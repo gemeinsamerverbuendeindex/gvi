@@ -1,0 +1,10 @@
+# Translation table for common masking of German umlauts.
+#
+
+"Ae" => "ä"
+"Oe" => "ö"
+"Ue" => "ü"
+"ae" => "ä"
+"oe" => "ö"
+"ue" => "ü"
+"ss" => "ß"
