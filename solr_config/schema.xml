@@ -1,0 +1,514 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Datenmodel für die Version 1.0 des Datenmodells des Gemeinsamen Verbünde Index. -->
+<!-- 2014-07-11 Reh Kommentierung und Umstellung des Datenmodells der Testversion. -->
+
+<schema name="GVI_1.0" version="1.5">
+    <!--
+    ###########################################
+    Pflichtfelder
+    ###########################################-->
+    <!-- Systemfeld von SOLR, wird automatisch belegt -->
+    <field name="_version_"               type="long"  stored="true"  required="true"   multiValued="false" />
+    
+    <!-- Eindeutige Datensatzkennung -->
+    <field name="id"                      type="string" stored="true" required="true" multiValued="false" />
+    
+    <!-- Bezeichner des Datentyps im primären Datencontainer. Bei GVI immer 'gvimarc', da wir einen eigenen RecordDriver dafür benötigen. -->
+    <field name="recordtype"              type="UnIndexed" default="gvimarc" multiValued="false" />
+
+    <!-- Primärer Datencontainer -->
+    <field name="fullrecord"              type="UnIndexed" required="true"   multiValued="false" />
+    <field name="index_date"              type="Date" stored="true" default="NOW" multiValued="false" />
+
+    <!-- Verbünde mit Bestand. -->
+    <field name="consortium"              type="Facet" required="true" />
+
+        <!-- Aggregierte Verfügbarkeit der Exemplare in der Fernleihe. Die Eigenschaften werden dargestellt durch: -->
+    <!-- die kummulative Werte 'loan', 'copy' und 'ecopy oder die exklusiven Werte: 'none' oder 'unknown' -->
+    <field name="ill_flag"                type="Facet" default="unknown" />
+    <field name="ill_region"              type="Facet" default="unknown" />
+      
+    <!--
+    ###########################################
+    Felder der Kernfunktionalität
+    ###########################################-->
+    <!-- Vereinfachte SuchFelder für minimalistische Anwendungen -->
+    <!-- Alle Textfelder ohne Normdaten  fehlertolerant aufgearbeitet. -->
+    <field name="allfields"               type="text_fuzzy" />
+    
+    <!-- Wie 'allfields' aber ohne Stemming und Phonetik -->
+    <field name="allfields_unstemmed"     type="text" />
+    
+    <!-- Alle Verfasser (auch Körperschaften) und beteiligte Personen -->
+    <!-- Verfasser ohne jegliche Aufbereitung.
+    (Nichtsortierzeichen sollten extern entfernt werden. -->
+    <!-- Alle Angaben ohne Synonymen fehlertolerant aufgearbeitet. -->
+    <field name="author"                  type="text_fuzzy"   />
+    
+    <field name="author_facet"            type="Facet" />
+    
+    <!-- 1. Verfasser in Sortierform -->
+    <field name="author_sort"             type="string_lc" multiValued="false" />
+    
+    <!-- Alle Angaben mit Synonymen fehlertolerant aufgearbeitet. -->
+    <field name="author_norm"             type="text_fuzzy_p" />
+    
+    <!-- Wie 'author_norm' aber ohne Stemming und Phonetik-->
+    <field name="author_norm_unstemmed"   type="text_p" />
+    
+    <!-- Wie 'author' aber ohne Stemming und Phonetik-->
+    <field name="author_unstemmed"        type="text"/>
+    
+    <!-- Wie 'author_norm_unstemmed' aber als Phrase indexiert-->
+    <field name="author_norm_phrase"      type="string_lc_p" />
+    
+    <!-- Wie 'author_phrase' aber als Phrase indexiert-->
+    <field name="author_phrase"           type="string_lc" />
+    
+    <!-- Titelangaben -->
+    <!--  Alle Titelangaben fehlertolerant aufgearbeitet -->
+    <field name="title"                   type="text_fuzzy" />
+    
+    <!-- 1. Titel (HST wenn vorhanden) in Sortierform -->
+    <field name="title_sort"              type="string_lc"    multiValued="false" />
+    
+    <!-- Wie 'title' aber ohne Stemming und Phonetik -->
+    <field name="title_unstemmed"         type="text" />
+    
+    <!-- Wie 'title_unstemmed'  aber als Phrase indexiert -->
+    <field name="title_phrase"            type="string_lc" />
+    
+    <!-- Angaben zur Erscheinung -->
+    <!-- Verlag und Verlagsort ohne Stemming und Phonetik -->
+    <field name="publisher"               type="text" />
+    
+    <!-- Erscheinungsdatum für die Sucheinschränkung.
+    Bei Zeitschriften, Serien und Reihen die Erscheinungsdaten der Bände/Hefte -->
+    <field name="publish_date"            type="Year" />
+    <field name="publish_date_sort"       type="Year"         multiValued="false" />
+    
+    <!-- Erscheinungsdatum der Mono oder des ersten Band/Heft -->
+    <field name="publish_date_sort_min"   type="Year"         multiValued="false" />
+    <!-- Erscheinungsdatum der Mono oder des letzten Band/Heft -->
+    <field name="publish_date_sort_max"   type="Year"         multiValued="false" />
+    
+    <!-- Materialart (Buch, eBuch, CD, Karte, Flugschrift, ...) -->
+    <field name="material_content_type"   type="Facet" />
+    
+    <!-- Materialmedium (Papier, CD, VHS, ...) -->
+    <field name="material_media_type"     type="Facet" />
+
+    <!-- Erscheinungsform (Mono, Mehrbänder, Reihe, Serie, Zeitschrift, Artikel) -->
+    <field name="material_pubform"        type="Facet" />
+    
+    <!-- Zugriffsart (physikalisch, online) -->
+    <field name="material_access"         type="Facet" />
+        
+    <!-- IDs -->
+    <!-- Intenatonale Standart Nummern (isbn, issn, ismn, ...) -->
+    <field name="isxn"                    type="text" />
+    
+    <!-- Andere Kennumern und URIs (zdbn, olcn, doi, urn, ...) -->
+    <field name="other_ids"               type="string_lc" />
+
+    <!-- Regionale Identifikationsnummer der erstkatalogisierenden Institution -->
+    <field name="eki"                     type="string"  multiValued="false" />
+    
+    <!-- Inhaltliche Erschliesung: Topic -->
+    <!-- Schlagworte RSWK -->
+    <field name="subject_all"             type="text_fuzzy"/>
+    <field name="subject_all_facet"       type="Facet" />
+
+    <!-- Schlagworte RSWK mit Synonymen aus GND -->
+    <field name="subject_all_norm"        type="text_fuzzy_s" />
+    
+    <!-- Schlagworte RSWK -->
+    <field name="subject_all_unstemmed"   type="text" />
+    
+    <!-- Schlagworte RSWK mit Synonymen aus GND -->
+    <field name="subject_all_norm_unstemmed"  type="text_s"       />
+    
+    <!-- Regensburger Verbund Klassifikation vollständig und erste drei Zeichen -->
+    <field name="rvk"                     type="string_lc" />
+    
+    <!-- Dewey Decimal Classifiction vollständig und erste drei Zeichen-->
+    <field name="ddc"                     type="string_lc" />
+
+    <!-- Zusammenfassungen: 500a:501a:502a:504a:505a -->
+    <field name="summary"                 type="text"/>
+    <!--
+    ###########################################
+    Optionale Felder zur Erweiterung der Kernfunktionalität
+    ###########################################-->
+    <!-- Bestandsinformationen -->
+    <!-- Bibliotheken mit Bestand als ISIL ersatzweise BIK -->
+    <field name="institution_id"          type="Facet" />
+    
+    <!-- Bibliotheken mit Bestand als Geolocation -->
+    <field name="institution_loc"         type="GeoLocation" />
+    
+    <!-- optionalener alternativer Datencontainer -->
+    <!-- Bezeichner des Datentyps -->
+    <field name="raw_recordtype"          type="UnIndexed" multiValued="false" />
+    
+    <!-- Alternativer Datencontainer -->
+    <field name="raw_fullrecord"          type="UnIndexed" multiValued="false" />
+    
+    <!-- Texte zur einfachen Autovervollständigung in einer Suchmaske
+         mit Hilfe von
+         https://cwiki.apache.org/confluence/display/solr/The+Terms+Component  
+    -->
+    <field name="allfields_suggest"          type="string_lc" />
+    
+    <!-- 3-Buchstabiger Sprachcode ('und' für undefiniert, wenn nicht im Titel erfasst.
+        Siehe http://www.loc.gov/marc/languages/language_code.html
+    -->
+    <field name="language"                   type="Facet" />
+    
+    <!-- Schlagworte  -->
+    
+    <!-- Sachbegriff -->
+    <field name="subject_topic"              type="text_fuzzy" />
+    <field name="subject_topic_facet"        type="Facet" />
+    
+    <!-- Inhaltliche Form -->
+    <field name="subject_genre"              type="text_fuzzy" />
+    <field name="subject_genre_facet"        type="Facet" />
+    
+    <!-- Regionaler Bezug -->
+    <field name="subject_geogname"           type="text_fuzzy" />
+    <field name="subject_geogname_facet"     type="Facet" />
+    
+    <!-- Zeitlicher Bezug -->
+    <field name="subject_chrono"             type="text_fuzzy" />
+    <field name="subject_chrono_facet"       type="Facet" />
+    
+    <!-- Personen, Köperschaften, Veranstaltungen als Sachbegriff -->
+    <field name="subject_persname"           type="text_fuzzy" />
+    <field name="subject_persname_facet"     type="Facet" />
+    
+    <field name="subject_corpname"           type="text_fuzzy" />
+    <field name="subject_corpname_facet"     type="Facet" />
+    
+    <field name="subject_meetname"           type="text_fuzzy" />
+    <field name="subject_meetname_facet"     type="Facet" />
+    
+    <!-- Werktitel -->
+    <field name="subject_worktitle"          type="text_fuzzy" />
+    <field name="subject_worktitle_facet"    type="Facet" />
+    
+    <!-- GND-IDs für externe Verlinkung http://de.wikipedia.org/wiki/Wikipedia:BEACON -->
+    <!-- Pesonen- und Körperschaftsnormdaten als Verfasser oder Bearbeiter -->
+    <field name="gnd_from"                   type="string" />
+    
+    <!-- Normdaten, die zur Beschreibung des Titels angegeben wurden -->
+    <field name="gnd_about"                  type="string" />
+    
+    <!-- ID, die z.B zum übergeordneten Werk zeigt. Dient der Anzeige der Bände.
+         Verlinkt aber natürlich nur innerhalb des Subsets eines Verbundes.
+    -->
+    <field name="id_related"                type="string" />
+    
+    
+      
+    <!--
+    ###########################################
+    Automatisches mitfüllen von Hilfsfeldern
+    ###########################################-->
+    
+    <copyField source="allfields"         dest="allfields_unstemmed" />
+    <copyField source="allfields"         dest="allfields_suggest" />
+
+    <copyField source="author"            dest="author_facet" />
+    <copyField source="author"            dest="author_unstemmed" />
+    <copyField source="author"            dest="author_phrase" />
+    <copyField source="author"            dest="author_norm" />
+    <copyField source="author"            dest="author_norm_unstemmed" />
+    <copyField source="author"            dest="author_norm_phrase" />
+    
+    <copyField source="title"             dest="title_unstemmed" />
+    <copyField source="title"             dest="title_phrase" />
+
+    <copyField source="subject_topic"     dest="subject_topic_facet" />
+    <copyField source="subject_genre"     dest="subject_genre_facet" />
+    <copyField source="subject_chrono"    dest="subject_chrono_facet" />
+    <copyField source="subject_geogname"  dest="subject_geogname_facet" />
+    <copyField source="subject_persname"  dest="subject_persname_facet" />
+    <copyField source="subject_corpname"  dest="subject_corpname_facet" />
+    <copyField source="subject_meetname"  dest="subject_meetname_facet" />
+    <copyField source="subject_worktitle" dest="subject_worktitle_facet" />
+    <copyField source="subject_*"         dest="subject_all" />
+    <copyField source="subject_*"         dest="subject_all_facet" />
+    <copyField source="subject_*"         dest="subject_all_unstemmed" />
+    <copyField source="subject_*"         dest="subject_all_norm" />
+    <copyField source="subject_*"         dest="subject_all_norm_unstemmed" />
+
+    <!--
+    ###########################################
+    Definition der Feldtypen
+    ###########################################-->
+    <!-- Für das Feld '_version_', welches vom 'real-time update' benötigt wird. -->
+    <fieldType name="long" class="solr.TrieLongField" />
+    
+    <!-- Für Datumssuche und Sortierung: Keine Modifikationen. -->
+    <fieldType name="Date" class="solr.TrieDateField"
+               sortMissingLast="true"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true"/>
+
+    <fieldType name="Year" class="solr.TrieIntField"
+               sortMissingLast="true"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true"/>
+    
+    <!-- Für Facetnsuche: Keine Modifikationen. -->
+    <fieldType name="Facet" class="solr.StrField"
+               sortMissingLast="true"
+               indexed="true"
+               stored="false"
+               required="false"  
+               multiValued="true" />
+    
+    <fieldType name="UnIndexed" class="solr.StrField"
+               indexed="false"
+               stored="true"
+               required="false"
+               multiValued="true"/>
+
+    <fieldType name="string" class="solr.StrField"
+               sortMissingLast="true"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true"/>
+    
+    <!-- Für Wortanfangsuche erste drei Zeichen. -->
+    <fieldType name="string_3" class="solr.TextField"     
+               sortMissingLast="true"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true">
+        <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\W" replacement="" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(...).*"    replacement="$1" />
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!--
+         Für Phrasensuche: Abweichend zu 'string' wird auf Kleinbuchstaben
+         abgebildet, Punktierungszeichen entfernt und mehere 'white-space'
+         zu einem Leerzeichen normiert
+    -->
+    <fieldType name="string_lc" class="solr.TextField"
+               sortMissingLast="true"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true">
+        <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\p{Punct}" replacement="" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\s{2,}"    replacement=" " />
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!--
+        Für Phrasensuche: Abweichend zu 'string' wird auf Kleinbuchstaben a
+        bgebildet, Punktierungszeichen entfernt und mehere
+        'white-space' zu einem Leerzeichen normiert
+    -->
+    <fieldType name="string_lc_p" class="solr.TextField"
+               sortMissingLast="true"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true">
+        <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\p{Punct}" replacement="" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\s{2,}"    replacement=" " />
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Standardsuche für Texte, es wird wortweise indexiert und Standartnummern werden komprimiert. -->
+    <fieldType name="text" class="solr.TextField"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"  
+               multiValued="true" >
+        <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Wie 'text' aber für die Verfassersuche werden auch Synonyme aus den Normdaten genutzt -->
+    <fieldType name="text_p" class="solr.TextField"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true" >
+        <analyzer  type="index">
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+        <analyzer type="query">           
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Wie 'text' aber für die Schlagwortsuche werden auch Synonyme aus den Normdaten genutzt -->
+    <fieldType name="text_s" class="solr.TextField"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"  
+               multiValued="true">
+        <analyzer  type="index">
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+        <analyzer type="query">           
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Fehlertolerante Variante von 'text'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
+    <fieldType name="text_fuzzy" class="solr.TextField"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"  
+               multiValued="true">
+        <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory" />
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
+            <filter class="solr.CJKBigramFilterFactory" />
+            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Fehlertollerante Variante von 'text_p'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
+    <fieldType name="text_fuzzy_p" class="solr.TextField"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true">
+        <analyzer  type="index">
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory" />
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
+            <filter class="solr.CJKBigramFilterFactory" />
+            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
+        </analyzer>
+        <analyzer type="query">           
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory" />
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
+            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
+            <filter class="solr.CJKBigramFilterFactory" />
+            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Fehlertolerante Variante von 'text_s'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
+    <fieldType name="text_fuzzy_s" class="solr.TextField"
+               positionIncrementGap="100"
+               indexed="true"
+               stored="false"
+               required="false"
+               multiValued="true" >
+        <analyzer  type="index">
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory" />
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
+            <filter class="solr.CJKBigramFilterFactory" />
+            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
+        </analyzer>
+        <analyzer type="query">           
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="solr.ICUTokenizerFactory" />
+            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
+            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
+            <filter class="solr.CJKBigramFilterFactory" />
+            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Standort als WGS84 Längen- und Breitengrade (siehe https://cwiki.apache.org/confluence/display/solr/Spatial+Search) -->
+    <fieldType name="GeoLocation" class="solr.SpatialRecursivePrefixTreeFieldType"
+        geo="true" distErrPct="0.025" maxDistErr="0.000009" units="degrees"
+        indexed="true"  stored="false" required="false"  multiValued="true" />
+
+    <uniqueKey>id</uniqueKey>
+    <defaultSearchField>allfields</defaultSearchField>
+    <solrQueryParser defaultOperator="OR" />
+</schema>
+
+
+
