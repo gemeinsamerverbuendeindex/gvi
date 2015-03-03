@@ -1,1 +1,2 @@
-Definitionen des GVI-Index zum upload in das ZK-Ensembles
+- Definitionen des GVI-Index (Zum Upload in das ZK-Ensemble)
+- Definition of the collection
