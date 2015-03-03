@@ -1,5 +1,5 @@
 # GVI: Gemeinsamer Verbünde Index 
-> @see English version below mentioned 
+  @see [English version](https://github.com/gemeinsamerverbuendeindex/gvi#gvi-combined-consortional-library-index)
 ## Beschreibung
 Neben der [Deutschen Nationalbibliothek](http://www.dnb.de/) pflegen die wissenschaftlichen [Bibliotheksverbünde](https://de.wikipedia.org/wiki/Bibliotheksverbund) große bibliografische Verzeichnisse.
 Ziel diese Projektes ist es eine gemeinsame Schnittstelle über den Gesamtbestand bereitzustellen und Verbundübergreifende Anwendungen zu entwickeln.
