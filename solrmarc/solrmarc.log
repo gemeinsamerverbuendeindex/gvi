@@ -1,0 +1,75 @@
+2015-03-06 12:22:46,132 [main] INFO  main org.solrmarc.marc.MarcImporter - Starting SolrMarc indexing.
+2015-03-06 12:22:46,141 [main] INFO  main org.solrmarc.tools.Utils - Opening file: /home/kirchhoff/NetBeansProjects/GVI/github/gvi/solrmarc/gvi_config.properties
+2015-03-06 12:22:46,145 [main] INFO  main org.solrmarc.marc.MarcImporter -  Connecting to remote Solr server at URL http://localhost:8080/solr-fernleihe/gvi/update
+2015-03-06 12:22:46,446 [main] INFO  main org.solrmarc.marc.MarcHandler - Attempting to open data file: /home/kirchhoff/NetBeansProjects/GVI/github/gvi/solrmarc/test.mrc
+2015-03-06 12:22:46,575 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 1 read from file: (DE-576)000000027
+2015-03-06 12:22:46,585 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 2 read from file: (DE-576)000000035
+2015-03-06 12:22:46,611 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 3 read from file: (DE-576)000000043
+2015-03-06 12:22:46,615 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 4 read from file: (DE-576)000000051
+2015-03-06 12:22:46,621 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 5 read from file: (DE-576)00000006X
+2015-03-06 12:22:46,630 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 6 read from file: (DE-576)000000094
+2015-03-06 12:22:46,636 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 7 read from file: (DE-576)000000108
+2015-03-06 12:22:46,645 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 8 read from file: (DE-576)000000116
+2015-03-06 12:22:46,648 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 9 read from file: (DE-576)000000124
+2015-03-06 12:22:46,653 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 10 read from file: (DE-576)000000132
+2015-03-06 12:22:46,657 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 11 read from file: (DE-576)000000140
+2015-03-06 12:22:46,660 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 12 read from file: (DE-576)000000167
+2015-03-06 12:22:46,664 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 13 read from file: (DE-576)000000175
+2015-03-06 12:22:46,668 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 14 read from file: (DE-576)000000183
+2015-03-06 12:22:46,670 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 15 read from file: (DE-576)000000191
+2015-03-06 12:22:46,678 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 16 read from file: (DE-576)000000205
+2015-03-06 12:22:46,682 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 17 read from file: (DE-576)000000213
+2015-03-06 12:22:46,685 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 18 read from file: (DE-576)000000221
+2015-03-06 12:22:46,689 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 19 read from file: (DE-576)00000023X
+2015-03-06 12:22:46,704 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 20 read from file: (DE-576)000000248
+2015-03-06 12:22:46,707 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 21 read from file: (DE-576)000000256
+2015-03-06 12:22:46,710 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 22 read from file: (DE-576)000000264
+2015-03-06 12:22:46,714 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 23 read from file: (DE-576)000000280
+2015-03-06 12:22:46,716 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 24 read from file: (DE-576)000000299
+2015-03-06 12:22:46,719 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 25 read from file: (DE-576)000000302
+2015-03-06 12:22:46,722 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 26 read from file: (DE-576)000000310
+2015-03-06 12:22:46,724 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 27 read from file: (DE-576)000000329
+2015-03-06 12:22:46,726 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 28 read from file: (DE-576)000000337
+2015-03-06 12:22:46,729 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 29 read from file: (DE-576)000000353
+2015-03-06 12:22:46,732 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 30 read from file: (DE-576)000000361
+2015-03-06 12:22:46,735 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 31 read from file: (DE-576)00000037X
+2015-03-06 12:22:46,738 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 32 read from file: (DE-576)000000388
+2015-03-06 12:22:46,742 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 33 read from file: (DE-576)000000396
+2015-03-06 12:22:46,744 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 34 read from file: (DE-576)00000040X
+2015-03-06 12:22:46,747 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 35 read from file: (DE-576)000000418
+2015-03-06 12:22:46,749 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 36 read from file: (DE-576)000000426
+2015-03-06 12:22:46,752 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 37 read from file: (DE-576)000000442
+2015-03-06 12:22:46,754 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 38 read from file: (DE-576)000000450
+2015-03-06 12:22:46,757 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 39 read from file: (DE-576)000000469
+2015-03-06 12:22:46,759 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 40 read from file: (DE-576)000000485
+2015-03-06 12:22:46,761 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 41 read from file: (DE-576)000000493
+2015-03-06 12:22:46,763 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 42 read from file: (DE-576)000000507
+2015-03-06 12:22:46,765 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 43 read from file: (DE-576)000000515
+2015-03-06 12:22:46,767 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 44 read from file: (DE-576)000000523
+2015-03-06 12:22:46,772 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 45 read from file: (DE-576)000000531
+2015-03-06 12:22:46,775 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 46 read from file: (DE-576)00000054X
+2015-03-06 12:22:46,778 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 47 read from file: (DE-576)000000558
+2015-03-06 12:22:46,780 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 48 read from file: (DE-576)000000566
+2015-03-06 12:22:46,782 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 49 read from file: (DE-576)000000574
+2015-03-06 12:22:46,784 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 50 read from file: (DE-576)000000582
+2015-03-06 12:22:46,791 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 51 read from file: (DE-576)000000590
+2015-03-06 12:22:46,792 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 52 read from file: (DE-576)000000604
+2015-03-06 12:22:46,794 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 53 read from file: (DE-576)000000612
+2015-03-06 12:22:46,796 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 54 read from file: (DE-576)000000620
+2015-03-06 12:22:46,798 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 55 read from file: (DE-576)000000639
+2015-03-06 12:22:46,800 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 56 read from file: (DE-576)000000647
+2015-03-06 12:22:46,801 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 57 read from file: (DE-576)000000655
+2015-03-06 12:22:46,805 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 58 read from file: (DE-576)000000663
+2015-03-06 12:22:46,807 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 59 read from file: (DE-576)000000671
+2015-03-06 12:22:46,810 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 60 read from file: (DE-576)00000068X
+2015-03-06 12:22:46,813 [main] INFO  main org.solrmarc.marc.MarcImporter - Added record 61 read from file: (DE-576)000000698
+2015-03-06 12:22:46,814 [main] INFO  main org.solrmarc.marc.MarcImporter -  Adding 61 of 61 documents to index
+2015-03-06 12:22:46,814 [main] INFO  main org.solrmarc.marc.MarcImporter -  Deleting 0 documents from index
+2015-03-06 12:22:46,814 [main] INFO  main org.solrmarc.marc.MarcImporter - Calling commit (with optimize set to false)
+2015-03-06 12:22:49,062 [main] INFO  main org.solrmarc.marc.MarcImporter - Done with the commit, closing Solr
+2015-03-06 12:22:49,063 [main] INFO  main org.solrmarc.marc.MarcImporter - Setting Solr closed flag
+2015-03-06 12:22:49,063 [main] INFO  main org.solrmarc.marc.MarcImporter - Finished indexing in 0:02,00
+2015-03-06 12:22:49,063 [main] INFO  main org.solrmarc.marc.MarcImporter - Indexed 61 at a rate of about 24.0 per sec
+2015-03-06 12:22:49,063 [main] INFO  main org.solrmarc.marc.MarcImporter - Deleted 0 records
+2015-03-06 12:22:49,064 [Thread-1] INFO  Thread-1 org.solrmarc.marc.MarcImporter - Starting Shutdown hook
+2015-03-06 12:22:49,064 [Thread-1] INFO  Thread-1 org.solrmarc.marc.MarcImporter - Finished Shutdown hook
