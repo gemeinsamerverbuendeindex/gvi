@@ -18,7 +18,7 @@
     <field name="recordtype"              type="UnIndexed" default="gvimarc" multiValued="false" />
 
     <!-- Primärer Datencontainer -->
-    <field name="fullrecord"              type="UnIndexed" required="true"   multiValued="false" />
+    <field name="fullrecord"              type="LargeString" required="true"   multiValued="false" />
     <field name="index_date"              type="Date" stored="true" default="NOW" multiValued="false" />
 
     <!-- Verbünde mit Bestand. -->
@@ -156,7 +156,7 @@
     <field name="raw_recordtype"          type="UnIndexed" multiValued="false" />
     
     <!-- Alternativer Datencontainer -->
-    <field name="raw_fullrecord"          type="UnIndexed" multiValued="false" />
+    <field name="raw_fullrecord"          type="LargeString" multiValued="false" />
     
     <!-- Texte zur einfachen Autovervollständigung in einer Suchmaske 
          mit Hilfe von 
@@ -282,6 +282,16 @@
                stored="true" 
                required="false" 
                multiValued="true"/>
+    
+    <fieldType name="LargeString" class="solr.StrField" 
+               indexed="false" 
+               stored="true" 
+               required="false" 
+               multiValued="true">
+        <analyzer>
+            <filter class="solr.LimitTokenCountFilterFactory" maxTokenCount="200000" consumeAllTokens="true" />
+        </analyzer>
+    </fieldType>
 
     <fieldType name="string" class="solr.StrField" 
                sortMissingLast="true" 
