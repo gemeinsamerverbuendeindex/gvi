@@ -123,31 +123,6 @@ public class GVIIndexer extends SolrIndexer
         return result;
     }
     
-    enum IllFlag
-    {
-        Undefined(0),
-        None(1),
-        Ecopy(2),
-        Copy(3),
-        Loan(4);
-        
-        private final int value;
-        
-        IllFlag (int value)
-        {
-            this.value = value;
-        }
-        
-        public int intValue()
-        {
-            return this.value;
-        }
-        @Override public String toString()
-        {
-            return "IllFlag." + name();
-        }        
-    }
-    
     /**
      * Determine ILL (Inter Library Loan) Flag
      *
@@ -161,7 +136,7 @@ public class GVIIndexer extends SolrIndexer
         // e = Fernleihe (Kopie, elektronischer Versand an Endnutzer möglich)
         // k = Fernleihe (Nur Kopie)
         // l = Fernleihe (Kopie und Ausleihe)
-        // n = Keine Fernleihe    
+        // n = Keine Fernleihe
         Set<String> result = new HashSet<String>();
         List fields = record.getVariableFields("924");
         if (fields != null)
@@ -180,41 +155,41 @@ public class GVIIndexer extends SolrIndexer
                     {
                         case 'U':
                             result.add(IllFlag.Undefined.toString());
-                            if (result.size() > 1) 
+                            if (result.size() > 1)
                                 result.remove(IllFlag.Undefined.toString());
                             break;
                         case 'N':
                             result.add(IllFlag.None.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            if (result.size() > 1) 
+                            if (result.size() > 1)
                                 result.remove(IllFlag.None.toString());
                             break;
                         case 'A':
                             result.add(IllFlag.Loan.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            result.remove(IllFlag.None.toString());                            
+                            result.remove(IllFlag.None.toString());
                             break;
                         case 'E':
                             result.add(IllFlag.Copy.toString());
                             result.add(IllFlag.Ecopy.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            result.remove(IllFlag.None.toString());                            
+                            result.remove(IllFlag.None.toString());
                             break;
                         case 'K':
                             result.add(IllFlag.Copy.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            result.remove(IllFlag.None.toString());                            
+                            result.remove(IllFlag.None.toString());
                             break;
                         case 'L':
                             result.add(IllFlag.Copy.toString());
                             result.add(IllFlag.Loan.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            result.remove(IllFlag.None.toString());                            
+                            result.remove(IllFlag.None.toString());
                             break;
                         default:
-                            if (!(result.contains(IllFlag.Copy.toString())  || 
-                                  result.contains(IllFlag.Ecopy.toString()) || 
-                                  result.contains(IllFlag.Loan.toString())  )) 
+                            if (!(result.contains(IllFlag.Copy.toString())  ||
+                                  result.contains(IllFlag.Ecopy.toString()) ||
+                                  result.contains(IllFlag.Loan.toString())  ))
                             {
                                 result.add(IllFlag.Undefined.toString());
                             }
@@ -231,49 +206,49 @@ public class GVIIndexer extends SolrIndexer
 
         return result;
     }
-
+    
     /**
      * Determine medium of material
      * @param record
-     * @return Set material medium of record 
+     * @return Set material medium of record
      */
     public Set getMaterialMedium(Record record)
     {
         Set result = new LinkedHashSet();
-        
+
         if (result.isEmpty())
         {
             result.add("UNDEFINED");
         }
         return result;
     }
-    
+
     /**
      * Determine type of material
      * @param record
-     * @return Set material type of record 
+     * @return Set material type of record
      */
     public Set getMaterialType(Record record)
     {
-        Set result = new LinkedHashSet();        
+        Set result = new LinkedHashSet();
         char materialTypeCode = record.getLeader().getTypeOfRecord();
         String materialType = "material_type." + materialTypeCode;
         result.add(materialType);
-        return result;        
+        return result;
     }
     
     /**
      * Determine publication form of material
      * @param record
-     * @return Set material type of record 
+     * @return Set material type of record
      */
     //public String getMaterialForm(Record record, String mapFileName )
     public String getMaterialForm(Record record)
     {
-        char publicationForm = record.getLeader().marshal().charAt(7);        
+        char publicationForm = record.getLeader().marshal().charAt(7);
         //String materialForm = "material_form."+publicationForm;
         String materialForm = ""+publicationForm;
-        
+
         /*
         String mapName = null;
         try
@@ -295,13 +270,13 @@ public class GVIIndexer extends SolrIndexer
     /**
      * Determine access method of material (physical, online)
      * @param record
-     * @return Set access record 
+     * @return Set access record
      */
     public Set<String> getMaterialAccess(Record record)
     {
         Set<String> result = new HashSet();
         //material_access.Online = 007[01]=cr OR has 856 field with indicator 40
-        ControlField field007 = ((ControlField)record.getVariableField("007")); 
+        ControlField field007 = ((ControlField)record.getVariableField("007"));
         if (field007 != null)
         {
             //System.out.println("DEBUG "+field007.getData());
@@ -311,6 +286,7 @@ public class GVIIndexer extends SolrIndexer
             if (accessCode.length() > 1 && "cr".equals(accessCode.substring(0, 2)) ||
                 (data856 != null && data856.getIndicator1()=='4' && data856.getIndicator1()=='0')) {
                 result.add("material_access.online");
+                //check 856 field again
                 if (data856 != null) {
                     Subfield noteField = data856.getSubfield('z');
                     if (noteField != null) {
@@ -322,21 +298,20 @@ public class GVIIndexer extends SolrIndexer
                 }
             }
         }
-        
+
         if (result.isEmpty())
         {
-            result.add("material_access.physical");            
+            result.add("material_access.physical");
         }
-        
-        return result;        
+
+        return result;
     }
-    
     
     public Set<String> getSubjectTopicalTerm(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.TOPICAL_TERM);
     }
-
+    
     public Set<String> getSubjectGeographicalName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.GEOGRAPHIC_NAME);
@@ -346,7 +321,7 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.GENRE_FORM);
     }
-    
+
     public Set<String> getSubjectPersonalName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.PERSONAL_NAME);
@@ -356,17 +331,17 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CORPORATE_NAME);
     }
-
+    
     public Set<String> getSubjectMeetingName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.MEETING_NAME);
     }
-    
+
     public Set<String> getSubjectUniformTitle(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.UNIFORM_TITLE);
     }
-
+    
     public Set<String> getSubjectChronologicalTerm(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CHRONOLOGICAL_TERM);
@@ -407,7 +382,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return result;
     }
-    
+
     public  Set<String> getSWDSubject(Record record, MARCSubjectCategory subjectCategory)
     {
         Set<String> result = new LinkedHashSet<String>();
@@ -444,12 +419,37 @@ public class GVIIndexer extends SolrIndexer
                         {
                             result.add(subject.getData());
                         }
-                        
-                    }                    
+
+                    }
                 }
             }
-        }        
-        return result;        
+        }
+        return result;
+    }
+    
+    enum IllFlag
+    {
+        Undefined(0),
+        None(1),
+        Ecopy(2),
+        Copy(3),
+        Loan(4);
+
+        private final int value;
+
+        IllFlag (int value)
+        {
+            this.value = value;
+        }
+
+        public int intValue()
+        {
+            return this.value;
+        }
+        @Override public String toString()
+        {
+            return "IllFlag." + name();
+        }
     }
                 
 
@@ -536,11 +536,6 @@ public class GVIIndexer extends SolrIndexer
             this.value = c;
         }
         
-        public final char valueOf() 
-        {
-            return value;
-        }
-        
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final char gndCategory)
         {
             final MARCSubjectCategory marcSubjectCategory;
@@ -572,6 +567,11 @@ public class GVIIndexer extends SolrIndexer
             }
             return marcSubjectCategory;
         }
+        
+        public final char valueOf()
+        {
+            return value;
+        }
     }
     
     public enum SWDSubjectCategory
@@ -590,11 +590,6 @@ public class GVIIndexer extends SolrIndexer
             this.value = c;
         }
         
-        public final char valueOf() 
-        {
-            return value;
-        }
-
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final char swdCategory)
         {
             final MARCSubjectCategory marcSubjectCategory;
@@ -622,6 +617,11 @@ public class GVIIndexer extends SolrIndexer
                      marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
             }
             return marcSubjectCategory;
+        }
+
+        public final char valueOf()
+        {
+            return value;
         }
     }
 }
