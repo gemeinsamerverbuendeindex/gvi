@@ -16,8 +16,6 @@ import org.solrmarc.index.SolrIndexer;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Subfield;
-import org.marc4j.marc.VariableField;
-import org.solrmarc.tools.Utils;
 
 /**
  *
@@ -25,27 +23,47 @@ import org.solrmarc.tools.Utils;
  */
 public class GVIIndexer extends SolrIndexer
 {
-    
-    private String id;
-    private String consortium;
-    
-    
+
+    private String recordId;
+    private String catalogId;
+    private Set<String> institutionSet = new LinkedHashSet<>();
+    private Set<String> consortium = new LinkedHashSet<>();
+    final private Map<String, String> institutionToConsortiumMap;
+
     public GVIIndexer(String indexingPropsFile, String[] propertyDirs)
     {
         super(indexingPropsFile, propertyDirs);
+        institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
+    }
+
+    public Set<String> getConsortium(final Record record)
+    {
+        return consortium;
+    }
+
+    public Set<String> getInstitutionID(final Record record)
+    {
+        return institutionSet;
+    }
+
+    public String getRecordID(final Record record)
+    {
+        return recordId;
     }
 
     @Override
     protected void perRecordInit(Record record)
     {
         String f001 = getFirstFieldVal(record, "001");
-        consortium = guessConsortium(record, f001);
-        id = "("+consortium+")"+f001;
+        catalogId = findCatalogId(record, f001);
+        recordId = "(" + catalogId + ")" + f001;
+        institutionSet = findInstitutionID(record, catalogId);
+        consortium = findConsortium(record, catalogId, institutionSet, institutionToConsortiumMap);
     }
-    
-    protected String guessConsortium(Record record, String f001)
+
+    protected String findCatalogId(Record record, String f001)
     {
-        // guess consortium
+        // guess catalogId
         String field003 = getFirstFieldVal(record, "003");
         String field040a = getFirstFieldVal(record, "040a");
         if (field003 != null)
@@ -54,75 +72,109 @@ public class GVIIndexer extends SolrIndexer
             {
                 field003 = field003.substring(0, 6);
             }
-            consortium = field003;
+            catalogId = field003;
         }
         else if (field040a != null)
         {
-            consortium = field040a;
+            catalogId = field040a;
         }
-        else if (f001.startsWith("BV"))
+        else if (f001 != null && f001.startsWith("BV"))
         {
-            consortium = "DE-604";
+            catalogId = "DE-604";
         }
         else
         {
-            consortium = "UNDEFINED";
+            catalogId = "UNDEFINED";
         }
-        return consortium;
+        return catalogId;
     }
 
-    public String getConsortium(Record record)
+    protected Set<String> findInstitutionID(Record record, String catalogId)
     {
-        return consortium;
+        Set<String> institution = new LinkedHashSet<>();
+        switch (catalogId)
+        {
+            case "DE-576": // SWB
+                institution.addAll(getFieldList(record, "924b"));
+                break;
+            case "DE-601": // GBV+KOBV
+                Set<String> ilnSet = getFieldList(record, "9802");
+                for (String iln : ilnSet)
+                {
+                    institution.add("GBV_ILN_" + iln);
+                }
+                break;
+            case "DE-604": // BVB+KOBV
+                institution.addAll(getFieldList(record, "049a"));
+                break;
+            default:
+                institution.add("UNDEFINED");
+        }
+        return institution;
     }
 
-    public String getRecordID(Record record)
+    protected Set<String> findConsortium(Record record, 
+                                         String catalogId, 
+                                         Set<String> institutionSet, 
+                                         Map<String, String> institutionToConsortiumMap)
     {
-        return id;
-    }
-    
-    public Set getInstitutionID(Record record)
-    {
-        Set<String> result = new HashSet<String>();
-        if (consortium.equals("DE-576")) // SWB
+        Set<String> consortiumSet= new HashSet<>();
+        switch (catalogId)
         {
-            result.addAll(getFieldList(record, "924b"));
+            case "DE-576": // SWB
+                consortiumSet.add(catalogId);
+                break;
+            case "DE-601": // GBV+KOBV
+            case "DE-604": // BVB+KOBV
+                consortiumSet.addAll(findConsortiumByInstitution(catalogId, institutionSet, institutionToConsortiumMap));
+                break;
+            case "DE-603":  // HEBIS
+                consortiumSet.add(catalogId);
+                break;
+            default:
+                consortiumSet.add("UNDEFINED");
+                break;
         }
-        else if(consortium.equals("DE-601"))  // GBV
+        return consortiumSet;
+    }
+
+    protected Set<String> findConsortiumByInstitution(String defaultCatalogId,
+                                                      Set<String> institutionSet,
+                                                      Map<String, String> institutionToConsortiumMap)
+    {
+        Set<String> consortiumSet = new HashSet<>();
+        int numOtherConsortium = 0;
+        for (String i : institutionSet)
         {
-            Set <String> ilnSet = getFieldList(record, "9802");
-            for (String iln: ilnSet)
+            if (institutionToConsortiumMap.containsKey(i))
             {
-                result.add("GBV_ILN_"+iln);
+                consortiumSet.add(institutionToConsortiumMap.get(i));
+                numOtherConsortium++;
             }
         }
-        else if(consortium.equals("DE-604"))  //BVB
+        if (institutionSet.isEmpty() || 
+            institutionSet.size() > numOtherConsortium)
         {
-            result.addAll(getFieldList(record, "049a"));            
+            consortiumSet.add(defaultCatalogId);
         }
-        else
-        {
-            result.add("UNDEFINED");
-        }
-        return result;
+        return consortiumSet;
     }
-    
-    public Set getTermID(Record record, String tagStr, String prefixStr, String keepPrefixStr)
+
+    public Set<String> getTermID(Record record, String tagStr, String prefixStr, String keepPrefixStr)
     {
-        boolean keepPrefix = Boolean.parseBoolean(keepPrefixStr);        
+        boolean keepPrefix = Boolean.parseBoolean(keepPrefixStr);
         Set<String> candidates = getFieldList(record, tagStr);
         Set result = new HashSet();
-        for (String candidate: candidates)
+        for (String candidate : candidates)
         {
             if (candidate.contains(prefixStr))
             {
-                result.add(keepPrefix?candidate:candidate.substring(prefixStr.length()+2));
+                result.add(keepPrefix ? candidate : candidate.substring(prefixStr.length() + 2));
             }
         }
-        
         return result;
     }
-    
+
     enum IllFlag
     {
         Undefined(0),
@@ -130,39 +182,41 @@ public class GVIIndexer extends SolrIndexer
         Ecopy(2),
         Copy(3),
         Loan(4);
-        
+
         private final int value;
-        
-        IllFlag (int value)
+
+        IllFlag(int value)
         {
             this.value = value;
         }
-        
+
         public int intValue()
         {
             return this.value;
         }
-        @Override public String toString()
+
+        @Override
+        public String toString()
         {
             return "IllFlag." + name();
-        }        
+        }
     }
-    
+
     /**
      * Determine ILL (Inter Library Loan) Flag
      *
      * @param record
      * @return Set ill facets
      */
-    public Set getIllFlag(Record record)
+    public Set<String> getIllFlag(Record record)
     {
 
-	// a = Fernleihe (nur Ausleihe)
+        // a = Fernleihe (nur Ausleihe)
         // e = Fernleihe (Kopie, elektronischer Versand an Endnutzer möglich)
         // k = Fernleihe (Nur Kopie)
         // l = Fernleihe (Kopie und Ausleihe)
         // n = Keine Fernleihe    
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         List fields = record.getVariableFields("924");
         if (fields != null)
         {
@@ -180,41 +234,45 @@ public class GVIIndexer extends SolrIndexer
                     {
                         case 'U':
                             result.add(IllFlag.Undefined.toString());
-                            if (result.size() > 1) 
+                            if (result.size() > 1)
+                            {
                                 result.remove(IllFlag.Undefined.toString());
+                            }
                             break;
                         case 'N':
                             result.add(IllFlag.None.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            if (result.size() > 1) 
+                            if (result.size() > 1)
+                            {
                                 result.remove(IllFlag.None.toString());
+                            }
                             break;
                         case 'A':
                             result.add(IllFlag.Loan.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            result.remove(IllFlag.None.toString());                            
+                            result.remove(IllFlag.None.toString());
                             break;
                         case 'E':
                             result.add(IllFlag.Copy.toString());
                             result.add(IllFlag.Ecopy.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            result.remove(IllFlag.None.toString());                            
+                            result.remove(IllFlag.None.toString());
                             break;
                         case 'K':
                             result.add(IllFlag.Copy.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            result.remove(IllFlag.None.toString());                            
+                            result.remove(IllFlag.None.toString());
                             break;
                         case 'L':
                             result.add(IllFlag.Copy.toString());
                             result.add(IllFlag.Loan.toString());
                             result.remove(IllFlag.Undefined.toString());
-                            result.remove(IllFlag.None.toString());                            
+                            result.remove(IllFlag.None.toString());
                             break;
                         default:
-                            if (!(result.contains(IllFlag.Copy.toString())  || 
-                                  result.contains(IllFlag.Ecopy.toString()) || 
-                                  result.contains(IllFlag.Loan.toString())  )) 
+                            if (!(result.contains(IllFlag.Copy.toString())
+                                  || result.contains(IllFlag.Ecopy.toString())
+                                  || result.contains(IllFlag.Loan.toString())))
                             {
                                 result.add(IllFlag.Undefined.toString());
                             }
@@ -234,46 +292,49 @@ public class GVIIndexer extends SolrIndexer
 
     /**
      * Determine medium of material
+     *
      * @param record
-     * @return Set material medium of record 
+     * @return Set material medium of record
      */
     public Set getMaterialMedium(Record record)
     {
         Set result = new LinkedHashSet();
-        
+
         if (result.isEmpty())
         {
             result.add("UNDEFINED");
         }
         return result;
     }
-    
+
     /**
      * Determine type of material
+     *
      * @param record
-     * @return Set material type of record 
+     * @return Set material type of record
      */
-    public Set getMaterialType(Record record)
+    public Set<String> getMaterialType(Record record)
     {
-        Set result = new LinkedHashSet();        
+        Set<String> result = new LinkedHashSet<>();
         char materialTypeCode = record.getLeader().getTypeOfRecord();
         String materialType = "material_type." + materialTypeCode;
         result.add(materialType);
-        return result;        
+        return result;
     }
-    
+
     /**
      * Determine publication form of material
+     *
      * @param record
-     * @return Set material type of record 
+     * @return Set material type of record
      */
     //public String getMaterialForm(Record record, String mapFileName )
     public String getMaterialForm(Record record)
     {
-        char publicationForm = record.getLeader().marshal().charAt(7);        
+        char publicationForm = record.getLeader().marshal().charAt(7);
         //String materialForm = "material_form."+publicationForm;
-        String materialForm = ""+publicationForm;
-        
+        String materialForm = "" + publicationForm;
+
         /*
         String mapName = null;
         try
@@ -288,20 +349,21 @@ public class GVIIndexer extends SolrIndexer
         Map<String, String> translationMap = findMap(mapName);
         String materialFormMapped = Utils.remap(materialForm, translationMap, true);
         return materialFormMapped;
-        */
+         */
         return materialForm;
     }
-    
+
     /**
      * Determine access method of material (physical, online)
+     *
      * @param record
-     * @return Set access record 
+     * @return Set access record
      */
     public Set<String> getMaterialAccess(Record record)
     {
         Set<String> result = new HashSet();
         //material_access.Online = 007[01]=cr OR has 856 field with indicator 40
-        ControlField field007 = ((ControlField)record.getVariableField("007")); 
+        ControlField field007 = ((ControlField) record.getVariableField("007"));
         if (field007 != null)
         {
             //System.out.println("DEBUG "+field007.getData());
@@ -323,16 +385,15 @@ public class GVIIndexer extends SolrIndexer
                 }
             }
         }
-        
+
         if (result.isEmpty())
         {
-            result.add("material_access.physical");            
+            result.add("material_access.physical");
         }
-        
-        return result;        
+
+        return result;
     }
-    
-    
+
     public Set<String> getSubjectTopicalTerm(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.TOPICAL_TERM);
@@ -347,12 +408,12 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.GENRE_FORM);
     }
-    
+
     public Set<String> getSubjectPersonalName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.PERSONAL_NAME);
     }
-    
+
     public Set<String> getSubjectCorporateName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CORPORATE_NAME);
@@ -362,7 +423,7 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.MEETING_NAME);
     }
-    
+
     public Set<String> getSubjectUniformTitle(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.UNIFORM_TITLE);
@@ -383,7 +444,7 @@ public class GVIIndexer extends SolrIndexer
 
     public Set<String> getSubjectUncontrolled(Record record, MARCSubjectCategory subjectCategory)
     {
-        Set<String> result = new LinkedHashSet<String>();
+        Set<String> result = new LinkedHashSet<>();
         List fields = record.getVariableFields("653");
         if (fields != null)
         {
@@ -398,7 +459,7 @@ public class GVIIndexer extends SolrIndexer
                     if (marcSubjectCategory.equals(subjectCategory))
                     {
                         List<Subfield> subjects = field.getSubfields('a');
-                        for (Subfield subject: subjects)
+                        for (Subfield subject : subjects)
                         {
                             result.add(subject.getData());
                         }
@@ -408,10 +469,10 @@ public class GVIIndexer extends SolrIndexer
         }
         return result;
     }
-    
-    public  Set<String> getSWDSubject(Record record, MARCSubjectCategory subjectCategory)
+
+    public Set<String> getSWDSubject(Record record, MARCSubjectCategory subjectCategory)
     {
-        Set<String> result = new LinkedHashSet<String>();
+        Set<String> result = new LinkedHashSet<>();
         List fields = record.getVariableFields("689");
         if (fields != null)
         {
@@ -427,7 +488,7 @@ public class GVIIndexer extends SolrIndexer
                     if (marcSubjectCategory.equals(subjectCategory))
                     {
                         List<Subfield> subjects = field.getSubfields('a');
-                        for (Subfield subject: subjects)
+                        for (Subfield subject : subjects)
                         {
                             result.add(subject.getData());
                         }
@@ -441,18 +502,18 @@ public class GVIIndexer extends SolrIndexer
                     if (marcSubjectCategory.equals(subjectCategory))
                     {
                         List<Subfield> subjects = field.getSubfields('a');
-                        for (Subfield subject: subjects)
+                        for (Subfield subject : subjects)
                         {
                             result.add(subject.getData());
                         }
-                        
-                    }                    
+
+                    }
                 }
             }
-        }        
-        return result;        
+        }
+        return result;
     }
-                
+
 
     /*
         Entitätentyp der GND: 
@@ -473,11 +534,10 @@ public class GVIIndexer extends SolrIndexer
           f     = Formschlagwort
           z     = Zeitschlagwort
     
-    */
-
+     */
     public enum MARCSubjectCategory
     {
-        PERSONAL_NAME, 
+        PERSONAL_NAME,
         CORPORATE_NAME,
         MEETING_NAME,
         UNIFORM_TITLE,
@@ -486,11 +546,11 @@ public class GVIIndexer extends SolrIndexer
         GEOGRAPHIC_NAME,
         GENRE_FORM,
         UNCONTROLLED_TERM;
-        
+
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final int indicator2From653)
         {
             final MARCSubjectCategory marcSubjectCategory;
-            switch(indicator2From653)
+            switch (indicator2From653)
             {
                 case 0:
                     marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
@@ -512,15 +572,15 @@ public class GVIIndexer extends SolrIndexer
                     break;
                 case 6:
                     marcSubjectCategory = MARCSubjectCategory.GENRE_FORM;
-                    break;                    
+                    break;
                 default:
                     marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
             }
-            return marcSubjectCategory;            
+            return marcSubjectCategory;
         }
-        
+
     }
-    
+
     public enum GNDSubjectCategory
     {
         PERSON_NONINDIVIDUAL('n'),
@@ -529,52 +589,52 @@ public class GVIIndexer extends SolrIndexer
         KONGRESS('f'),
         GEOGRAFIKUM('g'),
         SACHBEGRIFF('s'),
-        WERK('u');                
+        WERK('u');
         private final char value;
-        
+
         private GNDSubjectCategory(char c)
         {
             this.value = c;
         }
-        
-        public final char valueOf() 
+
+        public final char valueOf()
         {
             return value;
         }
-        
+
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final char gndCategory)
         {
             final MARCSubjectCategory marcSubjectCategory;
             switch (gndCategory)
             {
                 case 'n':
-                     marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
+                    marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
                     break;
                 case 'p':
-                     marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
+                    marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
                     break;
                 case 'b':
-                     marcSubjectCategory = MARCSubjectCategory.CORPORATE_NAME;
+                    marcSubjectCategory = MARCSubjectCategory.CORPORATE_NAME;
                     break;
                 case 'f':
-                     marcSubjectCategory = MARCSubjectCategory.MEETING_NAME;
+                    marcSubjectCategory = MARCSubjectCategory.MEETING_NAME;
                     break;
                 case 'g':
-                     marcSubjectCategory = MARCSubjectCategory.GEOGRAPHIC_NAME;
+                    marcSubjectCategory = MARCSubjectCategory.GEOGRAPHIC_NAME;
                     break;
                 case 's':
-                     marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
+                    marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
                     break;
                 case 'u':
-                     marcSubjectCategory = MARCSubjectCategory.UNIFORM_TITLE;
+                    marcSubjectCategory = MARCSubjectCategory.UNIFORM_TITLE;
                     break;
                 default:
-                     marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
+                    marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
             }
             return marcSubjectCategory;
         }
     }
-    
+
     public enum SWDSubjectCategory
     {
         SACHBEGRIFF('a'),
@@ -583,15 +643,15 @@ public class GVIIndexer extends SolrIndexer
         KOERPERSCHAFT('d'),
         FORMSCHLAGWORT('f'),
         ZEITSCHLAGWORT('z');
-        
+
         private final char value;
-        
+
         private SWDSubjectCategory(char c)
         {
             this.value = c;
         }
-        
-        public final char valueOf() 
+
+        public final char valueOf()
         {
             return value;
         }
@@ -602,25 +662,25 @@ public class GVIIndexer extends SolrIndexer
             switch (swdCategory)
             {
                 case 'a':
-                     marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
+                    marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
                     break;
                 case 'b':
-                     marcSubjectCategory = MARCSubjectCategory.GEOGRAPHIC_NAME;
+                    marcSubjectCategory = MARCSubjectCategory.GEOGRAPHIC_NAME;
                     break;
                 case 'c':
-                     marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
+                    marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
                     break;
                 case 'd':
-                     marcSubjectCategory = MARCSubjectCategory.CORPORATE_NAME;
+                    marcSubjectCategory = MARCSubjectCategory.CORPORATE_NAME;
                     break;
                 case 'f':
-                     marcSubjectCategory = MARCSubjectCategory.GENRE_FORM;
+                    marcSubjectCategory = MARCSubjectCategory.GENRE_FORM;
                     break;
                 case 'z':
-                     marcSubjectCategory = MARCSubjectCategory.CHRONOLOGICAL_TERM;
+                    marcSubjectCategory = MARCSubjectCategory.CHRONOLOGICAL_TERM;
                     break;
                 default:
-                     marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
+                    marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
             }
             return marcSubjectCategory;
         }
