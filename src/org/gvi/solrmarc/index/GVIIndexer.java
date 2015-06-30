@@ -309,16 +309,15 @@ public class GVIIndexer extends SolrIndexer
             DataField data856 = (DataField) record.getVariableField("856");
 
             if (accessCode.length() > 1 && "cr".equals(accessCode.substring(0, 2)) ||
-                (data856 != null && data856.getIndicator1()=='4' && data856.getIndicator1()=='0'))
-            {
+                (data856 != null && data856.getIndicator1()=='4' && data856.getIndicator1()=='0')) {
                 result.add("material_access.online");
-                Subfield noteField = data856.getSubfield('z');
-                if (noteField != null)
-                {
-                    String note = noteField.getData();
-                    if (note != null && note.contains("kostenfrei"))
-                    {
-                        result.add("material_access.online_kostenfrei");
+                if (data856 != null) {
+                    Subfield noteField = data856.getSubfield('z');
+                    if (noteField != null) {
+                        String note = noteField.getData();
+                        if (note != null && note.contains("kostenfrei")) {
+                            result.add("material_access.online_kostenfrei");
+                        }
                     }
                 }
             }
