@@ -175,33 +175,6 @@ public class GVIIndexer extends SolrIndexer
         return result;
     }
 
-    enum IllFlag
-    {
-        Undefined(0),
-        None(1),
-        Ecopy(2),
-        Copy(3),
-        Loan(4);
-
-        private final int value;
-
-        IllFlag(int value)
-        {
-            this.value = value;
-        }
-
-        public int intValue()
-        {
-            return this.value;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "IllFlag." + name();
-        }
-    }
-
     /**
      * Determine ILL (Inter Library Loan) Flag
      *
@@ -270,9 +243,9 @@ public class GVIIndexer extends SolrIndexer
                             result.remove(IllFlag.None.toString());
                             break;
                         default:
-                            if (!(result.contains(IllFlag.Copy.toString())
-                                  || result.contains(IllFlag.Ecopy.toString())
-                                  || result.contains(IllFlag.Loan.toString())))
+                            if (!(result.contains(IllFlag.Copy.toString())  ||
+                                  result.contains(IllFlag.Ecopy.toString()) ||
+                                  result.contains(IllFlag.Loan.toString())  ))
                             {
                                 result.add(IllFlag.Undefined.toString());
                             }
@@ -289,7 +262,7 @@ public class GVIIndexer extends SolrIndexer
 
         return result;
     }
-
+    
     /**
      * Determine medium of material
      *
@@ -371,16 +344,16 @@ public class GVIIndexer extends SolrIndexer
             DataField data856 = (DataField) record.getVariableField("856");
 
             if (accessCode.length() > 1 && "cr".equals(accessCode.substring(0, 2)) ||
-                (data856 != null && data856.getIndicator1()=='4' && data856.getIndicator1()=='0'))
-            {
+                (data856 != null && data856.getIndicator1()=='4' && data856.getIndicator1()=='0')) {
                 result.add("material_access.online");
-                Subfield noteField = data856.getSubfield('z');
-                if (noteField != null)
-                {
-                    String note = noteField.getData();
-                    if (note != null && note.contains("kostenfrei"))
-                    {
-                        result.add("material_access.online_kostenfrei");
+                //check 856 field again
+                if (data856 != null) {
+                    Subfield noteField = data856.getSubfield('z');
+                    if (noteField != null) {
+                        String note = noteField.getData();
+                        if (note != null && note.contains("kostenfrei")) {
+                            result.add("material_access.online_kostenfrei");
+                        }
                     }
                 }
             }
@@ -398,7 +371,7 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.TOPICAL_TERM);
     }
-
+    
     public Set<String> getSubjectGeographicalName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.GEOGRAPHIC_NAME);
@@ -418,7 +391,7 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CORPORATE_NAME);
     }
-
+    
     public Set<String> getSubjectMeetingName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.MEETING_NAME);
@@ -428,7 +401,7 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.UNIFORM_TITLE);
     }
-
+    
     public Set<String> getSubjectChronologicalTerm(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CHRONOLOGICAL_TERM);
@@ -512,6 +485,31 @@ public class GVIIndexer extends SolrIndexer
             }
         }
         return result;
+    }
+    
+    enum IllFlag
+    {
+        Undefined(0),
+        None(1),
+        Ecopy(2),
+        Copy(3),
+        Loan(4);
+
+        private final int value;
+
+        IllFlag (int value)
+        {
+            this.value = value;
+        }
+
+        public int intValue()
+        {
+            return this.value;
+        }
+        @Override public String toString()
+        {
+            return "IllFlag." + name();
+        }
     }
 
 
@@ -597,11 +595,6 @@ public class GVIIndexer extends SolrIndexer
             this.value = c;
         }
 
-        public final char valueOf()
-        {
-            return value;
-        }
-
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final char gndCategory)
         {
             final MARCSubjectCategory marcSubjectCategory;
@@ -633,6 +626,11 @@ public class GVIIndexer extends SolrIndexer
             }
             return marcSubjectCategory;
         }
+        
+        public final char valueOf()
+        {
+            return value;
+        }
     }
 
     public enum SWDSubjectCategory
@@ -649,11 +647,6 @@ public class GVIIndexer extends SolrIndexer
         private SWDSubjectCategory(char c)
         {
             this.value = c;
-        }
-
-        public final char valueOf()
-        {
-            return value;
         }
 
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final char swdCategory)
@@ -683,6 +676,11 @@ public class GVIIndexer extends SolrIndexer
                     marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
             }
             return marcSubjectCategory;
+        }
+
+        public final char valueOf()
+        {
+            return value;
         }
     }
 }
