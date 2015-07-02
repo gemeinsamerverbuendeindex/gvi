@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
-    <luceneMatchVersion>4.10.1</luceneMatchVersion>
-      <!-- Find plugins and big synonyms in SOLR_HOME/../lib -->
-      <lib dir="${solr.solr.home:}/../lib" />
-      <dataDir>${solr.data.dir:}</dataDir>
+    <luceneMatchVersion>4.10.3</luceneMatchVersion>
+    <lib dir="../../lib/dist"/>
+   
+    <lib dir="../../lib/contrib/analysis-extras/lib" />
+    <lib dir="../../lib/contrib/analysis-extras/lucene-libs" />
+    <dataDir>${solr.data.dir:}</dataDir>
    
     <directoryFactory name="DirectoryFactory" class="solr.MMapDirectoryFactory" />
     <!-- <directoryFactory name="DirectoryFactory" class="solr.SimpleFSDirectoryFactory" /> -->
@@ -60,6 +62,7 @@
                     <str name="facet.field">material_pubform</str>
                     <str name="facet.field">material_content_type</str>
                     <str name="facet.field">material_media_type</str>
+                    <str name="facet.field">publish_date</str>
                     <str name="facet.field">language</str>
                     <str name="facet.field">consortium</str>
                     <str name="facet.field">institution_id</str>
@@ -141,6 +144,13 @@
             -->
         </arr>
     </requestHandler>
+    
+    <requestHandler name="/get" class="solr.RealTimeGetHandler" >
+        <lst name="defaults">
+            <str name="omitHeader">true</str>
+        </lst>
+    </requestHandler>
+    
     <requestHandler name="/terms" class="solr.SearchHandler">
         <lst name="defaults">
             <bool name="terms">true</bool>
@@ -150,17 +160,11 @@
         </arr>
     </requestHandler>
 
-    <requestHandler name="/get" class="solr.RealTimeGetHandler" >
-      <lst name="defaults">
-         <str name="omitHeader">true</str>
-      </lst>
-    </requestHandler>
-
     <requestHandler name="morelikethis" class="solr.MoreLikeThisHandler">
         <lst name="defaults">
-            <str name="mlt.fl">allfield</str>
+            <str name="mlt.fl">allfields</str>
             <str name="mlt.qf">
-                allfield_unstemmed
+                allfields_unstemmed
             </str>
             <int name="mlt.mintf">1</int>
             <int name="mlt.mindf">1</int>
@@ -220,3 +224,4 @@
         <defaultQuery>*:*</defaultQuery>
     </admin>
 </config>
+

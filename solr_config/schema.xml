@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- Datenmodel für die Version 1.0 des Datenmodells des Gemeinsamen Verbünde Index. -->
-<!-- 2014-07-11 Reh Kommentierung und Umstellung des Datenmodells der Testversion. -->
+<!-- 2014-07-11 Reh Kommentierung und Umstellung des Datenmodells der Testversion. --> 
 
 <schema name="GVI_1.0" version="1.5">
-    <!--
+    <!-- 
     ###########################################
-    Pflichtfelder
+    Pflichtfelder 
     ###########################################-->
     <!-- Systemfeld von SOLR, wird automatisch belegt -->
     <field name="_version_"               type="long"  stored="true"  required="true"   multiValued="false" />
@@ -29,9 +29,9 @@
     <field name="ill_flag"                type="Facet" default="unknown" />
     <field name="ill_region"              type="Facet" default="unknown" />
       
-    <!--
+    <!-- 
     ###########################################
-    Felder der Kernfunktionalität
+    Felder der Kernfunktionalität 
     ###########################################-->
     <!-- Vereinfachte SuchFelder für minimalistische Anwendungen -->
     <!-- Alle Textfelder ohne Normdaten  fehlertolerant aufgearbeitet. -->
@@ -41,7 +41,7 @@
     <field name="allfields_unstemmed"     type="text" />
     
     <!-- Alle Verfasser (auch Körperschaften) und beteiligte Personen -->
-    <!-- Verfasser ohne jegliche Aufbereitung.
+    <!-- Verfasser ohne jegliche Aufbereitung. 
     (Nichtsortierzeichen sollten extern entfernt werden. -->
     <!-- Alle Angaben ohne Synonymen fehlertolerant aufgearbeitet. -->
     <field name="author"                  type="text_fuzzy"   />
@@ -58,7 +58,7 @@
     <field name="author_norm_unstemmed"   type="text_p" />
     
     <!-- Wie 'author' aber ohne Stemming und Phonetik-->
-    <field name="author_unstemmed"        type="text"/>
+    <field name="author_unstemmed"        type="text"/> 
     
     <!-- Wie 'author_norm_unstemmed' aber als Phrase indexiert-->
     <field name="author_norm_phrase"      type="string_lc_p" />
@@ -83,7 +83,7 @@
     <!-- Verlag und Verlagsort ohne Stemming und Phonetik -->
     <field name="publisher"               type="text" />
     
-    <!-- Erscheinungsdatum für die Sucheinschränkung.
+    <!-- Erscheinungsdatum für die Sucheinschränkung. 
     Bei Zeitschriften, Serien und Reihen die Erscheinungsdaten der Bände/Hefte -->
     <field name="publish_date"            type="Year" />
     <field name="publish_date_sort"       type="Year"         multiValued="false" />
@@ -113,7 +113,10 @@
     <field name="other_ids"               type="string_lc" />
 
     <!-- Regionale Identifikationsnummer der erstkatalogisierenden Institution -->
-    <field name="eki"                     type="string"  multiValued="false" />
+    <field name="eki"                     type="string" />
+    
+    <!-- Deduplikationsidentifikationsnummer -->
+    <field name="dupid"                   type="string"  multiValued="false" />
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
@@ -137,7 +140,7 @@
 
     <!-- Zusammenfassungen: 500a:501a:502a:504a:505a -->
     <field name="summary"                 type="text"/>
-    <!--
+    <!-- 
     ###########################################
     Optionale Felder zur Erweiterung der Kernfunktionalität
     ###########################################-->
@@ -155,13 +158,13 @@
     <!-- Alternativer Datencontainer -->
     <field name="raw_fullrecord"          type="UnIndexed" multiValued="false" />
     
-    <!-- Texte zur einfachen Autovervollständigung in einer Suchmaske
-         mit Hilfe von
+    <!-- Texte zur einfachen Autovervollständigung in einer Suchmaske 
+         mit Hilfe von 
          https://cwiki.apache.org/confluence/display/solr/The+Terms+Component  
     -->
     <field name="allfields_suggest"          type="string_lc" />
     
-    <!-- 3-Buchstabiger Sprachcode ('und' für undefiniert, wenn nicht im Titel erfasst.
+    <!-- 3-Buchstabiger Sprachcode ('und' für undefiniert, wenn nicht im Titel erfasst. 
         Siehe http://www.loc.gov/marc/languages/language_code.html
     -->
     <field name="language"                   type="Facet" />
@@ -212,9 +215,9 @@
     
     
       
-    <!--
+    <!-- 
     ###########################################
-    Automatisches mitfüllen von Hilfsfeldern
+    Automatisches mitfüllen von Hilfsfeldern 
     ###########################################-->
     
     <copyField source="allfields"         dest="allfields_unstemmed" />
@@ -244,56 +247,56 @@
     <copyField source="subject_*"         dest="subject_all_norm" />
     <copyField source="subject_*"         dest="subject_all_norm_unstemmed" />
 
-    <!--
+    <!-- 
     ###########################################
-    Definition der Feldtypen
+    Definition der Feldtypen 
     ###########################################-->
     <!-- Für das Feld '_version_', welches vom 'real-time update' benötigt wird. -->
     <fieldType name="long" class="solr.TrieLongField" />
     
     <!-- Für Datumssuche und Sortierung: Keine Modifikationen. -->
-    <fieldType name="Date" class="solr.TrieDateField"
-               sortMissingLast="true"
-               indexed="true"
-               stored="false"
-               required="false"
+    <fieldType name="Date" class="solr.TrieDateField" 
+               sortMissingLast="true" 
+               indexed="true" 
+               stored="false" 
+               required="false" 
                multiValued="true"/>
 
-    <fieldType name="Year" class="solr.TrieIntField"
-               sortMissingLast="true"
-               indexed="true"
-               stored="false"
-               required="false"
+    <fieldType name="Year" class="solr.TrieIntField" 
+               sortMissingLast="true" 
+               indexed="true" 
+               stored="false" 
+               required="false" 
                multiValued="true"/>
     
     <!-- Für Facetnsuche: Keine Modifikationen. -->
-    <fieldType name="Facet" class="solr.StrField"
-               sortMissingLast="true"
+    <fieldType name="Facet" class="solr.StrField" 
+               sortMissingLast="true" 
                indexed="true"
-               stored="false"
+               stored="false" 
                required="false"  
                multiValued="true" />
     
-    <fieldType name="UnIndexed" class="solr.StrField"
-               indexed="false"
-               stored="true"
-               required="false"
+    <fieldType name="UnIndexed" class="solr.StrField" 
+               indexed="false" 
+               stored="true" 
+               required="false" 
                multiValued="true"/>
-
-    <fieldType name="string" class="solr.StrField"
-               sortMissingLast="true"
-               indexed="true"
-               stored="false"
-               required="false"
+    
+    <fieldType name="string" class="solr.StrField" 
+               sortMissingLast="true" 
+               indexed="true" 
+               stored="false" 
+               required="false" 
                multiValued="true"/>
     
     <!-- Für Wortanfangsuche erste drei Zeichen. -->
     <fieldType name="string_3" class="solr.TextField"     
-               sortMissingLast="true"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
-               required="false"
+               sortMissingLast="true" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
+               required="false" 
                multiValued="true">
         <analyzer>
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="\W" replacement="" />
@@ -302,17 +305,17 @@
         </analyzer>
     </fieldType>
     
-    <!--
-         Für Phrasensuche: Abweichend zu 'string' wird auf Kleinbuchstaben
-         abgebildet, Punktierungszeichen entfernt und mehere 'white-space'
-         zu einem Leerzeichen normiert
+    <!-- 
+         Für Phrasensuche: Abweichend zu 'string' wird auf Kleinbuchstaben 
+         abgebildet, Punktierungszeichen entfernt und mehere 'white-space' 
+         zu einem Leerzeichen normiert 
     -->
     <fieldType name="string_lc" class="solr.TextField"
-               sortMissingLast="true"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
-               required="false"
+               sortMissingLast="true" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
+               required="false" 
                multiValued="true">
         <analyzer>
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="\p{Punct}" replacement="" />
@@ -322,17 +325,17 @@
         </analyzer>
     </fieldType>
     
-    <!--
+    <!-- 
         Für Phrasensuche: Abweichend zu 'string' wird auf Kleinbuchstaben a
-        bgebildet, Punktierungszeichen entfernt und mehere
+        bgebildet, Punktierungszeichen entfernt und mehere 
         'white-space' zu einem Leerzeichen normiert
     -->
     <fieldType name="string_lc_p" class="solr.TextField"
-               sortMissingLast="true"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
-               required="false"
+               sortMissingLast="true" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
+               required="false" 
                multiValued="true">
         <analyzer>
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="\p{Punct}" replacement="" />
@@ -343,10 +346,10 @@
     </fieldType>
     
     <!-- Standardsuche für Texte, es wird wortweise indexiert und Standartnummern werden komprimiert. -->
-    <fieldType name="text" class="solr.TextField"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
+    <fieldType name="text" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
                required="false"  
                multiValued="true" >
         <analyzer>
@@ -361,10 +364,10 @@
     </fieldType>
     
     <!-- Wie 'text' aber für die Verfassersuche werden auch Synonyme aus den Normdaten genutzt -->
-    <fieldType name="text_p" class="solr.TextField"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
+    <fieldType name="text_p" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
                required="false"
                multiValued="true" >
         <analyzer  type="index">
@@ -389,10 +392,10 @@
     </fieldType>
     
     <!-- Wie 'text' aber für die Schlagwortsuche werden auch Synonyme aus den Normdaten genutzt -->
-    <fieldType name="text_s" class="solr.TextField"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
+    <fieldType name="text_s" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
                required="false"  
                multiValued="true">
         <analyzer  type="index">
@@ -417,10 +420,10 @@
     </fieldType>
     
     <!-- Fehlertolerante Variante von 'text'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
-    <fieldType name="text_fuzzy" class="solr.TextField"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
+    <fieldType name="text_fuzzy" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
                required="false"  
                multiValued="true">
         <analyzer>
@@ -437,10 +440,10 @@
     </fieldType>
     
     <!-- Fehlertollerante Variante von 'text_p'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
-    <fieldType name="text_fuzzy_p" class="solr.TextField"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
+    <fieldType name="text_fuzzy_p" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
                required="false"
                multiValued="true">
         <analyzer  type="index">
@@ -469,10 +472,10 @@
     </fieldType>
     
     <!-- Fehlertolerante Variante von 'text_s'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
-    <fieldType name="text_fuzzy_s" class="solr.TextField"
-               positionIncrementGap="100"
-               indexed="true"
-               stored="false"
+    <fieldType name="text_fuzzy_s" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
                required="false"
                multiValued="true" >
         <analyzer  type="index">
@@ -502,13 +505,11 @@
     
     <!-- Standort als WGS84 Längen- und Breitengrade (siehe https://cwiki.apache.org/confluence/display/solr/Spatial+Search) -->
     <fieldType name="GeoLocation" class="solr.SpatialRecursivePrefixTreeFieldType"
-        geo="true" distErrPct="0.025" maxDistErr="0.000009" units="degrees"
+        geo="true" distErrPct="0.025" maxDistErr="0.000009" units="degrees" 
         indexed="true"  stored="false" required="false"  multiValued="true" />
 
     <uniqueKey>id</uniqueKey>
     <defaultSearchField>allfields</defaultSearchField>
-    <solrQueryParser defaultOperator="OR" />
+    <solrQueryParser defaultOperator="AND" />
 </schema>
-
-
 
