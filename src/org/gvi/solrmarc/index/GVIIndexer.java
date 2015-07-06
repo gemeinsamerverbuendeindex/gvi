@@ -24,16 +24,18 @@ import org.marc4j.marc.Subfield;
 public class GVIIndexer extends SolrIndexer
 {
 
+    final private Map<String, String> institutionToConsortiumMap;
+    final private Map<String, String> kobvInstitutionReplacementMap;
     private String recordId;
     private String catalogId;
     private Set<String> institutionSet = new LinkedHashSet<>();
     private Set<String> consortium = new LinkedHashSet<>();
-    final private Map<String, String> institutionToConsortiumMap;
 
     public GVIIndexer(String indexingPropsFile, String[] propertyDirs)
     {
         super(indexingPropsFile, propertyDirs);
         institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
+        kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
     }
 
     public Set<String> getConsortium(final Record record)
@@ -89,6 +91,43 @@ public class GVIIndexer extends SolrIndexer
         return catalogId;
     }
 
+    protected Set<String> getKobvInstitutions(Record record) {
+        Set<String> kobvInstitutions = new LinkedHashSet<>();
+        Set<String> values049a = getFieldList(record, "049a");
+        if (values049a == null) {
+            return kobvInstitutions;
+        }
+        for (String value049a : values049a) {
+            // In some cases (KobvIndex), the Sigel (ISIL) is followed by the internal uid.
+            // The delimiter is then ';', which cannot be a part of the Sigel
+            int semicolonIndex = value049a.indexOf(';');
+            if (semicolonIndex > 0) {
+                String isil = value049a.substring(0, semicolonIndex);
+                // Additionally, Brandendurg VOEB delivers all isils of the partner libraries (comma separated)
+                String[] isils = isil.split(",");
+                for (String oneisil : isils) {
+                    if (!oneisil.isEmpty()) {
+                        if (kobvInstitutionReplacementMap.containsKey(oneisil)) {
+                            kobvInstitutions.add(kobvInstitutionReplacementMap.get(oneisil));
+                        }
+                        else {
+                            kobvInstitutions.add(oneisil);
+                        }
+                    }
+                }
+            }
+            else {
+                if ("DE-VOEB".compareToIgnoreCase(value049a) == 0) {
+                    kobvInstitutions.add("DE-609");
+                }
+                else {
+                    kobvInstitutions.add(value049a);
+                }
+            }
+        }
+        return kobvInstitutions;
+    }
+
     protected Set<String> findInstitutionID(Record record, String catalogId)
     {
         Set<String> institution = new LinkedHashSet<>();
@@ -107,15 +146,18 @@ public class GVIIndexer extends SolrIndexer
             case "DE-604": // BVB+KOBV
                 institution.addAll(getFieldList(record, "049a"));
                 break;
+            case "DE-602": // KOBV
+                institution.addAll(getKobvInstitutions(record));
+                break;
             default:
                 institution.add("UNDEFINED");
         }
         return institution;
     }
 
-    protected Set<String> findConsortium(Record record, 
-                                         String catalogId, 
-                                         Set<String> institutionSet, 
+    protected Set<String> findConsortium(Record record,
+                                         String catalogId,
+                                         Set<String> institutionSet,
                                          Map<String, String> institutionToConsortiumMap)
     {
         Set<String> consortiumSet= new HashSet<>();
@@ -130,6 +172,9 @@ public class GVIIndexer extends SolrIndexer
                 break;
             case "DE-603":  // HEBIS
                 consortiumSet.add(catalogId);
+                break;
+            case "DE-602": //KOBV
+                consortiumSet.addAll(getFieldList(record, "040a"));
                 break;
             default:
                 consortiumSet.add("UNDEFINED");
@@ -152,7 +197,7 @@ public class GVIIndexer extends SolrIndexer
                 numOtherConsortium++;
             }
         }
-        if (institutionSet.isEmpty() || 
+        if (institutionSet.isEmpty() ||
             institutionSet.size() > numOtherConsortium)
         {
             consortiumSet.add(defaultCatalogId);
@@ -262,7 +307,7 @@ public class GVIIndexer extends SolrIndexer
 
         return result;
     }
-    
+
     /**
      * Determine medium of material
      *
@@ -371,7 +416,7 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.TOPICAL_TERM);
     }
-    
+
     public Set<String> getSubjectGeographicalName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.GEOGRAPHIC_NAME);
@@ -391,7 +436,7 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CORPORATE_NAME);
     }
-    
+
     public Set<String> getSubjectMeetingName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.MEETING_NAME);
@@ -401,7 +446,7 @@ public class GVIIndexer extends SolrIndexer
     {
         return getSubject(record, tagStr, MARCSubjectCategory.UNIFORM_TITLE);
     }
-    
+
     public Set<String> getSubjectChronologicalTerm(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CHRONOLOGICAL_TERM);
@@ -486,7 +531,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return result;
     }
-    
+
     enum IllFlag
     {
         Undefined(0),
@@ -626,7 +671,7 @@ public class GVIIndexer extends SolrIndexer
             }
             return marcSubjectCategory;
         }
-        
+
         public final char valueOf()
         {
             return value;
