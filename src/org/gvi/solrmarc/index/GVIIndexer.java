@@ -117,8 +117,8 @@ public class GVIIndexer extends SolrIndexer
                 }
             }
             else {
-                if ("DE-VOEB".compareToIgnoreCase(value049a) == 0) {
-                    kobvInstitutions.add("DE-609");
+                if (kobvInstitutionReplacementMap.containsKey(value049a)) {
+                    kobvInstitutions.add(kobvInstitutionReplacementMap.get(value049a));
                 }
                 else {
                     kobvInstitutions.add(value049a);
