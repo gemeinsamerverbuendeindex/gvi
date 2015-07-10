@@ -174,6 +174,7 @@ public class GVIIndexer extends SolrIndexer
                 consortiumSet.add(catalogId);
                 break;
             case "DE-602": //KOBV
+                consortiumSet.add(catalogId);
                 consortiumSet.addAll(getFieldList(record, "040a"));
                 break;
             default:
@@ -500,31 +501,33 @@ public class GVIIndexer extends SolrIndexer
                 DataField field = (DataField) iterator.next();
                 if (field.getSubfield('D') != null)
                 {
+                    String gndCategoryString = field.getSubfield('D').getData();
                     // GND Sachbegriff
-                    char gndCategory = field.getSubfield('D').getData().charAt(0);
-                    MARCSubjectCategory marcSubjectCategory = GNDSubjectCategory.mapToMARCSubjectCategory(gndCategory);
-                    if (marcSubjectCategory.equals(subjectCategory))
-                    {
-                        List<Subfield> subjects = field.getSubfields('a');
-                        for (Subfield subject : subjects)
-                        {
-                            result.add(subject.getData());
+                    if (gndCategoryString != null && !gndCategoryString.isEmpty()) {
+                        char gndCategory = field.getSubfield('D').getData().charAt(0);
+                        MARCSubjectCategory marcSubjectCategory = GNDSubjectCategory.mapToMARCSubjectCategory(gndCategory);
+                        if (marcSubjectCategory.equals(subjectCategory)) {
+                            List<Subfield> subjects = field.getSubfields('a');
+                            for (Subfield subject : subjects) {
+                                result.add(subject.getData());
+                            }
                         }
                     }
                 }
                 else if (field.getSubfield('A') != null)
                 {
                     // Alter SWD Sachbegriff. Muss gemappt werden!
-                    char swdCategory = field.getSubfield('A').getData().charAt(0);
-                    MARCSubjectCategory marcSubjectCategory = SWDSubjectCategory.mapToMARCSubjectCategory(swdCategory);
-                    if (marcSubjectCategory.equals(subjectCategory))
-                    {
-                        List<Subfield> subjects = field.getSubfields('a');
-                        for (Subfield subject : subjects)
-                        {
-                            result.add(subject.getData());
-                        }
+                    String swdCategoryString = field.getSubfield('A').getData();
+                    if (swdCategoryString != null && !swdCategoryString.isEmpty()) {
+                        char swdCategory = field.getSubfield('A').getData().charAt(0);
+                        MARCSubjectCategory marcSubjectCategory = SWDSubjectCategory.mapToMARCSubjectCategory(swdCategory);
+                        if (marcSubjectCategory.equals(subjectCategory)) {
+                            List<Subfield> subjects = field.getSubfields('a');
+                            for (Subfield subject : subjects) {
+                                result.add(subject.getData());
+                            }
 
+                        }
                     }
                 }
             }
