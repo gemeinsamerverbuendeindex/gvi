@@ -167,13 +167,13 @@ public class GVIIndexer extends SolrIndexer
                 consortiumSet.add(catalogId);
                 break;
             case "DE-601": // GBV+KOBV
-            case "DE-604": // BVB+KOBV
                 consortiumSet.addAll(findConsortiumByInstitution(catalogId, institutionSet, institutionToConsortiumMap));
                 break;
             case "DE-603":  // HEBIS
                 consortiumSet.add(catalogId);
                 break;
             case "DE-602": //KOBV
+            case "DE-604": // BVB+KOBV
                 consortiumSet.add(catalogId);
                 consortiumSet.addAll(getFieldList(record, "040a"));
                 break;
