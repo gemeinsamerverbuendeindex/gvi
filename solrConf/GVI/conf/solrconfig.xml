@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+    <luceneMatchVersion>5.1.0</luceneMatchVersion>
+    <!-- Find plugins and big synonyms in SOLR_HOME/../lib -->
+    <lib dir="${solr.solr.home:}/../lib" />    
+    <dataDir>${solr.data.dir:}</dataDir>
+   
+    <directoryFactory name="DirectoryFactory" class="solr.MMapDirectoryFactory" />
+    <!-- <directoryFactory name="DirectoryFactory" class="solr.SimpleFSDirectoryFactory" /> -->
+
+    <indexConfig>
+        <maxIndexingThreads>16</maxIndexingThreads>
+        <ramBufferSizeMB>200</ramBufferSizeMB>
+        <unlockOnStartup>true</unlockOnStartup>
+        <infoStream>true</infoStream>
+    </indexConfig>
+
+    <updateHandler class="solr.DirectUpdateHandler2">
+        <updateLog>
+            <str name="dir">${solr.ulog.dir:}</str>
+        </updateLog>
+        <autoCommit>
+            <maxDocs>${solr.autoCommit.maxdocs:100000}</maxDocs>
+            <maxTime>${solr.autoCommit.maxTime:360000}</maxTime>
+            <openSearcher>false</openSearcher>
+        </autoCommit>
+        <autoSoftCommit>
+            <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime>
+        </autoSoftCommit>
+    </updateHandler>
+
+    <query>
+        <maxBooleanClauses>1024</maxBooleanClauses>
+        <fieldValueCache class="solr.FastLRUCache" size="64" autowarmCount="0" showItems="16" />
+        <filterCache class="solr.FastLRUCache" size="25000" initialSize="25000" autowarmCount="0" />
+        <queryResultCache class="solr.LRUCache" size="50000" initialSize="50000" autowarmCount="0" />
+        <documentCache class="solr.LRUCache" size="0" initialSize="0" autowarmCount="0" />
+        <enableLazyFieldLoading>true</enableLazyFieldLoading>
+        <queryResultWindowSize>50</queryResultWindowSize>
+        <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
+        <useColdSearcher>false</useColdSearcher>
+        <listener event="firstSearcher" class="solr.QuerySenderListener">
+            <arr name="queries">
+                <lst> 
+                    <str name="q">*:*</str>
+                    <str name="start">0</str>
+                    <str name="rows">10</str>
+                    <str name="facet">true</str>
+                    <str name="facet.field">author_facet</str>
+                    <str name="facet.field">subject_all_facet</str>
+                    <str name="facet.field">subject_genre_facet</str>
+                    <str name="facet.field">subject_topic_facet</str>
+                    <str name="facet.field">subject_persname_facet</str>
+                    <str name="facet.field">subject_corpname_facet</str>
+                    <str name="facet.field">subject_meetname_facet</str>
+                    <str name="facet.field">subject_chrono_facet</str>
+                    <str name="facet.field">subject_geogname_facet</str>
+                    <str name="facet.field">subject_worktitle_facet</str>
+                    <str name="facet.field">material_access</str>
+                    <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">material_content_type</str>
+                    <str name="facet.field">material_media_type</str>
+                    <str name="facet.field">publish_date</str>
+                    <str name="facet.field">language</str>
+                    <str name="facet.field">consortium</str>
+                    <str name="facet.field">institution_id</str>
+                    <str name="facet.field">ill_flag</str>
+                    <str name="facet.field">ill_region</str>
+                    <str name="facet.field">ddc</str>
+                    <str name="facet.mincount">1</str>
+                    <str name="facet.method">fc</str>
+                    <str name="facet.threads">1000</str>
+                </lst>
+            </arr>
+        </listener>
+        <listener event="newSearcher" class="solr.QuerySenderListener">
+            <arr name="queries">
+                <lst> 
+                    <str name="q">*:*</str>
+                    <str name="start">0</str>
+                    <str name="rows">10</str>
+                    <str name="facet">true</str>
+                    <str name="facet.field">author_facet</str>
+                    <str name="facet.field">subject_all_facet</str>
+                    <str name="facet.field">subject_genre_facet</str>
+                    <str name="facet.field">subject_topic_facet</str>
+                    <str name="facet.field">subject_persname_facet</str>
+                    <str name="facet.field">subject_corpname_facet</str>
+                    <str name="facet.field">subject_meetname_facet</str>
+                    <str name="facet.field">subject_chrono_facet</str>
+                    <str name="facet.field">subject_geogname_facet</str>
+                    <str name="facet.field">subject_worktitle_facet</str>
+                    <str name="facet.field">material_access</str>
+                    <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">material_content_type</str>
+                    <str name="facet.field">material_media_type</str>
+                    <str name="facet.field">publish_date</str>
+                    <str name="facet.field">language</str>
+                    <str name="facet.field">consortium</str>
+                    <str name="facet.field">institution_id</str>
+                    <str name="facet.field">ill_flag</str>
+                    <str name="facet.field">ill_region</str>
+                    <str name="facet.field">ddc</str>
+                    <str name="facet.mincount">1</str>
+                    <str name="facet.method">fc</str>
+                    <str name="facet.threads">1000</str>
+                </lst>
+            </arr>
+        </listener>
+    </query>
+
+    <requestDispatcher handleSelect="true">
+        <requestParsers enableRemoteStreaming="false" />
+        <httpCaching never304="false" lastModifiedFrom="dirLastMod" etagSeed="Solr">
+            <cacheControl>max-age=300, public</cacheControl>
+        </httpCaching>
+    </requestDispatcher>
+
+    <requestHandler name="standard" class="solr.StandardRequestHandler" default="true">
+        <lst name="defaults">
+            <int name="rows">10</int>
+            <str name="df">allfields</str>
+            <str name="echoParams">all</str>
+            <str name="spellcheck">false</str>
+            <!--
+            <str name="spellcheck">true</str>
+            <str name="spellcheck.collate">true</str>
+            <str name="spellcheck.extendedResults">true</str>
+            <str name="spellcheck.collateExtendedResults">true</str>
+            <str name="spellcheck.maxResultsForSuggest">1000</str>
+            <str name="spellcheck.maxCollations">2</str>
+            <str name="spellcheck.maxCollationTries">1000</str>
+            <str name="spellcheck.alternativeTermCount">5</str>
+            -->
+        </lst>
+        <arr name="components">
+            <str>query</str>
+            <str>facet</str>
+            <str>mlt</str>
+            <str>stats</str>
+            <str>debug</str>
+            <!-- Erst mal keine Extras
+            <str>elevator</str>
+            <str>spellcheck</str>
+            -->
+        </arr>
+    </requestHandler>
+
+    <!-- Fuer VuFind den 'eDisMax' als 'DisMax' anbieten -->
+    <requestHandler name="dismax" class="solr.SearchHandler">
+        <lst name="defaults">
+            <str name="defType">edismax</str>
+            <str name="tie">0.1</str>
+            <str name="qf">allfields_unstemmed^4 allfields </str>
+            <str name="spellcheck">false</str>
+            <!--
+            <str name="spellcheck">true</str>
+            <str name="spellcheck.collate">true</str>
+            <str name="spellcheck.extendedResults">true</str>
+            <str name="spellcheck.collateExtendedResults">true</str>
+            <str name="spellcheck.maxResultsForSuggest">1000</str>
+            <str name="spellcheck.maxCollations">2</str>
+            <str name="spellcheck.maxCollationTries">1000</str>
+            <str name="spellcheck.alternativeTermCount">5</str>
+            -->
+        </lst>
+        <arr name="components">
+            <str>query</str>
+            <str>facet</str>
+            <str>mlt</str>
+            <str>stats</str>
+            <str>debug</str>
+            <!-- Erst mal keine Extras
+            <str>elevator</str>
+            <str>spellcheck</str>
+            -->
+        </arr>
+    </requestHandler>
+    
+    <requestHandler name="/get" class="solr.RealTimeGetHandler" >
+        <lst name="defaults">
+            <str name="omitHeader">true</str>
+        </lst>
+    </requestHandler>
+    
+    <requestHandler name="/terms" class="solr.SearchHandler">
+        <lst name="defaults">
+            <bool name="terms">true</bool>
+        </lst>
+        <arr name="components">
+            <str>terms</str>
+        </arr>
+    </requestHandler>
+
+    <requestHandler name="morelikethis" class="solr.MoreLikeThisHandler">
+        <lst name="defaults">
+            <str name="mlt.fl">allfields</str>
+            <str name="mlt.qf">
+                allfields_unstemmed
+            </str>
+            <int name="mlt.mintf">1</int>
+            <int name="mlt.mindf">1</int>
+            <str name="mlt.boost">true</str>
+            <int name="mlt.count">5</int>
+            <int name="rows">5</int>
+        </lst>
+    </requestHandler>
+
+    <requestHandler name="/update" class="solr.UpdateRequestHandler" />
+    <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
+    <requestHandler name="/analysis/document" class="solr.DocumentAnalysisRequestHandler" startup="lazy" />
+    <requestHandler name="/admin/" class="solr.admin.AdminHandlers" />
+    <requestHandler name="/replication" class="solr.ReplicationHandler">
+        <lst name="master">
+            <str name="enable">${master.enable:false}</str>
+            <str name="replicateAfter">${master.replicateAfter:optimize}</str>
+            <str name="backupAfter">${master.backupAfter:optimize}</str>
+            <int name="maxNumberOfBackups">${master.maxNumberOfBackups:2}</int> -->
+            <str name="confFiles">${master.confFiles:schema.xml,solrconfig.xml}</str>
+        </lst>
+        <lst name="slave">
+            <str name="enable">${slave.enable:false}</str>
+            <str name="masterUrl">${slave.masterUrl}</str>
+            <str name="pollInterval">${slave.pollInterval:00:30:00}</str>
+        </lst>
+    </requestHandler>
+
+    <requestHandler name="/debug/dump" class="solr.DumpRequestHandler">
+        <lst name="defaults">
+            <str name="echoParams">explicit</str>
+            <str name="echoHandler">true</str>
+        </lst>
+    </requestHandler>
+
+    <requestHandler name="/admin/ping" class="solr.PingRequestHandler">
+        <lst name="invariants">
+            <str name="q">solrpingquery</str>
+        </lst>
+        <lst name="defaults">
+            <str name="echoParams">all</str>
+        </lst>
+        <str name="healthcheckFile">server-enabled.txt</str>
+    </requestHandler>
+
+    <searchComponent name="tvComponent" class="solr.TermVectorComponent" />
+    <searchComponent name="terms" class="solr.TermsComponent"/>
+
+    <searchComponent name="spellcheck" class="solr.SpellCheckComponent">
+        <str name="queryAnalyzerFieldType">textSpell</str>
+        <lst name="spellchecker">
+            <str name="name">default</str>
+            <str name="classname">solr.DirectSolrSpellChecker</str>
+            <str name="field">spelling</str>
+            <int name="maxEdits">2</int>
+            <int name="minPrefix">1</int>
+            <int name="maxInspections">5</int>
+            <int name="minQueryLength">1</int>
+        </lst>
+    </searchComponent>
+
+    <!--
+       <searchComponent name="elevator" class="org.apache.solr.handler.component.QueryElevationComponent" >
+          <str name="queryFieldType">string_lc</str>
+          <str name="config-file">elevate.xml</str>
+       </searchComponent>
+    -->
+
+    <!-- Legacy config for the admin interface -->
+    <admin>
+        <defaultQuery>*:*</defaultQuery>
+    </admin>
+</config>
+
