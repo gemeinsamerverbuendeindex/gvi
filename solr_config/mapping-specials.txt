@@ -1,0 +1,13 @@
+# Translation table for nouns with special characters
+#
+
+# Programming language C++
+"++" => "plusplus"
+
+# Programming language C#
+"c#" => "csharp"
+"C#" => "csharp"
+
+# Database stuff
+"b+" => "bplus"
+"B+" => "bplus"
