@@ -24,7 +24,7 @@
     <!-- Verbünde mit Bestand. -->
     <field name="consortium"              type="Facet" required="true" />
 
-        <!-- Aggregierte Verfügbarkeit der Exemplare in der Fernleihe. Die Eigenschaften werden dargestellt durch: -->
+    <!-- Aggregierte Verfügbarkeit der Exemplare in der Fernleihe. Die Eigenschaften werden dargestellt durch: -->
     <!-- die kummulative Werte 'loan', 'copy' und 'ecopy oder die exklusiven Werte: 'none' oder 'unknown' -->
     <field name="ill_flag"                type="Facet" default="unknown" />
     <field name="ill_region"              type="Facet" default="unknown" />
@@ -107,7 +107,13 @@
         
     <!-- IDs -->
     <!-- Intenatonale Standart Nummern (isbn, issn, ismn, ...) -->
-    <field name="isxn"                    type="text" />
+    <field name="isbn"                    type="ISBN" />
+    <field name="isbn_related"            type="ISBN" />
+    
+    <field name="issn"                    type="ISSN" />
+    <field name="issn_related"            type="ISSN" />
+    
+    <field name="zdb_id"                  type="ZDBID" />
     
     <!-- Andere Kennumern und URIs (zdbn, olcn, doi, urn, ...) -->
     <field name="other_ids"               type="string_lc" />
@@ -511,8 +517,39 @@
     
     <!-- Standort als WGS84 Längen- und Breitengrade (siehe https://cwiki.apache.org/confluence/display/solr/Spatial+Search) -->
     <fieldType name="GeoLocation" class="solr.SpatialRecursivePrefixTreeFieldType"
-        geo="true" distErrPct="0.025" maxDistErr="0.000009"
-        indexed="true"  stored="false" required="false"  multiValued="true" />
+               geo="true" distErrPct="0.025" maxDistErr="0.000009"
+               indexed="true"  stored="false" required="false"  multiValued="true" />
+
+    <fieldType name="ISBN" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+        <analyzer>
+            <tokenizer class="solr.PatternTokenizerFactory" pattern="[;,]\s*" />
+            <filter class="edu.umich.lib.solr_filters.ISBNNormalizerFilterFactory" />
+            <filter class="solr.RemoveDuplicatesTokenFilterFactory" />
+            <filter class="solr.LengthFilterFactory" min="13" max="13" />
+        </analyzer>
+    </fieldType>    
+
+    <fieldType name="ISSN" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+        <analyzer>
+            <tokenizer class="solr.WhitespaceTokenizerFactory" />
+            <filter class="solr.PatternReplaceFilterFactory"
+                    pattern="(x)" replacement="X" replace="all"/>
+            <filter class="solr.PatternReplaceFilterFactory"
+                    pattern="([^0-9X])" replacement="" replace="all" />
+            <filter class="solr.LengthFilterFactory" min="8" max="8" />
+        </analyzer>
+    </fieldType>
+
+    <fieldType name="ZDBID" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+        <analyzer>
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+            <filter class="solr.TrimFilterFactory" />
+            <filter class="solr.LowerCaseFilterFactory"/>
+            <filter class="solr.PatternReplaceFilterFactory"
+                    pattern="(-)" replacement="" replace="all"/>
+            <filter class="solr.LengthFilterFactory" min="1" max="20" />
+        </analyzer>
+    </fieldType>
 
     <uniqueKey>id</uniqueKey>
     <defaultSearchField>allfields</defaultSearchField>
