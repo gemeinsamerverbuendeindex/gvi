@@ -3,7 +3,7 @@
 <!-- Datenmodel für die Version 1.0 des Datenmodells des Gemeinsamen Verbünde Index. -->
 <!-- 2014-07-11 Reh Kommentierung und Umstellung des Datenmodells der Testversion. --> 
 
-<schema name="GVI_1.0" version="1.5">
+<schema name="GVI_1.0" version="1.7">
     <!-- 
     ###########################################
     Pflichtfelder 
@@ -162,7 +162,9 @@
          mit Hilfe von 
          https://cwiki.apache.org/confluence/display/solr/The+Terms+Component  
     -->
+    <!-- macht Probleme, wenn der Term > 32k Byte ist
     <field name="allfields_suggest"          type="string_lc" />
+    -->
     
     <!-- 3-Buchstabiger Sprachcode ('und' für undefiniert, wenn nicht im Titel erfasst. 
         Siehe http://www.loc.gov/marc/languages/language_code.html
@@ -221,8 +223,11 @@
     ###########################################-->
     
     <copyField source="allfields"         dest="allfields_unstemmed" />
+    
+    <!-- macht Probleme, wenn der Term > 32k Byte ist
     <copyField source="allfields"         dest="allfields_suggest" />
-
+    -->
+    
     <copyField source="author"            dest="author_facet" />
     <copyField source="author"            dest="author_unstemmed" />
     <copyField source="author"            dest="author_phrase" />
@@ -275,7 +280,8 @@
                indexed="true"
                stored="false" 
                required="false"  
-               multiValued="true" />
+               multiValued="true"
+               docValues="false"/>
     
     <fieldType name="UnIndexed" class="solr.StrField" 
                indexed="false" 
@@ -357,8 +363,8 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory"/>
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.CJKBigramFilterFactory" />
         </analyzer>
     </fieldType>
@@ -375,8 +381,8 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory"/>
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.CJKBigramFilterFactory" />
         </analyzer>
         <analyzer type="query">           
@@ -384,9 +390,9 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
             <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.CJKBigramFilterFactory" />
         </analyzer>
     </fieldType>
@@ -403,8 +409,8 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory"/>
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.CJKBigramFilterFactory" />
         </analyzer>
         <analyzer type="query">           
@@ -412,9 +418,9 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory"/>
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
             <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.CJKBigramFilterFactory" />
         </analyzer>
     </fieldType>
@@ -431,8 +437,8 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory" />
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
             <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
@@ -451,8 +457,8 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory" />
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
             <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
@@ -462,8 +468,8 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory" />
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
@@ -483,8 +489,8 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory" />
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
             <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
@@ -494,8 +500,8 @@
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="solr.ICUTokenizerFactory" />
-            <filter class="solr.ICUFoldingFilterFactory" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
@@ -505,7 +511,7 @@
     
     <!-- Standort als WGS84 Längen- und Breitengrade (siehe https://cwiki.apache.org/confluence/display/solr/Spatial+Search) -->
     <fieldType name="GeoLocation" class="solr.SpatialRecursivePrefixTreeFieldType"
-        geo="true" distErrPct="0.025" maxDistErr="0.000009" units="degrees" 
+        geo="true" distErrPct="0.025" maxDistErr="0.000009"
         indexed="true"  stored="false" required="false"  multiValued="true" />
 
     <uniqueKey>id</uniqueKey>
