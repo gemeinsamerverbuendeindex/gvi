@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
-    <luceneMatchVersion>5.1.0</luceneMatchVersion>
+    <luceneMatchVersion>6.2.0</luceneMatchVersion>
     <!-- Find plugins and big synonyms in SOLR_HOME/../lib -->
     <lib dir="${solr.solr.home:}/../lib" />    
     <dataDir>${solr.data.dir:}</dataDir>
    
     <directoryFactory name="DirectoryFactory" class="solr.MMapDirectoryFactory" />
-    <!-- <directoryFactory name="DirectoryFactory" class="solr.SimpleFSDirectoryFactory" /> -->
 
     <indexConfig>
         <maxIndexingThreads>16</maxIndexingThreads>
         <ramBufferSizeMB>200</ramBufferSizeMB>
-        <unlockOnStartup>true</unlockOnStartup>
         <infoStream>true</infoStream>
+        <mergePolicyFactory class="org.apache.solr.index.TieredMergePolicyFactory">
+            <int name="maxMergeAtOnce">10</int>
+            <int name="segmentsPerTier">10</int>
+            <double name="reclaimDeletesWeight">5.0</double>
+            <double name="maxMergedSegmentMB">10000</double> 
+        </mergePolicyFactory>
     </indexConfig>
-
+    
+    <codecFactory class="solr.SchemaCodecFactory"/>
+    
+    <schemaFactory class="ClassicIndexSchemaFactory"/>
+    
     <updateHandler class="solr.DirectUpdateHandler2">
         <updateLog>
             <str name="dir">${solr.ulog.dir:}</str>
         </updateLog>
         <autoCommit>
-            <maxDocs>${solr.autoCommit.maxdocs:100000}</maxDocs>
-            <maxTime>${solr.autoCommit.maxTime:360000}</maxTime>
+            <maxTime>${solr.autoCommit.maxTime:15000}</maxTime>
             <openSearcher>false</openSearcher>
         </autoCommit>
         <autoSoftCommit>
-            <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime>
+            <maxTime>${solr.autoSoftCommit.maxTime:600000}</maxTime>
         </autoSoftCommit>
     </updateHandler>
 
@@ -136,9 +143,11 @@
         <arr name="components">
             <str>query</str>
             <str>facet</str>
+            <str>facet_module</str>
             <str>mlt</str>
             <str>stats</str>
             <str>debug</str>
+            <str>expand</str>
             <!-- Erst mal keine Extras
             <str>elevator</str>
             <str>spellcheck</str>
@@ -234,7 +243,7 @@
 
     <requestHandler name="/admin/ping" class="solr.PingRequestHandler">
         <lst name="invariants">
-            <str name="q">solrpingquery</str>
+            <str name="q">id:123</str>
         </lst>
         <lst name="defaults">
             <str name="echoParams">all</str>
