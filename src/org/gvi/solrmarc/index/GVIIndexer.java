@@ -137,11 +137,7 @@ public class GVIIndexer extends SolrIndexer
                 institution.addAll(getFieldList(record, "924b"));
                 break;
             case "DE-601": // GBV+KOBV
-                Set<String> ilnSet = getFieldList(record, "9802");
-                for (String iln : ilnSet)
-                {
-                    institution.add("GBV_ILN_" + iln);
-                }
+                institution.addAll(getFieldList(record, "924b"));
                 break;
             case "DE-604": // BVB+KOBV
                 institution.addAll(getFieldList(record, "049a"));
@@ -537,7 +533,29 @@ public class GVIIndexer extends SolrIndexer
         }
         return result;
     }
-
+    
+    public Set<String> getZdbId(Record record)
+    {
+       Set<String> result = new LinkedHashSet<>();
+       List fields = record.getVariableFields("016");
+        if (fields != null)
+        {
+            Iterator iterator = fields.iterator();
+            while (iterator.hasNext())
+            {
+                DataField field = (DataField) iterator.next();
+                Boolean isZDB = field.getSubfield('2') != null && 
+                                field.getSubfield('2').getData() != null &&
+                                field.getSubfield('2').getData().equals("DE-600");
+                if (isZDB && field.getSubfield('a') != null)
+                {
+                    result.add(field.getSubfield('a').getData());
+                }
+            }
+        }       
+       return result;
+    }
+    
     enum IllFlag
     {
         Undefined(0),
