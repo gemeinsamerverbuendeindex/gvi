@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
-    <luceneMatchVersion>5.1.0</luceneMatchVersion>
+    <luceneMatchVersion>6.2.0</luceneMatchVersion>
     <!-- Find plugins and big synonyms in SOLR_HOME/../lib -->
     <lib dir="${solr.solr.home:}/../lib" />    
     <dataDir>${solr.data.dir:}</dataDir>
    
     <directoryFactory name="DirectoryFactory" class="solr.MMapDirectoryFactory" />
-    <!-- <directoryFactory name="DirectoryFactory" class="solr.SimpleFSDirectoryFactory" /> -->
 
     <indexConfig>
         <maxIndexingThreads>16</maxIndexingThreads>
         <ramBufferSizeMB>200</ramBufferSizeMB>
-        <unlockOnStartup>true</unlockOnStartup>
         <infoStream>true</infoStream>
+        <mergePolicyFactory class="org.apache.solr.index.TieredMergePolicyFactory">
+            <int name="maxMergeAtOnce">10</int>
+            <int name="segmentsPerTier">10</int>
+            <double name="reclaimDeletesWeight">5.0</double>
+            <double name="maxMergedSegmentMB">10000</double> 
+        </mergePolicyFactory>
     </indexConfig>
-
+    
+    <codecFactory class="solr.SchemaCodecFactory"/>
+    
+    <schemaFactory class="ClassicIndexSchemaFactory"/>
+    
     <updateHandler class="solr.DirectUpdateHandler2">
         <updateLog>
             <str name="dir">${solr.ulog.dir:}</str>
         </updateLog>
         <autoCommit>
-            <maxDocs>${solr.autoCommit.maxdocs:100000}</maxDocs>
-            <maxTime>${solr.autoCommit.maxTime:360000}</maxTime>
+            <maxTime>${solr.autoCommit.maxTime:15000}</maxTime>
             <openSearcher>false</openSearcher>
         </autoCommit>
         <autoSoftCommit>
-            <maxTime>${solr.autoSoftCommit.maxTime:-1}</maxTime>
+            <maxTime>${solr.autoSoftCommit.maxTime:600000}</maxTime>
         </autoSoftCommit>
     </updateHandler>
 
@@ -40,6 +47,40 @@
         <queryResultMaxDocsCached>200</queryResultMaxDocsCached>
         <useColdSearcher>false</useColdSearcher>
         <listener event="firstSearcher" class="solr.QuerySenderListener">
+            <arr name="queries">
+                <lst> 
+                    <str name="q">*:*</str>
+                    <str name="start">0</str>
+                    <str name="rows">10</str>
+                    <str name="facet">true</str>
+                    <str name="facet.field">author_facet</str>
+                    <str name="facet.field">subject_all_facet</str>
+                    <str name="facet.field">subject_genre_facet</str>
+                    <str name="facet.field">subject_topic_facet</str>
+                    <str name="facet.field">subject_persname_facet</str>
+                    <str name="facet.field">subject_corpname_facet</str>
+                    <str name="facet.field">subject_meetname_facet</str>
+                    <str name="facet.field">subject_chrono_facet</str>
+                    <str name="facet.field">subject_geogname_facet</str>
+                    <str name="facet.field">subject_worktitle_facet</str>
+                    <str name="facet.field">material_access</str>
+                    <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">material_content_type</str>
+                    <str name="facet.field">material_media_type</str>
+                    <str name="facet.field">publish_date</str>
+                    <str name="facet.field">language</str>
+                    <str name="facet.field">consortium</str>
+                    <str name="facet.field">institution_id</str>
+                    <str name="facet.field">ill_flag</str>
+                    <str name="facet.field">ill_region</str>
+                    <str name="facet.field">ddc</str>
+                    <str name="facet.mincount">1</str>
+                    <str name="facet.method">fc</str>
+                    <str name="facet.threads">1000</str>
+                </lst>
+            </arr>
+        </listener>
+        <listener event="newSearcher" class="solr.QuerySenderListener">
             <arr name="queries">
                 <lst> 
                     <str name="q">*:*</str>
@@ -102,9 +143,11 @@
         <arr name="components">
             <str>query</str>
             <str>facet</str>
+            <str>facet_module</str>
             <str>mlt</str>
             <str>stats</str>
             <str>debug</str>
+            <str>expand</str>
             <!-- Erst mal keine Extras
             <str>elevator</str>
             <str>spellcheck</str>
@@ -176,7 +219,20 @@
     <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
     <requestHandler name="/analysis/document" class="solr.DocumentAnalysisRequestHandler" startup="lazy" />
     <requestHandler name="/admin/" class="solr.admin.AdminHandlers" />
-    <requestHandler name="/replication" class="solr.ReplicationHandler" />
+    <requestHandler name="/replication" class="solr.ReplicationHandler">
+        <lst name="master">
+            <str name="enable">${master.enable:false}</str>
+            <str name="replicateAfter">${master.replicateAfter:optimize}</str>
+            <str name="backupAfter">${master.backupAfter:optimize}</str>
+            <int name="maxNumberOfBackups">${master.maxNumberOfBackups:2}</int> -->
+            <str name="confFiles">${master.confFiles:schema.xml,solrconfig.xml}</str>
+        </lst>
+        <lst name="slave">
+            <str name="enable">${slave.enable:false}</str>
+            <str name="masterUrl">${slave.masterUrl}</str>
+            <str name="pollInterval">${slave.pollInterval:00:30:00}</str>
+        </lst>
+    </requestHandler>
 
     <requestHandler name="/debug/dump" class="solr.DumpRequestHandler">
         <lst name="defaults">
@@ -187,11 +243,12 @@
 
     <requestHandler name="/admin/ping" class="solr.PingRequestHandler">
         <lst name="invariants">
-            <str name="q">solrpingquery</str>
+            <str name="q">id:123</str>
         </lst>
         <lst name="defaults">
             <str name="echoParams">all</str>
         </lst>
+        <str name="healthcheckFile">server-enabled.txt</str>
     </requestHandler>
 
     <searchComponent name="tvComponent" class="solr.TermVectorComponent" />
