@@ -2,7 +2,7 @@
 <config>
     <luceneMatchVersion>6.2.0</luceneMatchVersion>
     <!-- Find plugins and big synonyms in SOLR_HOME/../lib -->
-    <lib dir="${solr.solr.home:}/../lib" />    
+    <lib dir="${solr.solr.home:}/../../lib" />    
     <dataDir>${solr.data.dir:}</dataDir>
    
     <directoryFactory name="DirectoryFactory" class="solr.MMapDirectoryFactory" />
