@@ -12,7 +12,7 @@
     <field name="_version_"               type="long"  stored="true"  required="true"   multiValued="false" />
     
     <!-- Eindeutige Datensatzkennung -->
-    <field name="id"                      type="GENERICID" stored="true" required="true" multiValued="false" />
+    <field name="id"                      type="string" stored="true" required="true" multiValued="false" />
     
     <!-- Bezeichner des Datentyps im primären Datencontainer. Bei GVI immer 'gvimarc', da wir einen eigenen RecordDriver dafür benötigen. -->
     <field name="recordtype"              type="UnIndexed" default="gvimarc" multiValued="false" />
@@ -116,13 +116,13 @@
     <field name="zdb_id"                  type="ZDBID" />
     
     <!-- Andere Kennumern und URIs (zdbn, olcn, doi, urn, ...) -->
-    <field name="other_id"                type="GENERICID" />
+    <field name="other_id"                type="GenericID" />
 
     <!-- Regionale Identifikationsnummer der erstkatalogisierenden Institution -->
-    <field name="eki_id"                  type="GENERICID" />
+    <field name="eki_id"                  type="GenericID" />
     
     <!-- Deduplikationsidentifikationsnummer -->
-    <field name="dup_id"                  type="GENERICID"  multiValued="false" />
+    <field name="dup_id"                  type="GenericID"  multiValued="false" />
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
@@ -548,11 +548,13 @@
                required="false" 
                multiValued="true">
         <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="(X)" replacement="x" />
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="(-)" replacement="" />
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="([^0-9x])" replacement="" />
             <tokenizer class="solr.WhitespaceTokenizerFactory" />
-            <filter class="solr.PatternReplaceFilterFactory"
-                    pattern="(x)" replacement="X" replace="all"/>
-            <filter class="solr.PatternReplaceFilterFactory"
-                    pattern="([^0-9X])" replacement="" replace="all" />
             <filter class="solr.LengthFilterFactory" min="8" max="8" />
         </analyzer>
     </fieldType>
@@ -566,16 +568,16 @@
                multiValued="false"
         >
         <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="(-)" replacement="" />
             <tokenizer class="solr.KeywordTokenizerFactory" />
             <filter class="solr.TrimFilterFactory" />
             <filter class="solr.LowerCaseFilterFactory"/>
-            <filter class="solr.PatternReplaceFilterFactory"
-                    pattern="(-)" replacement="" replace="all"/>
             <filter class="solr.LengthFilterFactory" min="1" max="20" />
         </analyzer>
     </fieldType>
     
-    <fieldType name="GENERICID" class="solr.TextField" 
+    <fieldType name="GenericID" class="solr.TextField" 
                sortMissingLast="true" 
                omitNorms="true" 
                indexed="true" 
@@ -583,11 +585,11 @@
                required="false" 
                multiValued="true">
         <analyzer>
-            <tokenizer class="solr.KeywordTokenizerFactory" />
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="([\(\)\-])" replacement="" />
+            <tokenizer class="solr.PatternTokenizerFactory" pattern="[;,]\s*" />
             <filter class="solr.TrimFilterFactory" />
             <filter class="solr.LowerCaseFilterFactory"/>
-            <filter class="solr.PatternReplaceFilterFactory"
-                    pattern="([\(\)\-])" replacement="" replace="all"/>
             <filter class="solr.LengthFilterFactory" min="1" max="100" />
         </analyzer>
     </fieldType>
