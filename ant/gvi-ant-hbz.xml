@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="index-full-hbz" name="GVI HBZ Jenkins">
+    
+    <property file="gvi-ant-hbz.properties"/>
+    
+    <import file="gvi-ant.xml"/>
+
+    <target name="index-full-hbz">
+      <solrmarc-index-dir src="${data.full.dir}"   suffix=".xml" logdir="${data.full.log.dir}"/>
+    </target>
+    
+</project>

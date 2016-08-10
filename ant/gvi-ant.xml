@@ -1,173 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="index-updates" name="GVI Jenkins">
-    
+
     <property file="gvi-ant.local.properties"/>
     <property file="gvi-ant.properties"/>
-    
+
     <path id="solrmarc.classpath">
         <pathelement location="${solrmarc.dist.path}/SolrMarc.jar"/>
     </path>
     
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
-            <pathelement location="${basedir}/lib/ant-contrib-1.0b3.jar"/>
+            <pathelement location="${solrmarc.dist.path}/../ant/lib/ant-contrib-1.0b3.jar"/>
         </classpath>
     </taskdef>
-    
-    <target name="download-updates-swb">
-        <ftp action="get"
-            server="${ftp.server}"
-            userid="${ftp.userid}"
-            password="${ftp.password}"
-            remotedir="${ftp.remotedir}"
-            verbose="true"
-            newer="true"
-            preservelastmodified="true">
-            <fileset dir="${data.update.dir}">
-                <include name="TA-MARC-verbund-*.tar.gz"/>
-                <include name="WA-MARC-verbund-*.tar.gz"/>
-                <include name="od_del*"/>
-            </fileset>
-        </ftp>
-    </target>
-    
-    <target name="index-new-updates-swb" depends="download-updates-swb">
-        <solrmarc-index-dir-swb src="${data.update.dir}" 
-                                dest="${data.update.work.dir}" 
-                                logdir="${data.update.log.dir}" 
-                                includeAll="false"/>
-    </target>
 
-    <target name="delete-new-updates-swb" depends="download-updates-swb">
-        <solrmarc-delete-dir-swb src="${data.update.dir}" 
-                                 dest="${data.update.work.dir}" 
-                                 logdir="${data.update.log.dir}" 
-                                 includeAll="false"/>
-    </target>
     
     
-    <target name="delete-all" depends="download-updates-swb">
-        <delete>
-            <fileset dir="${data.full.work.dir}" includes="od_del*.log"/>
-        </delete>
-        <solrmarc-delete-dir-swb src="${data.full.dir}" 
-                                 dest="${data.full.work.dir}" 
-                                 logdir="${data.full.log.dir}" 
-                                 includeAll="true"/>
-        <delete>
-            <fileset dir="${data.update.work.dir}" includes="od_del*.log"/>
-        </delete>
-        <solrmarc-delete-dir-swb src="${data.update.dir}" 
-                                 dest="${data.update.work.dir}" 
-                                 logdir="${data.update.log.dir}" 
-                                 includeAll="true"/>
-    </target>
-
-    <target name="index-all" depends="download-updates-swb">
-        <delete>
-            <fileset dir="${data.full.work.dir}" includes="*MARC*.log"/>
-        </delete>
-        <solrmarc-index-dir-swb src="${data.full.dir}" 
-                                dest="${data.full.work.dir}" 
-                                logdir="${data.full.log.dir}" 
-                                includeAll="true"/>        
-        <delete>
-            <fileset dir="${data.update.work.dir}" includes="*MARC*.log"/>
-        </delete>
-        <solrmarc-index-dir-swb src="${data.update.dir}" 
-                                dest="${data.update.work.dir}" 
-                                logdir="${data.update.log.dir}" 
-                                includeAll="true"/>
-    </target>
-    
-    <target name="index-all-updates-swb">
-        <mkdir dir="${data.update.work.dir}"/>
-        <solrmarc-index-dir src="${data.update.work.dir}"/>
-        <!--
-        echo "Process Updates for: $PROCESS_UPDATES_DATE"
-
-
-case $PROCESS_UPDATES_DATE in
-    "TODAY" )
-	date=`date -d "-1 days" +%y%m%d`
-	pattern="$date"
-	;;
-    "MONTH" )
-	date=`date -d "-1 days" +%y%m`
-	pattern="$date??"
-	;;
-    "YEAR" )
-	date=`date -d "-1 days" +%y`
-    	pattern="$date????"
-	;;
-esac
-
-echo "date=$date"
-dir="/data/input/gvi/swb/current/update"
-update_files=`ls $dir/*$pattern.tar.gz*`
-delete_files=`ls $dir/*del*$pattern*.txt`
-echo "UPDATE FILES=$update_files"
-echo "DELETE FILES=$delete_files"
-
-        -->
-    </target>
-    
-    <target name="index-full">
-        <sequential></sequential>
-    </target>
-    
-    <target name="solr-ping-status">
-        <solr-ping action="status"/>
-    </target>
-    
-    <target name="solr-ping-enable">
-        <solr-ping action="enable"/>
-    </target>
-    
-    <target name="solr-ping-disable">
-        <solr-ping action="disable"/>
-    </target>
-
-    <target name="solr-commit">
-        <solr-ping action="commit"/>
-    </target>
-        
-    <target name="solr-optimize">
-        <solr-ping action="optimize"/>
-    </target>
 
     <macrodef name="solrmarc-index-file" description="Index file or directory" >
         <attribute name="file"/>
         <attribute name="logdir"/>
+	<attribute name="suffix"          default=".mrc"/>
         <attribute name="solrmarc.config" default="${solrmarc.config}"/> 
         <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
         <attribute name="solr.core"       default="${solr.core}"/>
         <sequential>
-            <basename property="basename" file="@{filename}" suffix=".txt"/>
-            <java 
-                jar="${solrmarc.dist.path}/SolrMarc.jar"
-                fork="true" 
-                dir="${solrmarc.dist.path}"
-                error="@{logdir}/${basename}_err.log"
-                output="@{logdir}/${basename}_out.log"
-                maxmemory="1G">
-                <sysproperty key="solr.hosturl" value="@{solr.baseurl}/@{solr.core}/update"/>
-                <sysproperty key="solrmarc.log.level" value="INFO"/>
-                <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
-                <arg value="@{solrmarc.config}"/>
-                <arg value="@{file}.mrc"/>
-            </java>
+          <var name="basename" unset="true"/>	   
+          <basename property="basename" file="@{file}" suffix="@{suffix}"/>
+          <java 
+              jar="${solrmarc.dist.path}/SolrMarc.jar"
+              fork="true" 
+              dir="${solrmarc.dist.path}"
+              error="@{logdir}/${basename}_err.log"
+              output="@{logdir}/${basename}_out.log"
+              maxmemory="1G">
+            <sysproperty key="solr.hosturl" value="@{solr.baseurl}/@{solr.core}/update"/>
+            <sysproperty key="solrmarc.log.level" value="INFO"/>
+            <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
+            <arg value="@{solrmarc.config}"/>
+            <arg value="@{file}"/>
+          </java>
         </sequential>
     </macrodef>
 
-    <macrodef name="solrmarc-delete" description="Delete records by ID" >
+    <macrodef name="solrmarc-delete-file" description="Delete records by ID" >
         <attribute name="file"/>
         <attribute name="logdir"/>
         <attribute name="solrmarc.config" default="${solrmarc.config}"/> 
         <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
         <attribute name="solr.core"       default="${solr.core}"/>
         <sequential>
-            <basename property="basename" file="@{filename}" suffix=".txt"/>
+	  <var name="basename" unset="true"/>	   
+            <basename property="basename" file="@{file}" suffix=".txt"/>
             <java 
                 jar="${solrmarc.dist.path}/SolrMarc.jar"
                 fork="true" 
@@ -186,102 +70,39 @@ echo "DELETE FILES=$delete_files"
     </macrodef>
     
     <macrodef name="solrmarc-index-dir">
-        <attribute name="src"/>
-        <attribute name="logdir"/>
-        <sequential>
+      <attribute name="src"/>
+      <attribute name="suffix"          default=".mrc"/>
+      <attribute name="logdir"/>
+      <sequential>
+	<echo>Datadir @{src}</echo>
             <mkdir dir="@{logdir}"/>
-            <for param="filename">
+            <for param="file">
                 <path>
-                    <fileset dir="@{src}" includes="*.mrc"/>
+                  <fileset dir="@{src}">
+		    <include name="*.mrc"/>
+		    <include name="*.xml"/>
+		  </fileset>
                 </path>
                 <sequential>
-                    <var name="basename" unset="true"/>
-                    <basename property="basename" file="@{filename}" suffix=".mrc"/>
-                    <solrmarc-index-file file="@{src}/${basename}" logdir="@{logdir}"/>
+		  <echo>Indexing @{file}</echo>
+                  <solrmarc-index-file file="@{file}" suffix="@{suffix}" logdir="@{logdir}"/>
                 </sequential>
             </for>            
         </sequential>
     </macrodef>
     
-    <macrodef name="solrmarc-index-dir-swb">
+    <macrodef name="solrmarc-delete-dir">
         <attribute name="src"/>
-        <attribute name="dest"/>
         <attribute name="logdir"/>
-        <attribute name="includeAll" default="false"/>
         <sequential>
-            <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
-            <for param="filename">
+            <for param="file">
                 <path>
-                    <fileset dir="@{src}" includes="*.tar.gz"/>
+                    <fileset dir="@{src}" includes="*.txt"/>
                 </path>
                 <sequential>
-                    <var name="basename" unset="true"/>
-                    <basename property="basename" file="@{filename}" suffix=".tar.gz"/>
-                    <var name="is_mrc_avaliable" unset="true"/>
-                    <available property="is_mrc_avaliable" file="@{dest}/${basename}.mrc"/>                    
-                    <if>
-                        <not>
-                            <equals arg1="${is_mrc_avaliable}" arg2="true"/>
-                        </not>
-                        <then>
-                            <untar src="@{filename}" dest="@{dest}" compression="gzip">
-                                <patternset>
-                                    <include name="verbund-tit.mrc"/>
-                                </patternset>
-                            </untar>
-                            <move file="@{dest}/verbund-tit.mrc" tofile="@{dest}/${basename}.mrc"/>
-                            <solrmarc-index-file file="@{dest}/${basename}" logdir="@{logdir}"/>   
-                        </then>
-                        <else>
-                            <if>
-                                <equals arg1="@{includeAll}" arg2="true"/>
-                                <then>
-                                    <solrmarc-index-file file="@{dest}/${basename}" logdir="@{logdir}"/> 
-                                </then>
-                            </if>
-                        </else>
-                    </if>
-                </sequential>
-            </for>
-        </sequential>
-    </macrodef>
-    
-    <macrodef name="solrmarc-delete-dir-swb">
-        <attribute name="src"/>
-        <attribute name="dest"/>
-        <attribute name="logdir"/>
-        <attribute name="includeAll" default="false"/>
-        <sequential>
-            <mkdir dir="@{dest}"/>
-            <mkdir dir="@{logdir}"/>
-            <for param="filename">
-                <path>
-                    <fileset dir="@{src}" includes="od_del*.txt"/>
-                </path>
-                <sequential>
-                    <var name="basename" unset="true"/>
-                    <basename property="basename" file="@{filename}" suffix=".txt"/>
-                    <var name="is_del_avaliable" unset="true"/>
-                    <available property="is_del_avaliable" file="@{dest}/${basename}.txt"/>                    
-                    <if>
-                        <not>
-                            <equals arg1="${is_del_avaliable}" arg2="true"/>
-                        </not>
-                        <then>
-                            <copy file="@{filename}" todir="@{dest}"/>
-                            <replace file="@{dest}/${basename}.txt" token="PPN:" value="(DE-576)"/>
-                            <solrmarc-delete file="@{dest}/${basename}.txt" logdir="@{logdir}"/>
-                        </then>
-                        <else>
-                            <if>
-                                <equals arg1="@{includeAll}" arg2="true"/>
-                                <then>
-                                    <solrmarc-delete file="@{dest}/${basename}.txt" logdir="@{logdir}"/>
-                                </then>
-                            </if>
-                        </else>
-                    </if>
+		  <echo>Delete @{file}</echo>
+		  <solrmarc-delete-file file="@{file}" logdir="@{logdir}"/>
                 </sequential>
             </for>
         </sequential>

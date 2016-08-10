@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="index-full-dnb" name="GVI DNB Jenkins">
+    
+    <property file="gvi-ant-dnb.properties"/>
+    
+    <import file="gvi-ant.xml"/>
+
+    <target name="index-full-dnb">
+      <solrmarc-index-dir src="${data.full.dir}"   suffix=".xml" logdir="${data.full.log.dir}"/>
+    </target>
+    
+</project>

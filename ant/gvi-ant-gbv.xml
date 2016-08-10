@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="index-full-gbv" name="GVI GBV Jenkins">
+    
+    <property file="gvi-ant-gbv.properties"/>
+    
+    <import file="gvi-ant.xml"/>
+
+    <target name="index-full-gbv">
+      <solrmarc-index-dir src="${data.full.dir}"   suffix=".xml" logdir="${data.full.log.dir}"/>
+    </target>
+    
+</project>

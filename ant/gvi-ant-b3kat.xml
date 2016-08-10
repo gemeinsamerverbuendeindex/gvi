@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="init" name="GVI B3Kat Jenkins">
+    
+    <property file="gvi-ant-b3kat.properties"/>
+    
+    <import file="gvi-ant.xml"/>
+
+    <target name="init">
+      <tstamp/>
+      <property name="data.update.dir" location="${data.base.dir}/current/update/${DSTAMP}"/>
+    </target>
+    
+    <target name="copy-updates-b3kat" depends="init">
+      <mkdir dir="${data.update.dir}"/>
+      <move todir="${data.update.dir}">
+        <fileset dir="${data.base.dir}">
+          <include name="*.xml"/>
+          <include name="*.txt"/>
+        </fileset>
+      </move>
+      <move file="${data.base.dir}/ready_to_index"
+	    tofile="${data.base.dir}/ready_to_index.done"
+	    failonerror="false"/>
+    </target>
+    
+    <target name="index-updates-b3kat" depends="copy-updates-b3kat">
+      <solrmarc-index-dir src="${data.update.dir}"   suffix=".xml" logdir="${data.update.dir}/log"/>
+      <solrmarc-delete-dir src="${data.update.dir}"  logdir="${data.update.dir}/log"/>
+    </target>
+    
+</project>
