@@ -159,6 +159,9 @@ public class GVIIndexer extends SolrIndexer
         Set<String> consortiumSet= new HashSet<>();
         switch (catalogId)
         {
+            case "DE-101":  // DNB
+                consortiumSet.add(catalogId);
+                break;
             case "DE-576": // SWB
                 consortiumSet.add(catalogId);
                 break;
