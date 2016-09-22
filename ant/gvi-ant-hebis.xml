@@ -1,12 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="index-full-hebis" name="GVI Hebis Jenkins">
+<project basedir="." default="init" name="GVI HeBIS Jenkins">
     
-    <property file="gvi-ant-hebis.properties"/>
-    
-    <import file="gvi-ant.xml"/>
+   <import file="gvi-ant.xml"/>
 
-    <target name="index-full-hebis">
-      <solrmarc-index-dir src="${data.full.dir}"   suffix=".xml" logdir="${data.full.log.dir}"/>
-    </target>
+   <target name="init">
+      <tstamp>
+         <format property="time.stamp" pattern="yyyy-MM-dd'T'HH:mm:ss"/>
+      </tstamp>
+      <property name="base.dir"   location="/data/input/gvi/hebis/current"/>
+      <property name="full.dir"   location="${base.dir}/full"/>
+      <property name="drop.dir"   location="${base.dir}/update/dropin"/>
+      <property name="work.dir"   location="${base.dir}/update/${time.stamp}"/>
+      <property name="semaphore"  location="ready_to_index"/>
+   </target>
+    
+   < !-- Dateien aus dem Eingangsverzeichnis in ein neues Arbeitsverzeichnis kopieren. -->
+   <target name="copy-updates-hebis" depends="init">
+      <mkdir dir="${work.dir}"/>
+      <move todir="${work.dir}">
+        <fileset dir="${drop.dir}">
+          <include name="*.xml"/>
+          <include name="*.txt"/>
+        </fileset>
+      </move>
+   </target>
+    
+   <!-- Dateien aus dem aktuellen Arbeitsverzeichnis bearbeiten (indexieren / loeschen) -->
+   <target name="index-updates-hebis" depends="copy-updates-hebis">
+      <delete file="${base.dir}/${semaphore}.done" failonerror="false"/>
+      <solrmarc-index-dir src="${work.dir}"   suffix=".xml" logdir="${work.dir}/log"/>
+      <solrmarc-delete-dir src="${work.dir}"  logdir="${work.dir}/log"/>
+      <move file="${base.dir}/${semaphore}"
+	    tofile="${base.dir}/${semaphore}.done"
+	    failonerror="false"/>
+   </target>
+
+   <!-- Kompletabzug indexieren -->
+   <target name="index-full-hebis">
+      <solrmarc-index-dir src="${full.dir}"   suffix=".xml" logdir="${full.dir}/log"/>
+   </target>
     
 </project>
