@@ -47,7 +47,7 @@
                                  logdir="${data.full.log.dir}" 
                                  includeAll="true"/>
         <delete>
-            <fileset dir="${data.update.work.dir}" includes="od_del*.log"/>
+            <fileset dir="${data.update.log.dir}" includes="od_del*.log" erroronmissingdir="false"/>
         </delete>
         <solrmarc-delete-dir-swb src="${data.update.dir}" 
                                  dest="${data.update.work.dir}" 
