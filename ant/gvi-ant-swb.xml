@@ -90,6 +90,7 @@
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
+            <echo>Datadir @{src}</echo>
             <for param="filename">
                 <path>
                     <fileset dir="@{src}" includes="*.tar.gz"/>
@@ -134,6 +135,7 @@
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
+            <echo>Datadir @{src}</echo>
             <for param="filename">
                 <path>
                     <fileset dir="@{src}" includes="od_del*.txt"/>
