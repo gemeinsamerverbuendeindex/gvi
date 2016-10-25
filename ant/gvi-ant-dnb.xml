@@ -6,7 +6,7 @@
     <import file="gvi-ant.xml"/>
 
     <target name="index-full-dnb">
-      <solrmarc-index-dir src="${data.full.dir}"   suffix=".xml" logdir="${data.full.log.dir}"/>
+      <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
     </target>
     
 </project>
