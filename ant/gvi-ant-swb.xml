@@ -56,16 +56,16 @@
                                  includeAll="true"/>
     </target>
 
-    <target name="index-all" depends="download-updates-swb">
+    <target name="index-all">
         <delete>
-            <fileset dir="${data.full.work.dir}" includes="*MARC*.log"/>
+            <fileset dir="${data.full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
         </delete>
         <solrmarc-index-dir-swb src="${data.full.dir}" 
                                 dest="${data.full.work.dir}" 
                                 logdir="${data.full.log.dir}" 
-                                includeAll="true"/>        
+                                includeAll="true"/> 
         <delete>
-            <fileset dir="${data.update.work.dir}" includes="*MARC*.log"/>
+            <fileset dir="${data.update.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
         </delete>
         <solrmarc-index-dir-swb src="${data.update.dir}" 
                                 dest="${data.update.work.dir}" 
@@ -75,7 +75,7 @@
     
     <target name="index-all-updates-swb">
         <delete>
-            <fileset dir="${data.update.work.dir}" includes="*MARC*.log"/>
+            <fileset dir="${data.update.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
         </delete>
         <solrmarc-index-dir-swb src="${data.update.dir}" 
                                 dest="${data.update.work.dir}" 
