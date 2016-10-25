@@ -39,16 +39,15 @@
     
     
     <target name="delete-all" depends="download-updates-swb">
-        <mkdir dir="${data.full.work.dir}"/>
         <delete>
-            <fileset dir="${data.full.work.dir}" includes="od_del*.log"/>
+            <fileset dir="${data.full.log.dir}" includes="od_del*.log" erroronmissingdir="false"/>
         </delete>
         <solrmarc-delete-dir-swb src="${data.full.dir}" 
                                  dest="${data.full.work.dir}" 
                                  logdir="${data.full.log.dir}" 
                                  includeAll="true"/>
         <delete>
-            <fileset dir="${data.update.work.dir}" includes="od_del*.log"/>
+            <fileset dir="${data.update.log.dir}" includes="od_del*.log" erroronmissingdir="false"/>
         </delete>
         <solrmarc-delete-dir-swb src="${data.update.dir}" 
                                  dest="${data.update.work.dir}" 
