@@ -2,7 +2,6 @@
 <config>
     <luceneMatchVersion>6.2.0</luceneMatchVersion>
     <!-- Find plugins and big synonyms in SOLR_HOME/../lib -->
-    <lib dir="${solr.solr.home:}/lib" />    
     <lib dir="${solr.solr.home:}/../../lib" />    
     <dataDir>${solr.data.dir:}</dataDir>
    
@@ -15,7 +14,7 @@
         <mergePolicyFactory class="org.apache.solr.index.TieredMergePolicyFactory">
             <int name="maxMergeAtOnce">10</int>
             <int name="segmentsPerTier">10</int>
-            <double name="reclaimDeletesWeight">5.0</double>
+            <double name="reclaimDeletesWeight">10.0</double>
             <double name="maxMergedSegmentMB">10000</double> 
         </mergePolicyFactory>
     </indexConfig>
