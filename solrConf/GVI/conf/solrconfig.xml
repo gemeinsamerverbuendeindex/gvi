@@ -15,7 +15,7 @@
         <mergePolicyFactory class="org.apache.solr.index.TieredMergePolicyFactory">
             <int name="maxMergeAtOnce">10</int>
             <int name="segmentsPerTier">10</int>
-            <double name="reclaimDeletesWeight">5.0</double>
+            <double name="reclaimDeletesWeight">10.0</double>
             <double name="maxMergedSegmentMB">10000</double> 
         </mergePolicyFactory>
     </indexConfig>
