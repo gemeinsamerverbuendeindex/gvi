@@ -16,6 +16,7 @@ import org.solrmarc.index.SolrIndexer;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Subfield;
+import org.marc4j.marc.VariableField;
 import org.solrmarc.tools.Utils;
 
 /**
@@ -38,9 +39,10 @@ public class GVIIndexer extends SolrIndexer
         institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
         kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
     }
-    
+
     /**
      * Return the date in 260c/264c as a string
+     *
      * @param record - the marc record object
      * @return 260c/264c, "cleaned" per org.solrmarc.tools.Utils.cleanDate()
      */
@@ -50,19 +52,28 @@ public class GVIIndexer extends SolrIndexer
         String date264c = getFieldVals(record, "264c", ", ");
         String date = null;
         if (date260c != null && date260c.length() > 0)
+        {
             date = date260c;
+        }
         else if (date264c != null && date264c.length() > 0)
+        {
             date = date264c;
+        }
         if (date == null || date.length() == 0)
+        {
             return (null);
+        }
         return Utils.cleanDate(date);
     }
-    
+
     /**
-     * Stub more advanced version of getDate that looks in the 008 field as well as the 260c field
-     * this routine does some simple sanity checking to ensure that the date to return makes sense. 
+     * Stub more advanced version of getDate that looks in the 008 field as well
+     * as the 260c field this routine does some simple sanity checking to ensure
+     * that the date to return makes sense.
+     *
      * @param record - the marc record object
-     * @return 260c or 008[7-10] or 008[11-14], "cleaned" per org.solrmarc.tools.Utils.cleanDate()
+     * @return 260c or 008[7-10] or 008[11-14], "cleaned" per
+     * org.solrmarc.tools.Utils.cleanDate()
      */
     public String getPublicationDate008or26xc(final Record record)
     {
@@ -71,38 +82,54 @@ public class GVIIndexer extends SolrIndexer
         String pubDate26xcJustDigits = null;
 
         if (pubDate26xc != null)
-            pubDate26xcJustDigits = pubDate26xc.replaceAll("[^0-9]", "");       
-
-        if (field008 == null || field008.length() < 16) 
         {
-            return(pubDate26xc);
+            pubDate26xcJustDigits = pubDate26xc.replaceAll("[^0-9]", "");
         }
-        
+
+        if (field008 == null || field008.length() < 16)
+        {
+            return (pubDate26xc);
+        }
+
         String field008_d1 = field008.substring(7, 11);
         String field008_d2 = field008.substring(11, 15);
-        
+
         String retVal = null;
         char dateType = field008.charAt(6);
-        if (dateType == 'r' && field008_d2.equals(pubDate26xc)) 
+        if (dateType == 'r' && field008_d2.equals(pubDate26xc))
+        {
             retVal = field008_d2;
+        }
         else if (field008_d1.equals(pubDate26xc))
+        {
             retVal = field008_d1;
+        }
         else if (field008_d2.equals(pubDate26xc))
+        {
             retVal = field008_d2;
-        else if (pubDate26xcJustDigits != null && 
-                 pubDate26xcJustDigits.length() == 4 && 
-                 pubDate26xc != null &&
-                 pubDate26xc.matches("(20|19|18|17|16|15)[0-9][0-9]"))
+        }
+        else if (pubDate26xcJustDigits != null
+                 && pubDate26xcJustDigits.length() == 4
+                 && pubDate26xc != null
+                 && pubDate26xc.matches("(20|19|18|17|16|15)[0-9][0-9]"))
+        {
             retVal = pubDate26xc;
-        else if (field008_d1.matches("(20|1[98765432])[0-9][0-9]"))        
+        }
+        else if (field008_d1.matches("(20|1[98765432])[0-9][0-9]"))
+        {
             retVal = field008_d1;
-        else if (field008_d2.matches("(20|1[98765432])[0-9][0-9]"))        
+        }
+        else if (field008_d2.matches("(20|1[98765432])[0-9][0-9]"))
+        {
             retVal = field008_d2;
+        }
         else
+        {
             retVal = pubDate26xc;
-        return(retVal);
+        }
+        return (retVal);
     }
-    
+
     public Set<String> getConsortium(final Record record)
     {
         return consortium;
@@ -156,36 +183,68 @@ public class GVIIndexer extends SolrIndexer
         return catalogId;
     }
 
-    protected Set<String> getKobvInstitutions(Record record) {
+    protected boolean isGbvZdbRecord(Record record)
+    {
+        boolean isGbvZdb = false;
+        List<VariableField> f016List = getFieldSetMatchingTagList(record, "016");
+        if (!f016List.isEmpty())
+        {
+            for (VariableField f : f016List)
+            {
+                DataField d = (DataField) f;
+                Subfield s = d.getSubfield('2');
+                if (s != null && s.getData() != null && s.getData().equals("DE-600"))
+                {
+                    isGbvZdb = true;
+                    break;
+                }
+
+            }
+        }
+        return isGbvZdb;
+    }
+
+    protected Set<String> getKobvInstitutions(Record record)
+    {
         Set<String> kobvInstitutions = new LinkedHashSet<>();
         Set<String> values049a = getFieldList(record, "049a");
-        if (values049a == null) {
+        if (values049a == null)
+        {
             return kobvInstitutions;
         }
-        for (String value049a : values049a) {
+        for (String value049a : values049a)
+        {
             // In some cases (KobvIndex), the Sigel (ISIL) is followed by the internal uid.
             // The delimiter is then ';', which cannot be a part of the Sigel
             int semicolonIndex = value049a.indexOf(';');
-            if (semicolonIndex > 0) {
+            if (semicolonIndex > 0)
+            {
                 String isil = value049a.substring(0, semicolonIndex);
                 // Additionally, Brandendurg VOEB delivers all isils of the partner libraries (comma separated)
                 String[] isils = isil.split(",");
-                for (String oneisil : isils) {
-                    if (!oneisil.isEmpty()) {
-                        if (kobvInstitutionReplacementMap.containsKey(oneisil)) {
+                for (String oneisil : isils)
+                {
+                    if (!oneisil.isEmpty())
+                    {
+                        if (kobvInstitutionReplacementMap.containsKey(oneisil))
+                        {
                             kobvInstitutions.add(kobvInstitutionReplacementMap.get(oneisil));
                         }
-                        else {
+                        else
+                        {
                             kobvInstitutions.add(oneisil);
                         }
                     }
                 }
             }
-            else {
-                if (kobvInstitutionReplacementMap.containsKey(value049a)) {
+            else
+            {
+                if (kobvInstitutionReplacementMap.containsKey(value049a))
+                {
                     kobvInstitutions.add(kobvInstitutionReplacementMap.get(value049a));
                 }
-                else {
+                else
+                {
                     kobvInstitutions.add(value049a);
                 }
             }
@@ -221,7 +280,7 @@ public class GVIIndexer extends SolrIndexer
                                          Set<String> institutionSet,
                                          Map<String, String> institutionToConsortiumMap)
     {
-        Set<String> consortiumSet= new HashSet<>();
+        Set<String> consortiumSet = new HashSet<>();
         switch (catalogId)
         {
             case "DE-101":  // DNB
@@ -233,8 +292,15 @@ public class GVIIndexer extends SolrIndexer
             case "DE-576": // SWB
                 consortiumSet.add(catalogId);
                 break;
-            case "DE-601": // GBV+KOBV
-                consortiumSet.addAll(findConsortiumByInstitution(catalogId, institutionSet, institutionToConsortiumMap));
+            case "DE-601": // GBV+KOBV+ZDB
+                if (isGbvZdbRecord(record))
+                {
+                     consortiumSet.add("DE-600");
+                }
+                else
+                {
+                    consortiumSet.addAll(findConsortiumByInstitution(catalogId, institutionSet, institutionToConsortiumMap));                    
+                }
                 break;
             case "DE-603":  // HEBIS
                 consortiumSet.add(catalogId);
@@ -268,8 +334,8 @@ public class GVIIndexer extends SolrIndexer
                 numOtherConsortium++;
             }
         }
-        if (institutionSet.isEmpty() ||
-            institutionSet.size() > numOtherConsortium)
+        if (institutionSet.isEmpty()
+            || institutionSet.size() > numOtherConsortium)
         {
             consortiumSet.add(defaultCatalogId);
         }
@@ -359,9 +425,9 @@ public class GVIIndexer extends SolrIndexer
                             result.remove(IllFlag.None.toString());
                             break;
                         default:
-                            if (!(result.contains(IllFlag.Copy.toString())  ||
-                                  result.contains(IllFlag.Ecopy.toString()) ||
-                                  result.contains(IllFlag.Loan.toString())  ))
+                            if (!(result.contains(IllFlag.Copy.toString())
+                                  || result.contains(IllFlag.Ecopy.toString())
+                                  || result.contains(IllFlag.Loan.toString())))
                             {
                                 result.add(IllFlag.Undefined.toString());
                             }
@@ -459,15 +525,19 @@ public class GVIIndexer extends SolrIndexer
             String accessCode = field007.getData();
             DataField data856 = (DataField) record.getVariableField("856");
 
-            if (accessCode.length() > 1 && "cr".equals(accessCode.substring(0, 2)) ||
-                (data856 != null && data856.getIndicator1()=='4' && data856.getIndicator1()=='0')) {
+            if (accessCode.length() > 1 && "cr".equals(accessCode.substring(0, 2))
+                || (data856 != null && data856.getIndicator1() == '4' && data856.getIndicator1() == '0'))
+            {
                 result.add("material_access.online");
                 //check 856 field again
-                if (data856 != null) {
+                if (data856 != null)
+                {
                     Subfield noteField = data856.getSubfield('z');
-                    if (noteField != null) {
+                    if (noteField != null)
+                    {
                         String note = noteField.getData();
-                        if (note != null && note.contains("kostenfrei")) {
+                        if (note != null && note.matches("[Kk]ostenfrei"))
+                        {
                             result.add("material_access.online_kostenfrei");
                         }
                     }
@@ -573,12 +643,15 @@ public class GVIIndexer extends SolrIndexer
                 {
                     String gndCategoryString = field.getSubfield('D').getData();
                     // GND Sachbegriff
-                    if (gndCategoryString != null && !gndCategoryString.isEmpty()) {
+                    if (gndCategoryString != null && !gndCategoryString.isEmpty())
+                    {
                         char gndCategory = field.getSubfield('D').getData().charAt(0);
                         MARCSubjectCategory marcSubjectCategory = GNDSubjectCategory.mapToMARCSubjectCategory(gndCategory);
-                        if (marcSubjectCategory.equals(subjectCategory)) {
+                        if (marcSubjectCategory.equals(subjectCategory))
+                        {
                             List<Subfield> subjects = field.getSubfields('a');
-                            for (Subfield subject : subjects) {
+                            for (Subfield subject : subjects)
+                            {
                                 result.add(subject.getData());
                             }
                         }
@@ -588,12 +661,15 @@ public class GVIIndexer extends SolrIndexer
                 {
                     // Alter SWD Sachbegriff. Muss gemappt werden!
                     String swdCategoryString = field.getSubfield('A').getData();
-                    if (swdCategoryString != null && !swdCategoryString.isEmpty()) {
+                    if (swdCategoryString != null && !swdCategoryString.isEmpty())
+                    {
                         char swdCategory = field.getSubfield('A').getData().charAt(0);
                         MARCSubjectCategory marcSubjectCategory = SWDSubjectCategory.mapToMARCSubjectCategory(swdCategory);
-                        if (marcSubjectCategory.equals(subjectCategory)) {
+                        if (marcSubjectCategory.equals(subjectCategory))
+                        {
                             List<Subfield> subjects = field.getSubfields('a');
-                            for (Subfield subject : subjects) {
+                            for (Subfield subject : subjects)
+                            {
                                 result.add(subject.getData());
                             }
 
@@ -604,29 +680,29 @@ public class GVIIndexer extends SolrIndexer
         }
         return result;
     }
-    
+
     public Set<String> getZdbId(Record record)
     {
-       Set<String> result = new LinkedHashSet<>();
-       List fields = record.getVariableFields("016");
+        Set<String> result = new LinkedHashSet<>();
+        List fields = record.getVariableFields("016");
         if (fields != null)
         {
             Iterator iterator = fields.iterator();
             while (iterator.hasNext())
             {
                 DataField field = (DataField) iterator.next();
-                Boolean isZDB = field.getSubfield('2') != null && 
-                                field.getSubfield('2').getData() != null &&
-                                field.getSubfield('2').getData().equals("DE-600");
+                Boolean isZDB = field.getSubfield('2') != null
+                                && field.getSubfield('2').getData() != null
+                                && field.getSubfield('2').getData().equals("DE-600");
                 if (isZDB && field.getSubfield('a') != null)
                 {
                     result.add(field.getSubfield('a').getData());
                 }
             }
-        }       
-       return result;
+        }
+        return result;
     }
-    
+
     enum IllFlag
     {
         Undefined(0),
@@ -637,7 +713,7 @@ public class GVIIndexer extends SolrIndexer
 
         private final int value;
 
-        IllFlag (int value)
+        IllFlag(int value)
         {
             this.value = value;
         }
@@ -646,7 +722,9 @@ public class GVIIndexer extends SolrIndexer
         {
             return this.value;
         }
-        @Override public String toString()
+
+        @Override
+        public String toString()
         {
             return "IllFlag." + name();
         }
