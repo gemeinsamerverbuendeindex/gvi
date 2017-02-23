@@ -3,6 +3,7 @@
     
    <import file="gvi-ant.xml"/>
 
+   <!-- Die Variablen definieren. -->
    <target name="init">
       <tstamp>
          <format property="time.stamp" pattern="yyyy-MM-dd'T'HH:mm:ss"/>
@@ -11,11 +12,23 @@
       <property name="full.dir"   location="${base.dir}/full"/>
       <property name="drop.dir"   location="${base.dir}/update/dropin"/>
       <property name="work.dir"   location="${base.dir}/update/${time.stamp}"/>
-      <property name="semaphore"  location="ready_to_index"/>
+      <available property="update.available" file="${drop.dir}/gvi-update.tar"/>
    </target>
-    
-   < !-- Dateien aus dem Eingangsverzeichnis in ein neues Arbeitsverzeichnis kopieren. -->
-   <target name="copy-updates-hebis" depends="init">
+
+   <target name="unpack-update-files" depends="init" if="update.available">
+       <exec executable="/bin/tar" dir="${drop.dir}" failonerror="false">
+          <arg value="xf" />
+          <arg value="gvi-update.tar" />
+       </exec>
+       <delete>
+          <fileset dir="${drop.dir}">
+             <include name="*.tar"/>
+          </fileset>
+       </delete>
+   </target> 
+
+   <!-- Dateien aus dem Eingangsverzeichnis in ein neues Arbeitsverzeichnis kopieren. -->
+   <target name="copy-updates-hebis" depends="unpack-update-files" if="update.available">
       <mkdir dir="${work.dir}"/>
       <move todir="${work.dir}">
         <fileset dir="${drop.dir}">
@@ -26,18 +39,18 @@
    </target>
     
    <!-- Dateien aus dem aktuellen Arbeitsverzeichnis bearbeiten (indexieren / loeschen) -->
-   <target name="index-updates-hebis" depends="copy-updates-hebis">
-      <delete file="${base.dir}/${semaphore}.done" failonerror="false"/>
+   <target name="index-updates-hebis" depends="copy-updates-hebis" if="update.available">
       <solrmarc-index-dir src="${work.dir}"   suffix=".xml" logdir="${work.dir}/log"/>
       <solrmarc-delete-dir src="${work.dir}"  logdir="${work.dir}/log"/>
-      <move file="${base.dir}/${semaphore}"
-	    tofile="${base.dir}/${semaphore}.done"
-	    failonerror="false"/>
    </target>
 
    <!-- Kompletabzug indexieren -->
-   <target name="index-full-hebis">
+   <target name="index-full-hebis" depends="init">
       <solrmarc-index-dir src="${full.dir}"   suffix=".xml" logdir="${full.dir}/log"/>
    </target>
     
+    <target name="test" depends="init">
+      <solr-ping />
+    </target>
+
 </project>
