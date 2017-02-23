@@ -1,12 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="index-full-gbv" name="GVI GBV Jenkins">
     
+	<property file="gvi-ant-gbv.local.properties"/>
     <property file="gvi-ant-gbv.properties"/>
     
     <import file="gvi-ant.xml"/>
 
-    <target name="index-full-gbv">
-      <solrmarc-index-dir src="${data.full.dir}"   suffix=".xml" logdir="${data.full.log.dir}"/>
+    <target name="download-updates-gbv">
+		<ftp action="get"
+			 server="${ftp.server}"
+			 userid="${ftp.userid}"
+			 password="${ftp.password}"
+			 remotedir="${ftp.remotedir}"
+			 verbose="true"
+			 newer="true"
+			 preservelastmodified="true">
+			<fileset dir="${data.update.dir}">
+				<include name="gbv-catalog-update-*.mrc.tar.gz"/>
+				<include name="gbv-catalog-delete-*.txt"/>
+			</fileset>
+		</ftp>
     </target>
+    
+    <target name="index-new-updates-gbv" depends="download-updates-gbv">
+		<solrmarc-index-dir-gbv src="${data.update.dir}"
+								dest="${data.update.work.dir}"
+								logdir="${data.update.log.dir}"
+								includeAll="false"/>
+	</target>
+    
+	<target name="delete-new-updates-gbv" depends="download-updates-gbv">
+		<solrmarc-delete-dir-gbv src="${data.update.dir}"
+								 dest="${data.update.work.dir}"
+								 logdir="${data.update.log.dir}"
+								 includeAll="false"/>
+	</target>
+	
+	<target name="index-full-gbv">
+		<solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
+    </target>
+
+    <macrodef name="solrmarc-index-dir-gbv">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="includeAll" default="false"/>
+        <sequential>
+            <mkdir dir="@{dest}"/>
+            <mkdir dir="@{logdir}"/>
+            <echo>Datadir @{src}</echo>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}" includes="*.tar.gz"/>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".mrc.tar.gz"/>
+					<var name="date" unset="true"/>
+					<propertyregex property="date" input="${basename}" regexp="gbv-catalog-update-(.*)" select="\1" />
+                    <var name="is_mrc_avaliable" unset="true"/>
+                    <available property="is_mrc_avaliable" file="@{dest}/${date}/${basename}.001.mrc"/>
+					
+                    <if>
+                        <not>
+                            <equals arg1="${is_mrc_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+							<mkdir dir ="@{dest}/${date}"/>
+                            <untar src="@{filename}" dest="@{dest}/${date}" compression="gzip"/>
+                            <move todir="@{dest}/${date}">
+								<fileset dir="@{dest}">
+									<include name="${basename}*"/>
+								</fileset>
+							</move>
+                            <solrmarc-index-dir src="@{dest}/${date}" suffix=".mrc" logdir="@{logdir}"/>   
+                        </then>
+                        <else>
+                            <if>
+                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <then>
+                                    <solrmarc-index-dir src="@{dest}/${date}" suffix=".mrc" logdir="@{logdir}"/> 
+                                </then>
+                            </if>
+                        </else>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="solrmarc-delete-dir-gbv">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="includeAll" default="false"/>
+        <sequential>
+            <mkdir dir="@{dest}"/>
+            <mkdir dir="@{logdir}"/>
+            <echo>Datadir @{src}</echo>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}" includes="gbv-catalog-delete-*.txt"/>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".txt"/>
+					<propertyregex property="date" input="${basename}" regexp="gbv-catalog-delete-(.*)" select="\1" />
+                    <var name="is_del_avaliable" unset="true"/>
+                    <available property="is_del_avaliable" file="@{dest}/${date}/${basename}.txt"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_del_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <copy file="@{filename}" todir="@{dest}/${date}">
+                                <filterchain>
+                                    <prefixlines prefix="(DE-601)"/>
+                                </filterchain>
+                            </copy>
+                            <solrmarc-delete-file file="@{dest}/${date}/${basename}.txt" logdir="@{logdir}"/>
+                        </then>
+                        <else>
+                            <if>
+                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <then>
+                                    <solrmarc-delete-dir file="@{dest}/${date}" logdir="@{logdir}"/>
+                                </then>
+                            </if>
+                        </else>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+	
     
 </project>
