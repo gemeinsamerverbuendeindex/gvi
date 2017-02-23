@@ -81,8 +81,7 @@
             <for param="file">
                 <path>
                     <fileset dir="@{src}">
-                        <include name="*.mrc"/>
-                        <include name="*.xml"/>
+                        <include name="*@{suffix}"/>
                     </fileset>
                 </path>
                 <sequential>
