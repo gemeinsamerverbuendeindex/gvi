@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="index-updates" name="GVI SWB Jenkins">
     
-  <property file="gvi-ant-swb.local.properties"/>
-  <property file="gvi-ant-swb.properties"/>
+	<property file="gvi-ant-swb.local.properties"/>
+	<property file="gvi-ant-swb.properties"/>
     
     <import file="gvi-ant.xml"/>
     
     <target name="download-updates-swb">
-      <ftp action="get"
-	   server="${ftp.server}"
-	   userid="${ftp.userid}"
-	   password="${ftp.password}"
-	   remotedir="${ftp.remotedir}"
-	   verbose="true"
-	   newer="true"
-	   preservelastmodified="true">
-	<fileset dir="${data.update.dir}">
-	  <include name="TA-MARC-verbund-*.tar.gz"/>
-	  <include name="WA-MARC-verbund-*.tar.gz"/>
-	  <include name="od_del*"/>
-	</fileset>
-      </ftp>
+		<ftp action="get"
+			 server="${ftp.server}"
+			 userid="${ftp.userid}"
+			 password="${ftp.password}"
+			 remotedir="${ftp.remotedir}"
+			 verbose="true"
+			 newer="true"
+			 preservelastmodified="true">
+			<fileset dir="${data.update.dir}">
+				<include name="SA-MARC-verbund-*.tar.gz"/>
+				<include name="TA-MARC-verbund-*.tar.gz"/>
+				<include name="WA-MARC-verbund-*.tar.gz"/>
+				<include name="od_del*"/>
+			</fileset>
+		</ftp>
     </target>
 
     <target name="index-new-updates-swb" depends="download-updates-swb">
