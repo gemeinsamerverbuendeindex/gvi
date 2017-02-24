@@ -37,6 +37,13 @@
                                  logdir="${data.update.log.dir}" 
                                  includeAll="false"/>
     </target>
+
+    <target name="delete-all-updates-swb" depends="download-updates-swb">
+        <solrmarc-delete-dir-swb src="${data.update.dir}" 
+                                 dest="${data.update.work.dir}" 
+                                 logdir="${data.update.log.dir}" 
+                                 includeAll="true"/>
+    </target>
     
     
     <target name="delete-all" depends="download-updates-swb">
