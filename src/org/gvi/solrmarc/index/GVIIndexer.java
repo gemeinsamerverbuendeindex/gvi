@@ -184,8 +184,9 @@ public class GVIIndexer extends SolrIndexer
     }
 
     protected boolean isGbvZdbRecord(Record record)
-    {
+    {        
         boolean isGbvZdb = false;
+        /*
         List<VariableField> f016List = getFieldSetMatchingTagList(record, "016");
         if (!f016List.isEmpty())
         {
@@ -201,6 +202,7 @@ public class GVIIndexer extends SolrIndexer
 
             }
         }
+        */
         return isGbvZdb;
     }
 
