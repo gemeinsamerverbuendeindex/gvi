@@ -21,7 +21,8 @@
         <attribute name="file"/>
         <attribute name="logdir"/>
         <attribute name="suffix"          default=".mrc"/>
-        <attribute name="solrmarc.config" default="${solrmarc.config}"/> 
+        <attribute name="solrmarc.config" default="${solrmarc.config}"/>
+        <attribute name="solr.indexer"    default="${solr.indexer}"/>
         <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
         <attribute name="solr.core"       default="${solr.core}"/>
         <sequential>
@@ -36,6 +37,7 @@
                 output="@{logdir}/${basename}_out.log"
                 maxmemory="1G">
                 <sysproperty key="solr.hosturl" value="@{solr.baseurl}/@{solr.core}/update"/>
+                <sysproperty key="solr.indexer" value="@{solr.indexer}"/>
                 <sysproperty key="solrmarc.log.level" value="INFO"/>
                 <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
                 <arg value="@{solrmarc.config}"/>
@@ -48,6 +50,7 @@
         <attribute name="file"/>
         <attribute name="logdir"/>
         <attribute name="solrmarc.config" default="${solrmarc.config}"/> 
+        <attribute name="solr.indexer"    default="${solr.indexer}"/>
         <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
         <attribute name="solr.core"       default="${solr.core}"/>
         <sequential>
@@ -62,6 +65,7 @@
                 output="@{logdir}/${basename}_out.log"
                 maxmemory="1G">
                 <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
+                <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
                 <sysproperty key="solrmarc.log.level"      value="INFO"/>
                 <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
                 <sysproperty key="marc.ids_to_delete"      value="@{file}"/>
