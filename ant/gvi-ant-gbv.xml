@@ -8,13 +8,13 @@
 
     <target name="download-updates-gbv">
         <ftp action="get"
-                     server="${ftp.server}"
-                     userid="${ftp.userid}"
-                     password="${ftp.password}"
-                     remotedir="${ftp.remotedir}"
-                     verbose="true"
-                     newer="true"
-                     preservelastmodified="true">
+             server="${ftp.server}"
+             userid="${ftp.userid}"
+             password="${ftp.password}"
+             remotedir="${ftp.remotedir}"
+             verbose="true"
+             newer="true"
+             preservelastmodified="true">
             <fileset dir="${data.update.dir}">
                 <include name="gbv-catalog-update-*.mrc.tar.gz"/>
                 <include name="gbv-catalog-delete-*.txt"/>
@@ -24,30 +24,30 @@
     
     <target name="index-new-updates-gbv" depends="download-updates-gbv">
         <solrmarc-index-dir-gbv src="${data.update.dir}"
-                                        dest="${data.update.work.dir}"
-                                        logdir="${data.update.log.dir}"
-                                        includeAll="false"/>
+                                dest="${data.update.work.dir}"
+                                logdir="${data.update.log.dir}"
+                                includeAll="false"/>
     </target>
 
     <target name="index-all-updates-gbv" depends="download-updates-gbv">
         <solrmarc-index-dir-gbv src="${data.update.dir}"
-                                        dest="${data.update.work.dir}"
-                                        logdir="${data.update.log.dir}"
-                                        includeAll="true"/>
+                                dest="${data.update.work.dir}"
+                                logdir="${data.update.log.dir}"
+                                includeAll="true"/>
     </target>
     
     <target name="delete-new-updates-gbv" depends="download-updates-gbv">
         <solrmarc-delete-dir-gbv src="${data.update.dir}"
-                                         dest="${data.update.work.dir}"
-                                         logdir="${data.update.log.dir}"
-                                         includeAll="false"/>
+                                 dest="${data.update.work.dir}"
+                                 logdir="${data.update.log.dir}"
+                                 includeAll="false"/>
     </target>
 
     <target name="delete-all-updates-gbv" depends="download-updates-gbv">
         <solrmarc-delete-dir-gbv src="${data.update.dir}"
-                                         dest="${data.update.work.dir}"
-                                         logdir="${data.update.log.dir}"
-                                         includeAll="true"/>
+                                 dest="${data.update.work.dir}"
+                                 logdir="${data.update.log.dir}"
+                                 includeAll="true"/>
     </target>
 	
     <target name="index-full-gbv">
@@ -138,7 +138,7 @@
                             <if>
                                 <equals arg1="@{includeAll}" arg2="true"/>
                                 <then>
-                                    <solrmarc-delete-dir file="@{dest}/${date}" logdir="@{logdir}"/>
+                                    <solrmarc-delete-dir src="@{dest}/${date}" logdir="@{logdir}"/>
                                 </then>
                             </if>
                         </else>
