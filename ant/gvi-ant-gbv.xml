@@ -119,6 +119,7 @@
                 <sequential>
                     <var name="basename" unset="true"/>
                     <basename property="basename" file="@{filename}" suffix=".txt"/>
+                    <var name="date" unset="true"/>
                     <propertyregex property="date" input="${basename}" regexp="gbv-catalog-delete-(.*)" select="\1" />
                     <var name="is_del_avaliable" unset="true"/>
                     <available property="is_del_avaliable" file="@{dest}/${date}/${basename}.txt"/>                    
