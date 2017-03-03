@@ -149,19 +149,17 @@
         <attribute name="location"/>
         <sequential>
             <tstamp/>
-            <property name="name" value="@{collection}-BACKUP-${DSTAMP}"/>
+            <property name="backup-name" value="@{collection}-BACKUP-${DSTAMP}"/>
+            <echo>solr-backup: name = ${backup-name}</echo>
             <get dest="solr-response.txt" 
                  verbose="true"
                  maxtime="3"
-                 retries="3">
-                <url baseUrl="${solr.baseurl}/${solr.core}/admin/collections?action=@{action}"
-                     relativePath="&amp;name=@{name}&amp;collection=@{collection}&location=@{location}&async=@{name}"/>
-            </get>
+                 retries="3"
+                 src="${solr.baseurl}/admin/collections?action=@{action}&amp;name=${backup-name}&amp;collection=@{collection}&amp;location=@{location}&amp;async=${backup-name}"/>
             <loadfile property="solr-response.txt" srcFile="solr-response.txt"/>
             <echo message="solr-response"/>
             <delete file="solr-response.txt"/>
         </sequential>
     </macrodef>
-        
-    </macrodef>
+
 </project>
