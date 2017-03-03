@@ -143,4 +143,25 @@
         </sequential>
     </macrodef>
     
+    <macrodef name="solr-backup">
+        <attribute name="action" default="BACKUP"/>
+        <attribute name="collection"/>
+        <attribute name="location"/>
+        <sequential>
+            <tstamp/>
+            <property name="name" value="@{collection}-BACKUP-${DSTAMP}"/>
+            <get dest="solr-response.txt" 
+                 verbose="true"
+                 maxtime="3"
+                 retries="3">
+                <url baseUrl="${solr.baseurl}/${solr.core}/admin/collections?action=@{action}"
+                     relativePath="&amp;name=@{name}&amp;collection=@{collection}&location=@{location}&async=@{name}"/>
+            </get>
+            <loadfile property="solr-response.txt" srcFile="solr-response.txt"/>
+            <echo message="solr-response"/>
+            <delete file="solr-response.txt"/>
+        </sequential>
+    </macrodef>
+        
+    </macrodef>
 </project>
