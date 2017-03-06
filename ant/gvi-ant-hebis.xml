@@ -1,56 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="init" name="GVI HeBIS Jenkins">
     
-   <import file="gvi-ant.xml"/>
+    <import file="gvi-ant.xml"/>
 
-   <!-- Die Variablen definieren. -->
-   <target name="init">
-      <tstamp>
-         <format property="time.stamp" pattern="yyyy-MM-dd'T'HH:mm:ss"/>
-      </tstamp>
-      <property name="base.dir"   location="/data/input/gvi/hebis/current"/>
-      <property name="full.dir"   location="${base.dir}/full"/>
-      <property name="drop.dir"   location="${base.dir}/update/dropin"/>
-      <property name="work.dir"   location="${base.dir}/update/${time.stamp}"/>
-      <available property="update.available" file="${drop.dir}/gvi-update.tar"/>
-   </target>
+    <!-- Die Variablen definieren. -->
+    <target name="init">
+        <tstamp>
+            <format property="time.stamp" pattern="yyyy-MM-dd'T'HH:mm:ss"/>
+        </tstamp>
+        <property name="base.dir"   location="/data/input/gvi/hebis/current"/>
+        <property name="full.dir"   location="${base.dir}/full"/>
+        <property name="drop.dir"   location="${base.dir}/update/dropin"/>
+        <property name="work.dir"   location="${base.dir}/update/${time.stamp}"/>
+        <available property="update.available" file="${drop.dir}/gvi-update.tar"/>
+    </target>
 
-   <target name="unpack-update-files" depends="init" if="update.available">
-       <exec executable="/bin/tar" dir="${drop.dir}" failonerror="false">
-          <arg value="xf" />
-          <arg value="gvi-update.tar" />
-       </exec>
-       <delete>
-          <fileset dir="${drop.dir}">
-             <include name="*.tar"/>
-          </fileset>
-       </delete>
-   </target> 
+    <target name="unpack-update-files" depends="init" if="update.available">
+        <exec executable="/bin/tar" dir="${drop.dir}" failonerror="false">
+            <arg value="xf" />
+            <arg value="gvi-update.tar" />
+        </exec>
+        <delete>
+            <fileset dir="${drop.dir}">
+                <include name="*.tar"/>
+            </fileset>
+        </delete>
+    </target> 
 
-   <!-- Dateien aus dem Eingangsverzeichnis in ein neues Arbeitsverzeichnis kopieren. -->
-   <target name="copy-updates-hebis" depends="unpack-update-files" if="update.available">
-      <mkdir dir="${work.dir}"/>
-      <move todir="${work.dir}">
-        <fileset dir="${drop.dir}">
-          <include name="*.xml"/>
-          <include name="*.txt"/>
-        </fileset>
-      </move>
-   </target>
+    <!-- Dateien aus dem Eingangsverzeichnis in ein neues Arbeitsverzeichnis kopieren. -->
+    <target name="copy-updates-hebis" depends="unpack-update-files" if="update.available">
+        <mkdir dir="${work.dir}"/>
+        <move todir="${work.dir}">
+            <fileset dir="${drop.dir}">
+                <include name="*.xml"/>
+                <include name="*.txt"/>
+            </fileset>
+        </move>
+    </target>
     
-   <!-- Dateien aus dem aktuellen Arbeitsverzeichnis bearbeiten (indexieren / loeschen) -->
-   <target name="index-updates-hebis" depends="copy-updates-hebis" if="update.available">
-      <solrmarc-index-dir src="${work.dir}"   suffix=".xml" logdir="${work.dir}/log"/>
-      <solrmarc-delete-dir src="${work.dir}"  logdir="${work.dir}/log"/>
-   </target>
+    <!-- Dateien aus dem aktuellen Arbeitsverzeichnis bearbeiten (indexieren / loeschen) -->
+    <target name="index-updates-hebis" depends="copy-updates-hebis" if="update.available">
+        <solrmarc-index-dir src="${work.dir}"   suffix=".xml" logdir="${work.dir}/log"/>
+        <solrmarc-delete-dir src="${work.dir}"  logdir="${work.dir}/log"/>
+    </target>
+   
+    <target name="index-all-updates-hebis">
+        <for param="dir">
+            <path>
+                <dirset dir="${base.dir}/update" includes="*" excludes="dropin"/>
+            </path>
+            <sequential>
+                <delete>
+                    <fileset dir="@{dir}/log" includes="*.log" erroronmissingdir="false"/>
+                </delete>
+                <solrmarc-index-dir  src="@{dir}" logdir="@{dir}/log" suffix=".xml" />
+                <solrmarc-delete-dir src="@{dir}" logdir="@{dir}/log"/>                
+            </sequential>
+        </for>
+    </target>
 
-   <!-- Kompletabzug indexieren -->
-   <target name="index-full-hebis" depends="init">
-      <solrmarc-index-dir src="${full.dir}"   suffix=".xml" logdir="${full.dir}/log"/>
-   </target>
+    <!-- Kompletabzug indexieren -->
+    <target name="index-full-hebis" depends="init">
+        <delete>
+            <fileset dir="${full.dir}/log" includes="*.log" erroronmissingdir="false"/>
+        </delete>        
+        <solrmarc-index-dir src="${full.dir}"   suffix=".xml" logdir="${full.dir}/log"/>
+    </target>
+    
+    <target name="index-all-hebis">
+        <antcall target="index-full-hebis"/>
+        <antcall target="index-all-updates-hebis"/>
+    </target>
     
     <target name="test" depends="init">
-      <solr-ping />
+        <solr-ping />
     </target>
 
 </project>
