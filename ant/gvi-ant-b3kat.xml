@@ -45,6 +45,9 @@
     </target>
     
     <target name="index-full-b3kat">
+        <delete>
+            <fileset dir="${data.full.log.dir}" includes="*.log" erroronmissingdir="false"/>
+        </delete>
         <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
     </target>
 
