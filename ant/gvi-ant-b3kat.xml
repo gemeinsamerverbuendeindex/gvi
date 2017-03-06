@@ -50,4 +50,10 @@
         <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
     </target>
 
+    <target name="index-all">
+        <antcall target="index-all-updates-b3kat"/>
+        <antcall target="index-full-b3kat"/>
+        <antcall target="index-updates-b3kat"/>
+    </target>
+    
 </project>
