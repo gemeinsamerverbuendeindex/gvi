@@ -51,7 +51,16 @@
     </target>
 	
     <target name="index-full-gbv">
+        <delete>
+            <fileset dir="${data.full.log.dir}" includes="*.log" erroronmissingdir="false"/>
+        </delete>
         <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
+    </target>
+
+    <target name="index-all-gbv">
+        <antcall target="index-full-gbv"/>
+        <antcall target="index-all-updates-gbv"/>
+        <antcall target="delete-all-updates-gbv"/>
     </target>
 
     <macrodef name="solrmarc-index-dir-gbv">
