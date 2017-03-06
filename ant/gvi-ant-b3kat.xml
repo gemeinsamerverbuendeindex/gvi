@@ -34,7 +34,6 @@
                 <dirset dir="${data.update.base.dir}" includes="*"/>
             </path>
             <sequential>
-                <echo>Index all updates in @{dir}/</echo>
                 <delete>
                     <fileset dir="@{dir}/log" includes="*.log" erroronmissingdir="false"/>
                 </delete>
