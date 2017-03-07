@@ -44,7 +44,7 @@
         <solrmarc-delete-dir src="${work.dir}"  logdir="${work.dir}/log"/>
     </target>
    
-    <target name="index-all-updates-hebis">
+    <target name="index-all-updates-hebis" depends="init">
         <for param="dir">
             <path>
                 <dirset dir="${base.dir}/update" includes="*" excludes="dropin"/>
@@ -67,7 +67,7 @@
         <solrmarc-index-dir src="${full.dir}"   suffix=".xml" logdir="${full.dir}/log"/>
     </target>
     
-    <target name="index-all-hebis">
+    <target name="index-all-hebis" depends="init">
         <antcall target="index-full-hebis"/>
         <antcall target="index-all-updates-hebis"/>
     </target>
