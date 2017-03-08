@@ -148,18 +148,100 @@
         <attribute name="collection"/>
         <attribute name="location"/>
         <sequential>
+            <tstamp>
+                <format property="max.age" 
+                        pattern="dd.MM.yyyy HH:mm"
+                        offset="-2" unit="day"/>
+            </tstamp>
+            <echo>Delete backups older than ${max.age} at location @{location}</echo>
+            <delete>
+                <fileset dir="@{location}" includes="**/*">
+                    <date datetime="${max.age}" when="before" pattern="dd.MM.yyyy HH:mm"/>
+                </fileset>
+            </delete>
             <tstamp/>
-            <property name="backup-name" value="@{collection}-BACKUP-${DSTAMP}"/>
-            <echo>solr-backup: name = ${backup-name}</echo>
-            <get dest="solr-response.txt" 
+            <property name="backup-name" value="@{collection}-BACKUP-${DSTAMP}-${TSTAMP}"/>
+            <property name="backup-dir"  value="@{location}/${backup-name}"/>
+            <echo>Create new Backup ${backup-name} at location ${backup-dir} </echo>
+            <tempfile property="solr-response-file" prefix="solr-response-" destDir="/tmp"/>
+            <get dest="${solr-response-file}" 
                  verbose="true"
                  maxtime="3"
                  retries="3"
-                 src="${solr.baseurl}/admin/collections?action=@{action}&amp;name=${backup-name}&amp;collection=@{collection}&amp;location=@{location}&amp;async=${backup-name}"/>
-            <loadfile property="solr-response.txt" srcFile="solr-response.txt"/>
+                 src="${solr.baseurl}/admin/collections?action=@{action}&amp;name=${backup-name}&amp;collection=@{collection}&amp;location=@{location}&amp;async=${backup-name}"/>                 
+            <loadfile property="solr-response" srcFile="${solr-response-file}"/>
             <echo message="solr-response"/>
-            <delete file="solr-response.txt"/>
+            <delete file="${solr-response-file}"/>
+            <solr-requeststatus requestid="${backup-name}" 
+                                status-property="solr-response-status"
+                                message-property="solr-response-message"/>
+            <echo message="Status : ${solr-response-status}"/>
+            <echo message="Message: ${solr-response-message}"/>
+            <waitfor maxwait="60" 
+                     maxwaitunit="minute"
+                     checkevery="1"
+                     checkeveryunit="minute"
+                     timeoutproperty="timeout">
+                <available file="${backup-dir}/backup.properties"/>
+            </waitfor>
+            <sleep minutes="1"/>
+            <solr-requeststatus requestid="${backup-name}" 
+                                status-property="solr-response-status"
+                                message-property="solr-response-message"/>
+            <fail message="Backup timeout after 60 min: ${solr-response-message}">
+                <condition>
+                    <equals arg1="true" arg2="${timeout}"/>
+                </condition>                
+            </fail>
+            <fail message="Backup failed: ${solr-response-message}">
+                <condition>
+                    <not>
+                        <equals arg1="completed" arg2="${solr-response-status}"/>
+                    </not>
+                </condition>
+            </fail>
+            <echo message="Status : ${solr-response-status}"/>
+            <echo message="Message: ${solr-response-message}"/>
         </sequential>
     </macrodef>
 
+    <macrodef name="solr-requeststatus">
+        <attribute name="requestid"/>
+        <attribute name="status-property"/>
+        <attribute name="message-property"/>
+        <sequential>
+            <tempfile property="solr-response-file" prefix="solr-response-status-" destDir="/tmp"/>
+            <get dest="${solr-response-file}" 
+                 verbose="true"
+                 maxtime="3"
+                 retries="3"
+                 src="${solr.baseurl}/admin/collections?action=REQUESTSTATUS&amp;requestid=@{requestid}&amp;wt=json&amp;indent=true"/>
+            <loadfile property="@{status-property}" srcFile="${solr-response-file}">
+                <filterchain>
+                    <linecontains>
+                        <contains value="state"/>
+                    </linecontains>
+                    <deletecharacters chars='",'/>
+                    <tokenfilter>
+                        <replacestring from="state:" to=""/>
+                        <trim/>
+                    </tokenfilter>
+                </filterchain>
+            </loadfile>
+            <loadfile property="@{message-property}" srcFile="${solr-response-file}">
+                <filterchain>
+                    <linecontains>
+                        <contains value="msg"/>
+                    </linecontains>
+                    <deletecharacters chars='",}'/>
+                    <tokenfilter>
+                        <replacestring from="msg:" to=""/>
+                        <trim/>
+                    </tokenfilter>
+                </filterchain>
+            </loadfile>
+            <delete file="${solr-response-file}"/>
+        </sequential>        
+    </macrodef>
+    
 </project>
