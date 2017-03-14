@@ -9,8 +9,8 @@
             location="${backup.location}"/>
     </target>
     
-    <solr name="solr-optimize">
+    <target name="solr-optimize">
         <solr-optimize maxSegments="8"/>
-    </solr>
+    </target>
     
 </project>
