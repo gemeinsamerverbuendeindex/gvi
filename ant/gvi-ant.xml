@@ -146,10 +146,10 @@
     <macrodef name="solr-optimize">
         <attribute name="maxSegments"  default="8"/>
         <attribute name="waitSearcher" default="false"/>
-        <var name="solr-response-file" unset="true"/>
-        <tempfile property="solr-response-file" prefix="solr-response-" destDir="/tmp"/>
         <sequential>
-            <get src="${solr.baseurl}/${solr.core}/update?maxSegments=@{maxSegments}&amp;waitSearcher=@{waitSearcher}&amp;indent=true&amp;" 
+            <var name="solr-response-file" unset="true"/>
+            <tempfile property="solr-response-file" prefix="solr-response-" destDir="/tmp"/>
+            <get src="${solr.baseurl}/${solr.core}/update?optimize=true&amp;maxSegments=@{maxSegments}&amp;waitSearcher=@{waitSearcher}&amp;indent=true&amp;wt=json" 
                  dest="${solr-response-file}" 
                  verbose="true"/>
             <var name="solr-response" unset="true"/>
