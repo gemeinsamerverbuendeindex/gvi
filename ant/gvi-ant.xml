@@ -14,7 +14,23 @@
         </classpath>
     </taskdef>
 
+    <target name="init-index-date-for-delete">
+        <tstamp>
+            <format property="index-date-for-delete" 
+                    pattern="yyyy-MM-dd'T'HH:mm:'000Z'" 
+                    timezone="GMT"/>
+        </tstamp>
+        <echo>init-index-date-for-delete (UTC): ${init-index-date-for-delete}</echo>
+    </target>
     
+    <target name="delete-by-consortium-and-index-date">
+        <solr-delete-by-consortium-and-indexdate 
+            collection="${solr.core}"
+            date="${index-date-for-delete}"
+            consortium="${consortium}"
+            response-property="msg"/>
+    </target>
+        
     
 
     <macrodef name="solrmarc-index-file" description="Index file or directory" >
@@ -298,4 +314,39 @@
             <delete file="${solr-response-file}"/>
         </sequential>        
     </macrodef>
+
+    <macrodef name="solr-delete-by-consortium-and-indexdate">
+        <attribute name="collection"/>
+        <attribute name="consortium"/>
+        <attribute name="date"/>
+        <attribute name="response-property"/>
+        <sequential>
+            <property name="query" value="index_date:[* TO @{date}] AND consortium:(@{consortium})"/>
+            <solr-delete-by-query 
+                query="${query}"
+                collection="@{collection}"
+                response-property="@{response-property}"
+            />
+        </sequential>
+    </macrodef>
+
+    <macrodef name="solr-delete-by-query">
+        <attribute name="query"/>        
+        <attribute name="collection"/>
+        <attribute name="response-property"/>
+        <sequential>
+            <var name="response-property" unset="true"/>
+            <var name="solr-delete-response-file" unset="true"/>
+            <tempfile property="solr-delete-response-file" prefix="solr-delete-response-status-" destDir="/tmp"/>
+            <property name="stream.body" value="&lt;delete>&lt;query>@{query}&lt;/query>&lt;/delete>"/>
+            <post to="${solr.baseurl}/@{collection}/update"
+                  property="@{response-property}">
+                <prop name="commit" value="true"/>
+                <prop name="wt" value="json"/>
+                <prop name="indent" value="true"/>
+                ${stream.body}
+            </post>
+        </sequential>
+    </macrodef>
+    
 </project>
