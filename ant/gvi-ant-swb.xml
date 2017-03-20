@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="index-updates" name="GVI SWB Jenkins">
     
-	<property file="gvi-ant-swb.local.properties"/>
-	<property file="gvi-ant-swb.properties"/>
+    <property file="gvi-ant-swb.local.properties"/>
+    <property file="gvi-ant-swb.properties"/>
     
     <import file="gvi-ant.xml"/>
     
-    <target name="download-updates-swb">
-		<ftp action="get"
-			 server="${ftp.server}"
-			 userid="${ftp.userid}"
-			 password="${ftp.password}"
-			 remotedir="${ftp.remotedir}"
-			 verbose="true"
-			 newer="true"
-			 preservelastmodified="true">
-			<fileset dir="${data.update.dir}">
-				<include name="SA-MARC-verbund-*.tar.gz"/>
-				<include name="TA-MARC-verbund-*.tar.gz"/>
-				<include name="WA-MARC-verbund-*.tar.gz"/>
-				<include name="od_del*"/>
-			</fileset>
-		</ftp>
+    <target name="init">
+        <tstamp>
+          <format property="date.dir" pattern="yyyy-MM-dd"/>
+        </tstamp>        
+        <property name="data.update.dir"      location="${data.update.base.dir}/${date.dir}"/>
+        <property name="data.update.work.dir" location="${data.update.dir}/work"/>
+        <property name="data.update.log.dir"  location="${data.update.dir}/log"/>
+    </target>
+    
+    <target name="download-updates-swb" depends="init">
+        <ftp action="get"
+                     server="${ftp.server}"
+                     userid="${ftp.userid}"
+                     password="${ftp.password}"
+                     remotedir="${ftp.remotedir}"
+                     verbose="true"
+                     newer="true"
+                     preservelastmodified="true">
+            <fileset dir="${data.update.dir}">
+                <include name="SA-MARC-verbund-*.tar.gz"/>
+                <include name="TA-MARC-verbund-*.tar.gz"/>
+                <include name="WA-MARC-verbund-*.tar.gz"/>
+                <include name="od_del*"/>
+            </fileset>
+        </ftp>
     </target>
 
     <target name="index-new-updates-swb" depends="download-updates-swb">
@@ -63,7 +72,7 @@
                                  includeAll="true"/>
     </target>
 
-    <target name="index-all">
+    <target name="index-all-swb" depends="init,init-index-date-for-delete">
         <delete>
             <fileset dir="${data.full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
         </delete>
@@ -71,23 +80,24 @@
                                 dest="${data.full.work.dir}" 
                                 logdir="${data.full.log.dir}" 
                                 includeAll="true"/> 
-        <delete>
-            <fileset dir="${data.update.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
-        </delete>
-        <solrmarc-index-dir-swb src="${data.update.dir}" 
-                                dest="${data.update.work.dir}" 
-                                logdir="${data.update.log.dir}" 
-                                includeAll="true"/>
+        <antcall target="index-all-updates-swb"/>
+        <antcall target="delete-by-consortium-and-index-date"/>
     </target>
     
-    <target name="index-all-updates-swb">
-        <delete>
-            <fileset dir="${data.update.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
-        </delete>
-        <solrmarc-index-dir-swb src="${data.update.dir}" 
-                                dest="${data.update.work.dir}" 
-                                logdir="${data.update.log.dir}" 
-                                includeAll="true"/>
+    <target name="index-all-updates-swb" depends="init, download-updates-swb">
+        <for param="dir">
+            <path>
+                <dirset dir="${data.update.base.dir}" includes="*"/>
+            </path>
+            <sequential>
+                <echo>Datadir @{dir}</echo>
+                <delete>
+                    <fileset dir="@{dir}/log" includes="*.log" erroronmissingdir="false"/>
+                </delete>
+                <solrmarc-index-dir-swb  src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>
+                <solrmarc-delete-dir-swb src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>                
+            </sequential>
+        </for>
     </target>
     
     <macrodef name="solrmarc-index-dir-swb">
@@ -98,7 +108,6 @@
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
-            <echo>Datadir @{src}</echo>
             <for param="filename">
                 <path>
                     <fileset dir="@{src}" includes="*.tar.gz"/>
@@ -143,7 +152,6 @@
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
-            <echo>Datadir @{src}</echo>
             <for param="filename">
                 <path>
                     <fileset dir="@{src}" includes="od_del*.txt"/>
@@ -176,4 +184,4 @@
         </sequential>
     </macrodef>
 
- </project>
+</project>
