@@ -10,7 +10,7 @@
     </target>
     
     <target name="solr-optimize">
-        <solr-optimize maxSegments="10"/>
+        <solr-optimize maxSegments="5"/>
     </target>
     
 </project>
