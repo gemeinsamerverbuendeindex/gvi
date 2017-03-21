@@ -180,11 +180,10 @@
         <attribute name="collection"/>
         <attribute name="location"/>
         <sequential>
-            <!--
             <tstamp>
                 <format property="max.age" 
                         pattern="dd.MM.yyyy HH:mm"
-                        offset="-2" unit="day"/>
+                        offset="-3" unit="day"/>
             </tstamp>
             <echo>Delete backups older than ${max.age} at location @{location}</echo>
             <delete>
@@ -192,12 +191,16 @@
                     <date datetime="${max.age}" when="before" pattern="dd.MM.yyyy HH:mm"/>
                 </fileset>
             </delete>
-            -->
             <tstamp/>
             <property name="backup-requestid" value="@{collection}-BACKUP-${DSTAMP}-${TSTAMP}"/>
+            <property name="backup-name-curr" value="${backup-requestid}"/>
+            <!--
             <property name="backup-name-curr" value="@{collection}-BACKUP-CURR"/>
             <property name="backup-name-prev" value="@{collection}-BACKUP-PREV"/>
+            -->
             <property name="backup-dir-curr"  value="@{location}/${backup-name-curr}"/>
+            <property name="backup-link-curr" value="@{location}/@{collection}-BACKUP-CURRENT"/>
+            <!--
             <property name="backup-dir-prev"  value="@{location}/${backup-name-prev}"/>
             <delete includeemptydirs="true">
                 <fileset dir="@{location}" includes="${backup-name-prev}/**"/>
@@ -206,6 +209,7 @@
                   tofile="${backup-dir-prev}" 
                   failonerror="false" 
                   verbose="true"/>
+            -->
             <echo>Create new Backup ${backup-requestid} at location ${backup-dir-curr} </echo>
             <tempfile property="solr-response-file" prefix="solr-response-" destDir="/tmp"/>
             <get dest="${solr-response-file}" 
@@ -249,6 +253,7 @@
                 </not>
             </condition>
             <fail if="notCompleted" message="Backup failed. Status: ${solr-response-status}, Message: ${solr-response-message}"/>
+            <symlink link="${backup-link-curr}" resource="${backup-dir-curr}" overwrite="true"/>
             <echo message="Status : ${solr-response-status}"/>
             <echo message="Message: ${solr-response-message}"/>
             <solr-deletestatus requestid="${backup-requestid}" 
