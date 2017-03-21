@@ -9,13 +9,17 @@
     <target name="init">
         <tstamp>
           <format property="date.dir" pattern="yyyy-MM-dd"/>
-        </tstamp>        
+        </tstamp>
+        <tstamp>
+            <format property="date.download" pattern="YYMMdd" offset="-1" unit="day"/>
+        </tstamp>
         <property name="data.update.dir"      location="${data.update.base.dir}/${date.dir}"/>
         <property name="data.update.work.dir" location="${data.update.dir}/work"/>
         <property name="data.update.log.dir"  location="${data.update.dir}/log"/>
     </target>
     
     <target name="download-updates-swb" depends="init">
+        <echo>Checking updates for ${date.download}</echo>
         <ftp action="get"
                      server="${ftp.server}"
                      userid="${ftp.userid}"
@@ -25,10 +29,10 @@
                      newer="true"
                      preservelastmodified="true">
             <fileset dir="${data.update.dir}">
-                <include name="SA-MARC-verbund-*.tar.gz"/>
-                <include name="TA-MARC-verbund-*.tar.gz"/>
-                <include name="WA-MARC-verbund-*.tar.gz"/>
-                <include name="od_del*"/>
+                <include name="SA-MARC-verbund-${date.download}*.tar.gz"/>
+                <include name="TA-MARC-verbund-${date.download}*.tar.gz"/>
+                <include name="WA-MARC-verbund-${date.download}*.tar.gz"/>
+                <include name="od_del_bsz-tit_${date.download}*"/>
             </fileset>
         </ftp>
     </target>
@@ -38,53 +42,13 @@
                                 dest="${data.update.work.dir}" 
                                 logdir="${data.update.log.dir}" 
                                 includeAll="false"/>
-    </target>
-
-    <target name="delete-new-updates-swb" depends="download-updates-swb">
         <solrmarc-delete-dir-swb src="${data.update.dir}" 
                                  dest="${data.update.work.dir}" 
                                  logdir="${data.update.log.dir}" 
                                  includeAll="false"/>
     </target>
 
-    <target name="delete-all-updates-swb" depends="download-updates-swb">
-        <solrmarc-delete-dir-swb src="${data.update.dir}" 
-                                 dest="${data.update.work.dir}" 
-                                 logdir="${data.update.log.dir}" 
-                                 includeAll="true"/>
-    </target>
-    
-    
-    <target name="delete-all" depends="download-updates-swb">
-        <delete>
-            <fileset dir="${data.full.log.dir}" includes="od_del*.log" erroronmissingdir="false"/>
-        </delete>
-        <solrmarc-delete-dir-swb src="${data.full.dir}" 
-                                 dest="${data.full.work.dir}" 
-                                 logdir="${data.full.log.dir}" 
-                                 includeAll="true"/>
-        <delete>
-            <fileset dir="${data.update.log.dir}" includes="od_del*.log" erroronmissingdir="false"/>
-        </delete>
-        <solrmarc-delete-dir-swb src="${data.update.dir}" 
-                                 dest="${data.update.work.dir}" 
-                                 logdir="${data.update.log.dir}" 
-                                 includeAll="true"/>
-    </target>
-
-    <target name="index-all-swb" depends="init,init-index-date-for-delete">
-        <delete>
-            <fileset dir="${data.full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
-        </delete>
-        <solrmarc-index-dir-swb src="${data.full.dir}" 
-                                dest="${data.full.work.dir}" 
-                                logdir="${data.full.log.dir}" 
-                                includeAll="true"/> 
-        <antcall target="index-all-updates-swb"/>
-        <antcall target="delete-by-consortium-and-index-date"/>
-    </target>
-    
-    <target name="index-all-updates-swb" depends="init, download-updates-swb">
+    <target name="index-all-updates-swb" depends="init">
         <for param="dir">
             <path>
                 <dirset dir="${data.update.base.dir}" includes="*"/>
@@ -98,6 +62,18 @@
                 <solrmarc-delete-dir-swb src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>                
             </sequential>
         </for>
+    </target>
+    
+    <target name="index-all-swb" depends="init,init-index-date-for-delete">
+        <delete>
+            <fileset dir="${data.full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
+        </delete>
+        <solrmarc-index-dir-swb src="${data.full.dir}" 
+                                dest="${data.full.work.dir}" 
+                                logdir="${data.full.log.dir}" 
+                                includeAll="true"/> 
+        <antcall target="index-all-updates-swb"/>
+        <antcall target="delete-by-consortium-and-index-date"/>
     </target>
     
     <macrodef name="solrmarc-index-dir-swb">
