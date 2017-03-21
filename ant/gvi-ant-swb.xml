@@ -35,9 +35,10 @@
                 <include name="od_del_bsz-tit_${date.download}*"/>
             </fileset>
         </ftp>
+        <available property="updates.found" file="${data.update.dir}"/>
     </target>
 
-    <target name="index-new-updates-swb" depends="download-updates-swb">
+    <target name="index-new-updates-swb" depends="download-updates-swb" if="updates.found">
         <solrmarc-index-dir-swb src="${data.update.dir}" 
                                 dest="${data.update.work.dir}" 
                                 logdir="${data.update.log.dir}" 
