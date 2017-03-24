@@ -6,7 +6,8 @@
     <target name="solr-backup">
         <solr-backup 
             collection="${solr.core}"
-            location="${backup.location}"/>
+            location="${backup.location}"
+            maxAgeDays="${backup.maxAgeDays}"/>
     </target>
     
     <target name="solr-optimize">
