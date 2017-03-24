@@ -186,7 +186,7 @@
                         offset="-@{maxAgeDays}" unit="day"/>
             </tstamp>
             <echo>Delete backups older than ${max.age} at location @{location}</echo>
-            <delete>
+            <delete includeemptydirs="true">
                 <fileset dir="@{location}" includes="**/*">
                     <date datetime="${max.age}" when="before" pattern="dd.MM.yyyy HH:mm"/>
                 </fileset>
@@ -194,22 +194,8 @@
             <tstamp/>
             <property name="backup-requestid" value="@{collection}-BACKUP-${DSTAMP}-${TSTAMP}"/>
             <property name="backup-name-curr" value="${backup-requestid}"/>
-            <!--
-            <property name="backup-name-curr" value="@{collection}-BACKUP-CURR"/>
-            <property name="backup-name-prev" value="@{collection}-BACKUP-PREV"/>
-            -->
             <property name="backup-dir-curr"  value="@{location}/${backup-name-curr}"/>
             <property name="backup-link-curr" value="@{location}/@{collection}-BACKUP-CURRENT"/>
-            <!--
-            <property name="backup-dir-prev"  value="@{location}/${backup-name-prev}"/>
-            <delete includeemptydirs="true">
-                <fileset dir="@{location}" includes="${backup-name-prev}/**"/>
-            </delete>
-            <move file="${backup-dir-curr}"
-                  tofile="${backup-dir-prev}" 
-                  failonerror="false" 
-                  verbose="true"/>
-            -->
             <echo>Create new Backup ${backup-requestid} at location ${backup-dir-curr} </echo>
             <tempfile property="solr-response-file" prefix="solr-response-" destDir="/tmp"/>
             <get dest="${solr-response-file}" 
