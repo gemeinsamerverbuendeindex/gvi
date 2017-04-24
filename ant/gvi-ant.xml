@@ -187,7 +187,7 @@
             </tstamp>
             <echo>Delete backups older than ${max.age} at location @{location}</echo>
             <delete includeemptydirs="true">
-                <fileset dir="@{location}" includes="**/*">
+                <fileset dir="@{location}" includes="**/*" excludes="**/.no_backup">
                     <date datetime="${max.age}" when="before" pattern="dd.MM.yyyy HH:mm"/>
                 </fileset>
             </delete>
