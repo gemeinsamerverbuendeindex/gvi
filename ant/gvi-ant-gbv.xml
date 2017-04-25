@@ -57,10 +57,11 @@
         <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
     </target>
 
-    <target name="index-all-gbv">
+    <target name="index-all-gbv" depends="init-index-date-for-delete">
         <antcall target="index-full-gbv"/>
         <antcall target="index-all-updates-gbv"/>
         <antcall target="delete-all-updates-gbv"/>
+        <antcall target="delete-by-consortium-and-index-date"/>
     </target>
 
     <macrodef name="solrmarc-index-dir-gbv">
