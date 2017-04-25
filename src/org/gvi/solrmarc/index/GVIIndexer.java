@@ -130,6 +130,11 @@ public class GVIIndexer extends SolrIndexer
         return (retVal);
     }
 
+    public String getCatalogID(final Record record)
+    {
+        return catalogId;
+    }
+    
     public Set<String> getConsortium(final Record record)
     {
         return consortium;
