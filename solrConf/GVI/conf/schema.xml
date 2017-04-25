@@ -118,6 +118,9 @@
     
     <field name="zdb_id"                  type="ZDBID" />
     
+    <!-- Produktsigel -->
+    <field name="product_id"              type="ZDBID" />
+    
     <!-- Andere Kennumern und URIs (zdbn, olcn, doi, urn, ...) -->
     <field name="other_id"                type="GenericID" />
 
