@@ -25,7 +25,7 @@
     <field name="index_date"              type="Date" stored="true" default="NOW" multiValued="false" />
 
     <!-- Verbünde mit Bestand. -->
-    <field name="consortium"              type="Facet" required="true" />
+    <field name="consortium"              type="FacetPlus" required="true" />
 
     <!-- Aggregierte Verfügbarkeit der Exemplare in der Fernleihe. Die Eigenschaften werden dargestellt durch: -->
     <!-- die kummulative Werte 'loan', 'copy' und 'ecopy oder die exklusiven Werte: 'none' oder 'unknown' -->
@@ -100,13 +100,13 @@
     <field name="material_content_type"   type="Facet" />
     
     <!-- Materialmedium (Papier, CD, VHS, ...) -->
-    <field name="material_media_type"     type="Facet" />
+    <field name="material_media_type"     type="FacetPlus" />
 
     <!-- Erscheinungsform (Mono, Mehrbänder, Reihe, Serie, Zeitschrift, Artikel) -->
-    <field name="material_pubform"        type="Facet" />
+    <field name="material_pubform"        type="FacetPlus" />
     
     <!-- Zugriffsart (physikalisch, online) -->
-    <field name="material_access"         type="Facet" />
+    <field name="material_access"         type="FacetPlus" />
         
     <!-- IDs -->
     <!-- Intenatonale Standart Nummern (isbn, issn, ismn, ...) -->
@@ -291,6 +291,14 @@
                sortMissingLast="true" 
                indexed="true"
                stored="false" 
+               required="false"  
+               multiValued="true"
+               docValues="false"/>
+    <!-- Wie 'Facet' aber abrufbar (stored). -->
+    <fieldType name="FacetPlus" class="solr.StrField" 
+               sortMissingLast="true" 
+               indexed="true"
+               stored="true" 
                required="false"  
                multiValued="true"
                docValues="false"/>
