@@ -128,7 +128,7 @@
     <field name="eki_id"                  type="GenericID" />
     
     <!-- Deduplikationsidentifikationsnummer -->
-    <field name="dup_id"                  type="GenericID"  multiValued="false" />
+    <field name="dup_id"                  type="GenericID" stored="true" multiValued="false" />
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
