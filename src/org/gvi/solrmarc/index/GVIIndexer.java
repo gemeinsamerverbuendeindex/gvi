@@ -189,7 +189,7 @@ public class GVIIndexer extends SolrIndexer
 
     protected String findCollection()
     {
-        return System.getProperty("solrmarc.collection", "UNDEFINED");        
+        return System.getProperty("data.collection", "UNDEFINED");        
     }
     
     protected String findCatalog(Record record, String f001)
