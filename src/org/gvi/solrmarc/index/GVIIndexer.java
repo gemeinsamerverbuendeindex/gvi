@@ -29,7 +29,7 @@ public class GVIIndexer extends SolrIndexer
     final private Map<String, String> institutionToConsortiumMap;
     final private Map<String, String> kobvInstitutionReplacementMap;
     private String recordId;
-    private String catalogId;
+    private String catalog;
     private String collection;
     private Set<String> institutionSet = new LinkedHashSet<>();
     private Set<String> consortium = new LinkedHashSet<>();
@@ -156,9 +156,9 @@ public class GVIIndexer extends SolrIndexer
         return collection;
     }
     
-    public String getCatalogID(final Record record)
+    public String getCatalog(final Record record)
     {
-        return catalogId;
+        return catalog;
     }
 
     public Set<String> getConsortium(final Record record)
@@ -180,10 +180,10 @@ public class GVIIndexer extends SolrIndexer
     protected void perRecordInit(Record record)
     {
         String f001 = getFirstFieldVal(record, "001");
-        catalogId = findCatalogId(record, f001);
-        recordId = "(" + catalogId + ")" + f001;
-        institutionSet = findInstitutionID(record, catalogId);
-        consortium = findConsortium(record, catalogId, institutionSet, institutionToConsortiumMap);
+        catalog = findCatalog(record, f001);
+        recordId = "(" + catalog + ")" + f001;
+        institutionSet = findInstitutionID(record, catalog);
+        consortium = findConsortium(record, catalog, institutionSet, institutionToConsortiumMap);
         collection = findCollection();
     }
 
@@ -192,9 +192,9 @@ public class GVIIndexer extends SolrIndexer
         return System.getProperty("solrmarc.collection", "UNDEFINED");        
     }
     
-    protected String findCatalogId(Record record, String f001)
+    protected String findCatalog(Record record, String f001)
     {
-        // guess catalogId
+        // guess catalog
         String field003 = getFirstFieldVal(record, "003");
         String field040a = getFirstFieldVal(record, "040a");
         if (field003 != null)
@@ -203,21 +203,21 @@ public class GVIIndexer extends SolrIndexer
             {
                 field003 = field003.substring(0, 6);
             }
-            catalogId = field003;
+            catalog = field003;
         }
         else if (field040a != null)
         {
-            catalogId = field040a;
+            catalog = field040a;
         }
         else if (f001 != null && f001.startsWith("BV"))
         {
-            catalogId = "DE-604";
+            catalog = "DE-604";
         }
         else
         {
-            catalogId = "UNDEFINED";
+            catalog = "UNDEFINED";
         }
-        return catalogId;
+        return catalog;
     }
 
     protected boolean isDnbZdbRecord(Record record)
@@ -315,12 +315,12 @@ public class GVIIndexer extends SolrIndexer
     }
 
     protected Set<String> findConsortium(Record record,
-                                         String catalogId,
+                                         String catalog,
                                          Set<String> institutionSet,
                                          Map<String, String> institutionToConsortiumMap)
     {
         Set<String> consortiumSet = new HashSet<>();
-        switch (catalogId)
+        switch (catalog)
         {
             case "DE-101":  // DNB
                 if (isDnbZdbRecord(record))
@@ -329,27 +329,27 @@ public class GVIIndexer extends SolrIndexer
                 }
                 else
                 {
-                    consortiumSet.add(catalogId);
+                    consortiumSet.add(catalog);
                 }
                 break;
             case "DE-600":  // ZDB
-                consortiumSet.add(catalogId);
+                consortiumSet.add(catalog);
                 break;
             case "DE-576": // SWB
-                consortiumSet.add(catalogId);
+                consortiumSet.add(catalog);
                 break;
             case "DE-601": // GBV+KOBV+ZDB
-                consortiumSet.addAll(findConsortiumByInstitution(catalogId, institutionSet, institutionToConsortiumMap));
+                consortiumSet.addAll(findConsortiumByInstitution(catalog, institutionSet, institutionToConsortiumMap));
                 break;
             case "DE-603":  // HEBIS
-                consortiumSet.add(catalogId);
+                consortiumSet.add(catalog);
                 break;
             case "DE-605":  // HBZ
-                consortiumSet.add(catalogId);
+                consortiumSet.add(catalog);
                 break;
             case "DE-602": //KOBV
             case "DE-604": // BVB+KOBV
-                consortiumSet.add(catalogId);
+                consortiumSet.add(catalog);
                 consortiumSet.addAll(getFieldList(record, "040a"));
                 break;
             default:
@@ -359,7 +359,7 @@ public class GVIIndexer extends SolrIndexer
         return consortiumSet;
     }
 
-    protected Set<String> findConsortiumByInstitution(String defaultCatalogId,
+    protected Set<String> findConsortiumByInstitution(String defaultCatalog,
                                                       Set<String> institutionSet,
                                                       Map<String, String> institutionToConsortiumMap)
     {
@@ -376,7 +376,7 @@ public class GVIIndexer extends SolrIndexer
         if (institutionSet.isEmpty()
             || institutionSet.size() > numOtherConsortium)
         {
-            consortiumSet.add(defaultCatalogId);
+            consortiumSet.add(defaultCatalog);
         }
         return consortiumSet;
     }
