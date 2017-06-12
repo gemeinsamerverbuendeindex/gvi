@@ -30,6 +30,7 @@ public class GVIIndexer extends SolrIndexer
     final private Map<String, String> kobvInstitutionReplacementMap;
     private String recordId;
     private String catalogId;
+    private String collection;
     private Set<String> institutionSet = new LinkedHashSet<>();
     private Set<String> consortium = new LinkedHashSet<>();
 
@@ -150,6 +151,11 @@ public class GVIIndexer extends SolrIndexer
         return productYears;
     }
     
+    public String getCollection(final Record record)
+    {
+        return collection;
+    }
+    
     public String getCatalogID(final Record record)
     {
         return catalogId;
@@ -178,8 +184,14 @@ public class GVIIndexer extends SolrIndexer
         recordId = "(" + catalogId + ")" + f001;
         institutionSet = findInstitutionID(record, catalogId);
         consortium = findConsortium(record, catalogId, institutionSet, institutionToConsortiumMap);
+        collection = findCollection();
     }
 
+    protected String findCollection()
+    {
+        return System.getProperty("solrmarc.collection", "UNDEFINED");        
+    }
+    
     protected String findCatalogId(Record record, String f001)
     {
         // guess catalogId
