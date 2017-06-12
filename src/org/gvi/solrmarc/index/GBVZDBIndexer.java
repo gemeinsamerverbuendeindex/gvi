@@ -20,7 +20,7 @@ public class GBVZDBIndexer extends GVIIndexer
     }
 
     @Override
-    protected boolean isGbvZdbRecord(Record record)
+    protected boolean isDnbZdbRecord(Record record)
     {
         return true;
     }
