@@ -15,8 +15,11 @@
     <field name="id"                      type="string" stored="true" required="true" multiValued="false" />
     
     <!-- Eindeutige Kennung des Datenlieferanten (unabhängig von consortium) -->
-    <field name="catalog_id"              type="string" stored="true" required="true" multiValued="false" />
+    <field name="catalog"                 type="FacetPlus" required="true" multiValued="false" />
 
+    <!-- Eindeutige Kennung der Datensets. Beispiel: catalog=DE-101, collection=ZDB oder collection=DNB --> 
+    <field name="collection"              type="FacetPlus" required="true" multiValued="false" />
+    
     <!-- Bezeichner des Datentyps im primären Datencontainer. Bei GVI immer 'gvimarc', da wir einen eigenen RecordDriver dafür benötigen. -->
     <field name="recordtype"              type="UnIndexed" default="gvimarc" multiValued="false" />
 
@@ -119,8 +122,11 @@
     <field name="zdb_id"                  type="ZDBID" />
     
     <!-- Produktsigel -->
-    <field name="product_id"              type="ZDBID" />
-    
+    <field name="product_id"              type="ZDBID" multiValued="true"/>
+
+    <!-- Produktlizenzjahr -->
+    <field name="product_year"            type="Year"  multiValued="true"/>
+        
     <!-- Andere Kennumern und URIs (zdbn, olcn, doi, urn, ...) -->
     <field name="other_id"                type="GenericID" />
 
@@ -225,9 +231,22 @@
     <!-- ID, die z.B zum übergeordneten Werk zeigt. Dient der Anzeige der Bände.
          Verlinkt aber natürlich nur innerhalb des Subsets eines Verbundes.
     -->
-    <field name="id_related"                type="string" />
-    
-    
+    <field name="id_related"                     type="string" />
+    <field name="id_related_main_series"         type="string" />
+    <field name="id_related_subseries"           type="string" />
+    <field name="id_related_orig_language"       type="string" />
+    <field name="id_related_translated_language" type="string" />
+    <field name="id_related_supp_edition"        type="string" />
+    <field name="id_related_supp_parent"         type="string" />
+    <field name="id_related_host_item"           type="string" />
+    <field name="id_related_constituent_unit"    type="string" />
+    <field name="id_related_other_edition"       type="string" />
+    <field name="id_related_add_phys_form"       type="string" />
+    <field name="id_related_issued_with"         type="string" />
+    <field name="id_related_preceding"           type="string" />
+    <field name="id_related_succeeding"          type="string" />
+    <field name="id_related_datasource"          type="string" />
+    <field name="id_related_other"               type="string" />
       
     <!-- 
     ###########################################
@@ -294,6 +313,7 @@
                required="false"  
                multiValued="true"
                docValues="false"/>
+    
     <!-- Wie 'Facet' aber abrufbar (stored). -->
     <fieldType name="FacetPlus" class="solr.StrField" 
                sortMissingLast="true" 
