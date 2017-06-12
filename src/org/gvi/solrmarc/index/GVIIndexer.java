@@ -130,11 +130,31 @@ public class GVIIndexer extends SolrIndexer
         return (retVal);
     }
 
+    public Set<String> getProductYear(final Record record)
+    {
+        Set<String> values912b = getFieldList(record, "912b");
+        Set<String> productYears = new HashSet<>();
+        for (String yearExpr: values912b)
+        {            
+            String yearExprs[] = yearExpr.replaceAll("[^0-9,^\\-,^\\,]", "").split(",");
+            for (String y: yearExprs)
+            {
+                String range[] = y.split("\\-",-1);
+                productYears.add(range[0]);
+                if (range.length > 1)
+                {
+                    productYears.add(range[1]);
+                }
+            }
+        }
+        return productYears;
+    }
+    
     public String getCatalogID(final Record record)
     {
         return catalogId;
     }
-    
+
     public Set<String> getConsortium(final Record record)
     {
         return consortium;
@@ -188,8 +208,8 @@ public class GVIIndexer extends SolrIndexer
         return catalogId;
     }
 
-    protected boolean isGbvZdbRecord(Record record)
-    {        
+    protected boolean isDnbZdbRecord(Record record)
+    {
         boolean isGbvZdb = false;
         /*
         List<VariableField> f016List = getFieldSetMatchingTagList(record, "016");
@@ -207,7 +227,7 @@ public class GVIIndexer extends SolrIndexer
 
             }
         }
-        */
+         */
         return isGbvZdb;
     }
 
@@ -291,7 +311,14 @@ public class GVIIndexer extends SolrIndexer
         switch (catalogId)
         {
             case "DE-101":  // DNB
-                consortiumSet.add(catalogId);
+                if (isDnbZdbRecord(record))
+                {
+                    consortiumSet.add("DE-600");
+                }
+                else
+                {
+                    consortiumSet.add(catalogId);
+                }
                 break;
             case "DE-600":  // ZDB
                 consortiumSet.add(catalogId);
@@ -300,14 +327,7 @@ public class GVIIndexer extends SolrIndexer
                 consortiumSet.add(catalogId);
                 break;
             case "DE-601": // GBV+KOBV+ZDB
-                if (isGbvZdbRecord(record))
-                {
-                     consortiumSet.add("DE-600");
-                }
-                else
-                {
-                    consortiumSet.addAll(findConsortiumByInstitution(catalogId, institutionSet, institutionToConsortiumMap));                    
-                }
+                consortiumSet.addAll(findConsortiumByInstitution(catalogId, institutionSet, institutionToConsortiumMap));
                 break;
             case "DE-603":  // HEBIS
                 consortiumSet.add(catalogId);
