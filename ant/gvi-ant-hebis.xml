@@ -14,6 +14,7 @@
         <property name="work.dir"   location="${base.dir}/update/${time.stamp}"/>
         <available property="update.available" file="${drop.dir}/gvi-update.tar"/>
         <property name="consortium" value="DE-603"/>
+        <property name="data.collection" value="HEBIS"/>
     </target>
 
     <target name="unpack-update-files" depends="init" if="update.available">
@@ -71,7 +72,7 @@
     <target name="index-all-hebis" depends="init,init-index-date-for-delete">
         <antcall target="index-full-hebis"/>
         <antcall target="index-all-updates-hebis"/>
-        <antcall target="delete-by-consortium-and-index-date"/>
+        <antcall target="delete-by-collection-and-index-date"/>
     </target>
     
     <target name="test" depends="init">

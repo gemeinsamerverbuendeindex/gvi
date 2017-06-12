@@ -6,7 +6,7 @@
     
     <import file="gvi-ant.xml"/>
 
-    <target name="download-updates-gbv">
+    <target name="download-updates-gbv" unless="gbv.skip.ftp">
         <ftp action="get"
              server="${ftp.server}"
              userid="${ftp.userid}"

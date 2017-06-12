@@ -5,8 +5,9 @@
     
     <import file="gvi-ant.xml"/>
 
-    <target name="index-full-zdb">
-      <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
+    <target name="index-full-zdb" depends="init-index-date-for-delete">
+      <solrmarc-index-dir src="${data.full.dir}"   suffix=".xml" logdir="${data.full.log.dir}"/>
+      <antcall target="delete-by-collection-and-index-date"/>
     </target>
     
 </project>

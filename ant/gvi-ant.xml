@@ -23,11 +23,11 @@
         <echo>init-index-date-for-delete (UTC): ${index-date-for-delete}</echo>
     </target>
     
-    <target name="delete-by-consortium-and-index-date">
-        <solr-delete-by-consortium-and-indexdate 
-            collection="${solr.core}"
+    <target name="delete-by-collection-and-index-date">
+        <solr-delete-by-collection-and-indexdate 
+            solr.collection="${solr.core}"
+            data.collection="${data.collection}"
             date="${index-date-for-delete}"
-            consortium="${consortium}"
             response-property="msg"/>
     </target>
         
@@ -53,10 +53,11 @@
                 output="@{logdir}/${basename}_out.log"
                 maxmemory="1G"
                 failonerror="true">
-                <sysproperty key="solr.hosturl" value="@{solr.baseurl}/@{solr.core}/update"/>
-                <sysproperty key="solr.indexer" value="@{solr.indexer}"/>
-                <sysproperty key="solrmarc.log.level" value="INFO"/>
+                <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
+                <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
+                <sysproperty key="solrmarc.log.level"      value="INFO"/>
                 <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
+                <sysproperty key="data.collection"         value="${data.collection}"/>
                 <arg value="@{solrmarc.config}"/>
                 <arg value="@{file}"/>
             </java>
@@ -86,6 +87,7 @@
                 <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
                 <sysproperty key="solrmarc.log.level"      value="INFO"/>
                 <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
+                <sysproperty key="data.collection"         value="${data.collection}"/>
                 <sysproperty key="marc.ids_to_delete"      value="@{file}"/>
                 <arg value="@{solrmarc.config}"/>
                 <arg value="NONE"/>
@@ -315,16 +317,16 @@
         </sequential>        
     </macrodef>
 
-    <macrodef name="solr-delete-by-consortium-and-indexdate">
-        <attribute name="collection"/>
-        <attribute name="consortium"/>
+    <macrodef name="solr-delete-by-collection-and-indexdate">
+        <attribute name="solr.collection"/>
+        <attribute name="data.collection"/>
         <attribute name="date"/>
         <attribute name="response-property"/>
         <sequential>
-            <property name="query" value="index_date:[* TO @{date}] AND consortium:(@{consortium})"/>
+            <property name="query" value="index_date:[* TO @{date}] AND collection:(@{data.collection})"/>
             <solr-delete-by-query 
                 query="${query}"
-                collection="@{collection}"
+                collection="@{solr.collection}"
                 response-property="@{response-property}"
             />
         </sequential>

@@ -6,7 +6,12 @@
     <import file="gvi-ant.xml"/>
 
     <target name="index-full-hbz">
-      <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
+        <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
     </target>
     
+    <target name="index-all-hbz" depends="init-index-date-for-delete">
+        <antcall target="index-full-hbz"/>
+        <antcall target="delete-by-collection-and-index-date"/>
+    </target>
+
 </project>
