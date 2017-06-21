@@ -32,8 +32,8 @@
 
     <!-- Aggregierte Verfügbarkeit der Exemplare in der Fernleihe. Die Eigenschaften werden dargestellt durch: -->
     <!-- die kummulative Werte 'loan', 'copy' und 'ecopy oder die exklusiven Werte: 'none' oder 'unknown' -->
-    <field name="ill_flag"                type="Facet" default="unknown" />
-    <field name="ill_region"              type="Facet" default="unknown" />
+    <field name="ill_flag"                type="FacetPlus" default="unknown" />
+    <field name="ill_region"              type="Facet"     default="unknown" />
       
     <!-- 
     ###########################################
