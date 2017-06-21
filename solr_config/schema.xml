@@ -599,7 +599,7 @@
                indexed="true" 
                stored="false" 
                required="false" 
-               multiValued="false"
+               multiValued="true"
         >
         <analyzer>
             <charFilter class="solr.PatternReplaceFilterFactory"
