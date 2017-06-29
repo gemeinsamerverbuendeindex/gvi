@@ -100,7 +100,7 @@
     <field name="publish_date_sort_max"   type="Year"         multiValued="false" />
     
     <!-- Materialart (Buch, eBuch, CD, Karte, Flugschrift, ...) -->
-    <field name="material_content_type"   type="Facet" />
+    <field name="material_content_type"   type="FacetPlus" />
     
     <!-- Materialmedium (Papier, CD, VHS, ...) -->
     <field name="material_media_type"     type="FacetPlus" />
