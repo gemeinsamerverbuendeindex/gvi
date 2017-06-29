@@ -629,7 +629,5 @@
     </fieldType>
 
     <uniqueKey>id</uniqueKey>
-    <defaultSearchField>allfields</defaultSearchField>
-    <solrQueryParser defaultOperator="AND" />
 </schema>
 
