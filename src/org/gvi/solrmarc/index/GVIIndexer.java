@@ -745,7 +745,7 @@ public class GVIIndexer extends SolrIndexer
         @Override
         public String toString()
         {
-            return "IllFlag." + name();
+            return name();
         }
     }
 
