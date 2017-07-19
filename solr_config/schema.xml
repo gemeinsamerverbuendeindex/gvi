@@ -187,7 +187,7 @@
     <!-- 3-Buchstabiger Sprachcode ('und' für undefiniert, wenn nicht im Titel erfasst. 
         Siehe http://www.loc.gov/marc/languages/language_code.html
     -->
-    <field name="language"                   type="Facet" default="und"/>
+    <field name="language"                   type="FacetPlus" default="und"/>
     
     <!-- Schlagworte  -->
     
