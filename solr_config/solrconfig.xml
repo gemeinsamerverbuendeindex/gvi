@@ -252,7 +252,7 @@
         </lst>
         <str name="healthcheckFile">server-enabled.txt</str>
     </requestHandler>
-
+    
     <searchComponent name="tvComponent" class="solr.TermVectorComponent" />
     <searchComponent name="terms" class="solr.TermsComponent"/>
 
