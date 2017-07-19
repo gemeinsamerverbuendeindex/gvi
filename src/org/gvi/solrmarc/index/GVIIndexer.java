@@ -16,7 +16,6 @@ import org.solrmarc.index.SolrIndexer;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Subfield;
-import org.marc4j.marc.VariableField;
 import org.solrmarc.tools.Utils;
 
 /**
@@ -136,7 +135,7 @@ public class GVIIndexer extends SolrIndexer
         Set<String> values912b = getFieldList(record, "912b");
         Set<String> productYears = new HashSet<>();
         for (String yearExpr: values912b)
-        {            
+        {
             String yearExprs[] = yearExpr.replaceAll("[^0-9,^\\-,^\\,]", "").split(",");
             for (String y: yearExprs)
             {
@@ -150,12 +149,12 @@ public class GVIIndexer extends SolrIndexer
         }
         return productYears;
     }
-    
+
     public String getCollection(final Record record)
     {
         return collection;
     }
-    
+
     public String getCatalog(final Record record)
     {
         return catalog;
@@ -189,15 +188,19 @@ public class GVIIndexer extends SolrIndexer
 
     protected String findCollection()
     {
-        return System.getProperty("data.collection", "UNDEFINED");        
+        return System.getProperty("data.collection", "UNDEFINED");
     }
-    
+
     protected String findCatalog(Record record, String f001)
     {
         // guess catalog
         String field003 = getFirstFieldVal(record, "003");
         String field040a = getFirstFieldVal(record, "040a");
-        if (field003 != null)
+        if (collection.equals("ZDB"))
+        {
+            catalog = "DE-600";
+        }
+        else if (field003 != null)
         {
             if (field003.length() > 6)
             {
@@ -218,29 +221,6 @@ public class GVIIndexer extends SolrIndexer
             catalog = "UNDEFINED";
         }
         return catalog;
-    }
-
-    protected boolean isDnbZdbRecord(Record record)
-    {
-        boolean isGbvZdb = false;
-        /*
-        List<VariableField> f016List = getFieldSetMatchingTagList(record, "016");
-        if (!f016List.isEmpty())
-        {
-            for (VariableField f : f016List)
-            {
-                DataField d = (DataField) f;
-                Subfield s = d.getSubfield('2');
-                if (s != null && s.getData() != null && s.getData().equals("DE-600"))
-                {
-                    isGbvZdb = true;
-                    break;
-                }
-
-            }
-        }
-         */
-        return isGbvZdb;
     }
 
     protected Set<String> getKobvInstitutions(Record record)
@@ -323,7 +303,7 @@ public class GVIIndexer extends SolrIndexer
         switch (catalog)
         {
             case "DE-101":  // DNB
-                if (isDnbZdbRecord(record))
+                if (collection.equals("ZDB"))
                 {
                     consortiumSet.add("DE-600");
                 }
@@ -567,7 +547,7 @@ public class GVIIndexer extends SolrIndexer
             if (accessCode.length() > 1 && "cr".equals(accessCode.substring(0, 2))
                 || (data856 != null && data856.getIndicator1() == '4' && data856.getIndicator1() == '0'))
             {
-                result.add("material_access.online");
+                result.add("Online");
                 //check 856 field again
                 if (data856 != null)
                 {
@@ -577,7 +557,7 @@ public class GVIIndexer extends SolrIndexer
                         String note = noteField.getData();
                         if (note != null && note.matches("[Kk]ostenfrei"))
                         {
-                            result.add("material_access.online_kostenfrei");
+                            result.add("Online Kostenfrei");
                         }
                     }
                 }
@@ -586,7 +566,7 @@ public class GVIIndexer extends SolrIndexer
 
         if (result.isEmpty())
         {
-            result.add("material_access.physical");
+            result.add("Physical");
         }
 
         return result;
