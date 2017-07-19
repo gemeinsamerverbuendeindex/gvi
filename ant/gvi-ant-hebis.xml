@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="init" name="GVI HeBIS Jenkins">
     
+    <property file="gvi-ant-hebis.properties"/>
+    
     <import file="gvi-ant.xml"/>
 
     <!-- Die Variablen definieren. -->
@@ -13,8 +15,6 @@
         <property name="drop.dir"   location="${base.dir}/update/dropin"/>
         <property name="work.dir"   location="${base.dir}/update/${time.stamp}"/>
         <available property="update.available" file="${drop.dir}/gvi-update.tar"/>
-        <property name="consortium" value="DE-603"/>
-        <property name="data.collection" value="HEBIS"/>
     </target>
 
     <target name="unpack-update-files" depends="init" if="update.available">

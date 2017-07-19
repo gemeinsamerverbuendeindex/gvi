@@ -61,7 +61,7 @@
         <antcall target="index-full-gbv"/>
         <antcall target="index-all-updates-gbv"/>
         <antcall target="delete-all-updates-gbv"/>
-        <antcall target="delete-by-consortium-and-index-date"/>
+        <antcall target="delete-by-collection-and-index-date"/>
     </target>
 
     <macrodef name="solrmarc-index-dir-gbv">
