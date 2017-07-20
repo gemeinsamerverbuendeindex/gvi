@@ -178,12 +178,12 @@ public class GVIIndexer extends SolrIndexer
     @Override
     protected void perRecordInit(Record record)
     {
+        collection = findCollection();
         String f001 = getFirstFieldVal(record, "001");
         catalog = findCatalog(record, f001);
         recordId = "(" + catalog + ")" + f001;
         institutionSet = findInstitutionID(record, catalog);
         consortium = findConsortium(record, catalog, institutionSet, institutionToConsortiumMap);
-        collection = findCollection();
     }
 
     protected String findCollection()
