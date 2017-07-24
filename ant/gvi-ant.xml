@@ -72,26 +72,34 @@
         <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
         <attribute name="solr.core"       default="${solr.core}"/>
         <sequential>
-            <var name="basename" unset="true"/>	   
-            <basename property="basename" file="@{file}" suffix=".txt"/>
-            <echo>Deleting from Index @{file}</echo>
-            <java 
-                jar="${solrmarc.dist.path}/SolrMarc.jar"
-                fork="true" 
-                dir="${solrmarc.dist.path}"
-                error="@{logdir}/${basename}_err.log"
-                output="@{logdir}/${basename}_out.log"
-                maxmemory="1G"
-                failonerror="true">
-                <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
-                <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
-                <sysproperty key="solrmarc.log.level"      value="INFO"/>
-                <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
-                <sysproperty key="data.collection"         value="${data.collection}"/>
-                <sysproperty key="marc.ids_to_delete"      value="@{file}"/>
-                <arg value="@{solrmarc.config}"/>
-                <arg value="NONE"/>
-            </java>
+            <condition property="fileSizeGreaterNull">
+                <length file="@{file}" when="greater" length="0" />                
+            </condition>
+            <if>
+                <equals arg1="${fileSizeGreaterNull}" arg2="true"/>
+                <then>                    
+                    <var name="basename" unset="true"/>	   
+                    <basename property="basename" file="@{file}" suffix=".txt"/>
+                    <echo>Deleting from Index @{file}</echo>
+                    <java 
+                        jar="${solrmarc.dist.path}/SolrMarc.jar"
+                        fork="true" 
+                        dir="${solrmarc.dist.path}"
+                        error="@{logdir}/${basename}_err.log"
+                        output="@{logdir}/${basename}_out.log"
+                        maxmemory="1G"
+                        failonerror="true">
+                        <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
+                        <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
+                        <sysproperty key="solrmarc.log.level"      value="INFO"/>
+                        <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
+                        <sysproperty key="data.collection"         value="${data.collection}"/>
+                        <sysproperty key="marc.ids_to_delete"      value="@{file}"/>
+                        <arg value="@{solrmarc.config}"/>
+                        <arg value="NONE"/>
+                    </java>
+                </then>  
+            </if>
         </sequential>
     </macrodef>
     
