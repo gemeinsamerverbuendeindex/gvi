@@ -35,6 +35,8 @@
             <maxTime>${solr.autoSoftCommit.maxTime:600000}</maxTime>
         </autoSoftCommit>
     </updateHandler>
+    
+    <queryParser name="xmlparser" class="solr.ExtendedDismaxQParserPlugin" />
 
     <query>
         <maxBooleanClauses>1024</maxBooleanClauses>
