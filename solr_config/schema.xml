@@ -584,19 +584,19 @@
         <analyzer  type="index">
             <!-- Normalize 'X' to 'x -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="(X)" replacement="x" />
+                    pattern="X" replacement="x" />
             <!-- Remove all unneeded (incl. '-') -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="([^0-9x])" replacement="" />
+                    pattern="[^0-9x]" replacement="" />
             <tokenizer class="solr.WhitespaceTokenizerFactory" />
         </analyzer>
         <analyzer  type="query">
             <!-- Normalize 'X' to 'x -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="(X)" replacement="x" />
+                    pattern="X" replacement="x" />
             <!-- Remove separators '-' -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="(-)" replacement="" />
+                    pattern="-" replacement="" />
             <tokenizer class="solr.WhitespaceTokenizerFactory" />
         </analyzer>
     </fieldType>
