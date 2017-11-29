@@ -5,13 +5,160 @@
     
     <import file="gvi-ant.xml"/>
 
-    <target name="index-full-hbz">
-        <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
+     <target name="init">
+        <tstamp>
+          <format property="date.dir" pattern="yyyy-MM-dd"/>
+        </tstamp>
+        <tstamp>
+            <format property="date.download" pattern="YYYYMMdd" offset="-1" unit="day"/>
+        </tstamp>
+        <property name="data.update.dir"      location="${data.update.base.dir}/${date.dir}"/>
+        <property name="data.update.work.dir" location="${data.update.dir}/work"/>
+        <property name="data.update.log.dir"  location="${data.update.dir}/log"/>
+    </target>
+
+    <target name="download-updates-hbz" depends="init" unless="hbz.skip.ftp">
+        <echo>Checking updates for ${date.download}</echo>
+        <ftp action="get"
+             server="${ftp.server}"
+             userid="${ftp.userid}"
+             password="${ftp.password}"
+             remotedir="${ftp.remotedir}"
+             verbose="true"
+             newer="true"
+             preservelastmodified="true">
+            <fileset dir="${data.update.dir}">
+                <include name="*.gvi.i.*.mrc.gz"/>
+                <include name="*.gvi.d.*.lst.gz"/>
+            </fileset>
+        </ftp>
+        <available property="updates.found" file="${data.update.dir}"/>
     </target>
     
-    <target name="index-all-hbz" depends="init-index-date-for-delete">
+    <target name="index-new-updates-hbz" depends="download-updates-hbz" if="updates.found">
+        <solrmarc-index-dir-hbz src="${data.update.dir}" 
+                                dest="${data.update.work.dir}" 
+                                logdir="${data.update.log.dir}" 
+                                includeAll="false"/>
+        <solrmarc-delete-dir-hbz src="${data.update.dir}" 
+                                 dest="${data.update.work.dir}" 
+                                 logdir="${data.update.log.dir}" 
+                                 includeAll="false"/>
+    </target>
+
+    <target name="index-all-updates-hbz" depends="init">
+        <for param="dir">
+            <path>
+                <dirset dir="${data.update.base.dir}" includes="*"/>
+            </path>
+            <sequential>
+                <echo>Datadir @{dir}</echo>
+                <delete>
+                    <fileset dir="@{dir}/log" includes="*.log" erroronmissingdir="false"/>
+                </delete>
+                <solrmarc-index-dir-hbz  src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>
+                <solrmarc-delete-dir-hbz src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>                
+            </sequential>
+        </for>
+    </target>
+    
+    <target name="index-full-hbz" depends="init">
+        <delete>
+            <fileset dir="${data.full.log.dir}" includes="*.log" erroronmissingdir="false"/>
+        </delete>
+        <solrmarc-index-dir-hbz src="${data.full.dir}" 
+                                dest="${data.full.work.dir}" 
+                                logdir="${data.full.log.dir}" 
+                                includeAll="true"/> 
+    </target>
+    
+    <target name="index-all-hbz" depends="init,init-index-date-for-delete">
         <antcall target="index-full-hbz"/>
+        <antcall target="index-all-updates-hbz"/>
         <antcall target="delete-by-collection-and-index-date"/>
     </target>
+
+    <macrodef name="solrmarc-index-dir-hbz">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="includeAll" default="false"/>
+        <sequential>
+            <mkdir dir="@{dest}"/>
+            <mkdir dir="@{logdir}"/>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}">
+                        <include name="*.gvi.f.mrc.gz"/>
+                        <include name="*.gvi.i.*.mrc.gz"/>
+                    </fileset>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".mrc.gz"/>
+                    <echo>Basename=${basename}</echo>
+                    <var name="is_mrc_avaliable" unset="true"/>
+                    <available property="is_mrc_avaliable" file="@{dest}/${basename}.mrc"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_mrc_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <gunzip src="@{filename}" dest="@{dest}/${basename}.mrc"/>
+                            <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/>   
+                        </then>
+                        <else>
+                            <if>
+                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <then>
+                                    <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/> 
+                                </then>
+                            </if>
+                        </else>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="solrmarc-delete-dir-hbz">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="includeAll" default="false"/>
+        <sequential>
+            <mkdir dir="@{dest}"/>
+            <mkdir dir="@{logdir}"/>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}" includes="*.gvi.d.*.lst.gz"/>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".lst.gz"/>
+                    <echo>Basename=${basename}</echo>
+                    <var name="is_del_avaliable" unset="true"/>
+                    <available property="is_del_avaliable" file="@{dest}/${basename}.lst"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_del_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <gunzip src="@{filename}" dest="@{dest}/${basename}.lst"/>
+                            <solrmarc-delete-file file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
+                        </then>
+                        <else>
+                            <if>
+                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <then>
+                                    <solrmarc-delete-file file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
+                                </then>
+                            </if>
+                        </else>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
 
 </project>
