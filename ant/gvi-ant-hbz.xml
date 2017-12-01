@@ -6,9 +6,9 @@
     
     <import file="gvi-ant.xml"/>
 
-     <target name="init">
+    <target name="init">
         <tstamp>
-          <format property="date.dir" pattern="yyyy-MM-dd"/>
+            <format property="date.dir" pattern="yyyy-MM-dd"/>
         </tstamp>
         <tstamp>
             <format property="date.download" pattern="YYYYMMdd" offset="-1" unit="day"/>
@@ -29,8 +29,8 @@
              newer="true"
              preservelastmodified="true">
             <fileset dir="${data.update.dir}">
-                <include name="*.gvi.i.*.mrc.gz"/>
-                <include name="*.gvi.d.*.lst.gz"/>
+                <include name="${date.download}.gvi.i.*.mrc.gz"/>
+                <include name="${date.download}.gvi.d.*.lst.gz"/>
             </fileset>
         </ftp>
         <available property="updates.found" file="${data.update.dir}"/>
@@ -146,13 +146,13 @@
                         </not>
                         <then>
                             <gunzip src="@{filename}" dest="@{dest}/${basename}.lst"/>
-                            <solrmarc-delete-file file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
+                            <solr-delete-file-hbz file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
                         </then>
                         <else>
                             <if>
                                 <equals arg1="@{includeAll}" arg2="true"/>
                                 <then>
-                                    <solrmarc-delete-file file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
+                                    <solr-delete-file-hbz file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
                                 </then>
                             </if>
                         </else>
@@ -161,5 +161,62 @@
             </for>
         </sequential>
     </macrodef>
+    
+    <macrodef name="solr-delete-file-hbz" description="Delete records by other_id" >
+        <attribute name="file"/>
+        <attribute name="logdir"/>
+        <attribute name="solrmarc.config" default="${solrmarc.config}"/> 
+        <attribute name="solr.indexer"    default="${solr.indexer}"/>
+        <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
+        <attribute name="solr.core"       default="${solr.core}"/>
+        <sequential>
+            <condition property="fileSizeGreaterNull">
+                <length file="@{file}" when="greater" length="0" />                
+            </condition>
+            <if>
+                <equals arg1="${fileSizeGreaterNull}" arg2="true"/>
+                <then>                    
+                    <var name="basename" unset="true"/>	   
+                    <basename property="basename" file="@{file}" suffix=".txt"/>
+                    <echo>Deleting from Index @{file}</echo>
+                    <build-delete-by-query-file src="@{file}" dest="@{file}.batch"/>
+                    <solr-exec-batch file="@{file}.batch" response-property="msg"/>
+                    <echo>Solr Result: ${msg}</echo>
+                    <delete file="@{file}.batch"/>
+                </then>  
+            </if>
+        </sequential>
+    </macrodef>
 
+    <macrodef name="build-delete-by-query-file">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <sequential>
+            <concat destfile="@{dest}.tmp">
+                <path path="@{src}"/>
+                <filterchain>
+                    <tokenfilter>
+                        <replacestring from="(DE-605)" to="other_id:\(DE-605\)"/>
+                        <trim/>
+                    </tokenfilter>
+                    <prefixlines prefix="&lt;query>"/>
+                    <suffixlines suffix="&lt;/query>"/>    
+                </filterchain>
+            </concat>
+            <concat destfile="@{dest}">
+                <path path="@{dest}.tmp"/>
+                <header>&lt;delete>
+                </header>
+                <footer>&lt;/delete>
+                </footer>
+                <filterchain>
+                    <tokenfilter>
+                        <trim/>
+                    </tokenfilter>
+                </filterchain>
+            </concat>
+            <delete file="@{dest}.tmp"/>
+        </sequential>
+    </macrodef>
+    
 </project>
