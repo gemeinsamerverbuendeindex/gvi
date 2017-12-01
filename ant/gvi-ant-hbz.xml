@@ -182,7 +182,6 @@
                     <build-delete-by-query-file src="@{file}" dest="@{file}.batch"/>
                     <solr-exec-batch file="@{file}.batch" response-property="msg"/>
                     <echo>Solr Result: ${msg}</echo>
-                    <delete file="@{file}.batch"/>
                 </then>  
             </if>
         </sequential>
@@ -205,7 +204,8 @@
             </concat>
             <concat destfile="@{dest}">
                 <path path="@{dest}.tmp"/>
-                <header>&lt;delete>
+                <header>&lt;?xml version="1.0" encoding="UTF-8"?>
+                &lt;delete>
                 </header>
                 <footer>&lt;/delete>
                 </footer>
