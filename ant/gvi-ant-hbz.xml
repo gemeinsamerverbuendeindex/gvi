@@ -11,7 +11,7 @@
             <format property="date.dir" pattern="yyyy-MM-dd"/>
         </tstamp>
         <tstamp>
-            <format property="date.download" pattern="YYYYMMdd" offset="-1" unit="day"/>
+            <format property="date.download" pattern="YYYYMMdd" unit="day"/>
         </tstamp>
         <property name="data.update.dir"      location="${data.update.base.dir}/${date.dir}"/>
         <property name="data.update.work.dir" location="${data.update.dir}/work"/>
