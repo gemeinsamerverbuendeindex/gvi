@@ -77,7 +77,9 @@ public class GVIIndexer extends SolrIndexer
          }
          if (normdata == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
          result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
-         for (String alias : normdata.synonyms) { // Synonyme übernehmen
+         if (normdata.synonyms == null) continue;
+         for (String alias : normdata.synonyms) {
+            // Synonyme übernehmen            
             result.add(alias);
          }
       }
