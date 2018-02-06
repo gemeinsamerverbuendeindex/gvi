@@ -140,10 +140,15 @@ public class GVIIndexer extends SolrIndexer
             for (String y: yearExprs)
             {
                 String range[] = y.split("\\-",-1);
-                productYears.add(range[0]);
+                String year = Utils.cleanDate(range[0]);
+                if (year != null)
+                    productYears.add(year); 
+                
                 if (range.length > 1)
                 {
-                    productYears.add(range[1]);
+                    year = Utils.cleanDate(range[1]);
+                    if (year != null)
+                        productYears.add(year); 
                 }
             }
         }
