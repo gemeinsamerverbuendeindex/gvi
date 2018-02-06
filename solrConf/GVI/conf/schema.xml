@@ -58,10 +58,7 @@
     <field name="author_sort"             type="string_lc" multiValued="false" />
     
     <!-- Alle Angaben mit Synonymen fehlertolerant aufgearbeitet. -->
-    <field name="author_norm"             type="text_fuzzy_p" />
-    
-    <!-- Wie 'author_norm' aber ohne Stemming und Phonetik-->
-    <field name="author_norm_unstemmed"   type="text_p" />
+    <field name="author_norm"             type="text_p" />
     
     <!-- Wie 'author' aber ohne Stemming und Phonetik-->
     <field name="author_unstemmed"        type="text"/> 
@@ -142,13 +139,10 @@
     <field name="subject_all_facet"       type="Facet" />
 
     <!-- Schlagworte RSWK mit Synonymen aus GND -->
-    <field name="subject_all_norm"        type="text_fuzzy_s" />
+    <field name="subject_all_norm"        type="text" />
     
     <!-- Schlagworte RSWK -->
     <field name="subject_all_unstemmed"   type="text" />
-    
-    <!-- Schlagworte RSWK mit Synonymen aus GND -->
-    <field name="subject_all_norm_unstemmed"  type="text_s"       />
     
     <!-- Regensburger Verbund Klassifikation vollständig und erste drei Zeichen -->
     <field name="rvk"                     type="string_lc" />
@@ -263,7 +257,6 @@
     <copyField source="author"            dest="author_unstemmed" />
     <copyField source="author"            dest="author_phrase" />
     <copyField source="author"            dest="author_norm" />
-    <copyField source="author"            dest="author_norm_unstemmed" />
     <copyField source="author"            dest="author_norm_phrase" />
     
     <copyField source="title"             dest="title_unstemmed" />
@@ -281,7 +274,6 @@
     <copyField source="subject_*"         dest="subject_all_facet" />
     <copyField source="subject_*"         dest="subject_all_unstemmed" />
     <copyField source="subject_*"         dest="subject_all_norm" />
-    <copyField source="subject_*"         dest="subject_all_norm_unstemmed" />
 
     <!-- 
     ###########################################
