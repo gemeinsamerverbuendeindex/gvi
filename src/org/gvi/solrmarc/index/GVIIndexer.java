@@ -68,6 +68,8 @@ public class GVIIndexer extends SolrIndexer
         materialart+nachname erster autor+komprimierter titel
          */
         GetFormatMixin formatMixin = new GetFormatMixin();
+        formatMixin.setMainIndexer(this);
+        
         Set<String> contentTypes = formatMixin.getContentTypes(record);
         StringBuilder matchkey = new StringBuilder();
         if (contentTypes.contains("Book"))
