@@ -27,6 +27,9 @@ import de.hebis.it.hds.gnd.out.AuthorityBean;
 import de.hebis.it.hds.gnd.out.AuthorityRecordException;
 import de.hebis.it.hds.gnd.out.AutorityRecordFileFinder;
 import de.hebis.it.hds.tools.marc.MarcWrapper;
+import org.gvi.solrmarc.normalizer.IFieldSingleValueNormalizer;
+import org.gvi.solrmarc.normalizer.impl.PunctuationSingleNormalizer;
+import org.solrmarc.index.GetFormatMixin;
 
 /**
  *
@@ -46,7 +49,8 @@ public class GVIIndexer extends SolrIndexer
     
     private static final Logger       LOG            = LogManager.getLogger(Loader.class);
     private AutorityRecordFileFinder      gndFinder      = new AutorityRecordFileFinder();
- 
+    private PunctuationSingleNormalizer punctuationSingleNormalizer = new PunctuationSingleNormalizer();
+
     public GVIIndexer(String indexingPropsFile, String[] propertyDirs)
     {
         super(indexingPropsFile, propertyDirs);
@@ -58,6 +62,59 @@ public class GVIIndexer extends SolrIndexer
        super(null, null); 
     }
 
+    public String matchkeyMaterialAuthorTitle (Record record)
+    {
+        /*
+        materialart+nachname erster autor+komprimierter titel
+         */
+        GetFormatMixin formatMixin = new GetFormatMixin();
+        Set<String> contentTypes = formatMixin.getContentTypes(record);
+        StringBuilder matchkey = new StringBuilder();
+        if (contentTypes.contains("Book"))
+            matchkey.append("b");
+        else if (contentTypes.contains("Article"))
+            matchkey.append("a");
+        else if (contentTypes.contains("Journal/Magazine"))
+            matchkey.append("j");
+        else
+            matchkey.append("u");
+                
+        String firstAuthor = getFirstFieldVal(record, "100a");
+        if (firstAuthor != null)
+        {
+            matchkey.append(firstAuthor.split("[, ]+")[0].toLowerCase());
+        }        
+        
+        String title = getFirstFieldVal(record, "245a");
+        if (title != null)
+        {
+            title = punctuationSingleNormalizer.normalize(title);
+            String[] words = title.split(" ");
+            int maxWord = Math.min(5, words.length);
+            for (int i=0; i<maxWord; i++)
+                matchkey.append(words[i]);
+        }
+                
+        return matchkey.toString();
+    }
+    
+    public String matchkeyMaterialAuthorTitlePublisherYear (Record record)
+    {
+        StringBuilder matchkey = new StringBuilder(matchkeyMaterialAuthorTitle(record));
+        
+        String publisher = getFirstFieldVal(record, "260b:264b");
+        if (publisher != null)
+        {
+            publisher = punctuationSingleNormalizer.normalize(publisher);
+            matchkey.append(publisher.split(" ")[0]);
+        }
+     
+        String year = getDate26xc(record);
+        matchkey.append(year);
+
+        return matchkey.toString();
+    }
+    
     /**
     * Beispiel für den Abruf von Titelexpansionen aus dem GND Repo
     * 
