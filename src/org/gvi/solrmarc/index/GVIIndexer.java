@@ -1,9 +1,9 @@
+package org.gvi.solrmarc.index;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.gvi.solrmarc.index;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,34 +11,78 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.marc4j.marc.ControlField;
 import org.solrmarc.index.SolrIndexer;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Subfield;
+import org.solrmarc.index.SolrIndexer;
 import org.solrmarc.tools.Utils;
+
+import de.hebis.it.hds.gnd.in.Loader;
+import de.hebis.it.hds.gnd.out.AuthorityBean;
+import de.hebis.it.hds.gnd.out.AuthorityRecordException;
+import de.hebis.it.hds.gnd.out.AutorityRecordFileFinder;
+import de.hebis.it.hds.tools.marc.MarcWrapper;
 
 /**
  *
  * @author Thomas Kirchhoff <thomas.kirchhoff@bsz-bw.de>
+ * @version 2017-06-26 uh, Synonyme aus File lesen und ergänzen
  */
 public class GVIIndexer extends SolrIndexer
 {
 
-    final private Map<String, String> institutionToConsortiumMap;
-    final private Map<String, String> kobvInstitutionReplacementMap;
+    private Map<String, String> institutionToConsortiumMap = null;
+    private Map<String, String> kobvInstitutionReplacementMap = null;
     private String recordId;
     private String catalog;
     private String collection;
     private Set<String> institutionSet = new LinkedHashSet<>();
     private Set<String> consortium = new LinkedHashSet<>();
-
+    
+    private static final Logger       LOG            = LogManager.getLogger(Loader.class);
+    private AutorityRecordFileFinder      gndFinder      = new AutorityRecordFileFinder();
+ 
     public GVIIndexer(String indexingPropsFile, String[] propertyDirs)
     {
         super(indexingPropsFile, propertyDirs);
+        gndFinder      = new AutorityRecordFileFinder();
         institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
         kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
     }
+    public GVIIndexer() {
+       super(null, null); 
+    }
+
+    /**
+    * Beispiel für den Abruf von Titelexpansionen aus dem GND Repo
+    * 
+    * @param record Der aktuelle Titeldatensatz
+    * @param tagStr Die zu untersuchenden (Sub)Felder
+    * @return ein Set mit der gefundenen Bezeichnungen
+    */
+   public Set<String> expandGnd(Record record, String tagStr) {
+      AuthorityBean normdata = null;
+      HashSet<String> result = new HashSet<>();
+      for (String testId : getFieldList(record, tagStr)) {
+         if (!testId.startsWith("(DE-588)")) continue; // nur GND nutzen
+         try {
+            normdata = gndFinder.getAuthorityBean(testId); // Normdatensatz suchen
+         } catch (AuthorityRecordException e) {
+            LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
+         }
+         if (normdata == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
+         result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
+         for (String alias : normdata.synonyms) { // Synonyme übernehmen
+            result.add(alias);
+         }
+      }
+      return result;
+   }
 
     /**
      * Return the date in 260c/264c as a string
@@ -925,4 +969,18 @@ public class GVIIndexer extends SolrIndexer
             return value;
         }
     }
+    
+    /**
+     * Poor mens test of {@link #expandGnd(Record, String)}
+    * @param args
+    */
+   public static void main (String[] args) {
+      // Testtitel zu Werk von Goethe (DE-588)118540238 
+      String testTitel = "00475cam a2200157 ca4500001001000000003000700010005001700017006001900034008004100053035002500094040003900119041000800158100008100166245003800247264003200285#30;36411536X#30;DE-603#30;20150917230906.0#30;a          u00  u #30;150917s        xx           u00  u ger c#30;  #31;a(DE-599)HEB36411536X#30;  #31;aDE-603#31;bger#31;cDE-603#31;dDE-603#31;erakwb#30;  #31;ager#30;1 #31;0(DE-588)118540238#31;0(DE-603)086881264#31;aGoethe, Johann Wolfgang von#31;d1749-1832#30;00#31;aWerke#31;cJohann Wolfgang von Goethe#30; 1#31;aMünchen#31;bArtemis &amp; Winkler#30;#29;";
+      GVIIndexer me = new GVIIndexer();
+      Record test = MarcWrapper.string2Marc(testTitel);
+      Set<String> synonyms = me.expandGnd(test, "1000");
+      if (synonyms.isEmpty()) System.err.print("Keine Normdaten zu (DE-588)118540238 gefunden.");
+      for (String out : synonyms) System.out.println(" > " + out);  
+}
 }
