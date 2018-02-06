@@ -1,4 +1,5 @@
 package org.gvi.solrmarc.index;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -38,7 +39,7 @@ import org.solrmarc.index.GetFormatMixin;
  */
 public class GVIIndexer extends SolrIndexer
 {
-
+    
     private Map<String, String> institutionToConsortiumMap = null;
     private Map<String, String> kobvInstitutionReplacementMap = null;
     private String recordId;
@@ -47,22 +48,24 @@ public class GVIIndexer extends SolrIndexer
     private Set<String> institutionSet = new LinkedHashSet<>();
     private Set<String> consortium = new LinkedHashSet<>();
     
-    private static final Logger       LOG            = LogManager.getLogger(Loader.class);
-    private AutorityRecordFileFinder      gndFinder      = new AutorityRecordFileFinder();
+    private static final Logger LOG = LogManager.getLogger(Loader.class);
+    private AutorityRecordFileFinder gndFinder = new AutorityRecordFileFinder();
     private PunctuationSingleNormalizer punctuationSingleNormalizer = new PunctuationSingleNormalizer();
-
+    
     public GVIIndexer(String indexingPropsFile, String[] propertyDirs)
     {
         super(indexingPropsFile, propertyDirs);
-        gndFinder      = new AutorityRecordFileFinder();
+        gndFinder = new AutorityRecordFileFinder();
         institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
         kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
     }
-    public GVIIndexer() {
-       super(null, null); 
-    }
 
-    public String matchkeyMaterialAuthorTitle (Record record)
+    public GVIIndexer()
+    {
+        super(null, null);        
+    }
+    
+    public String matchkeyMaterialAuthorTitle(Record record)
     {
         /*
         materialart+nachname erster autor+komprimierter titel
@@ -73,19 +76,31 @@ public class GVIIndexer extends SolrIndexer
         Set<String> contentTypes = formatMixin.getContentTypes(record);
         StringBuilder matchkey = new StringBuilder();
         if (contentTypes.contains("Book"))
+        {
             matchkey.append("b");
+        }
         else if (contentTypes.contains("Article"))
+        {
             matchkey.append("a");
+        }
         else if (contentTypes.contains("Journal/Magazine"))
+        {
             matchkey.append("j");
+        }
         else
+        {
             matchkey.append("u");
-                
+        }
+        
+        matchkey.append(":");
+        
         String firstAuthor = getFirstFieldVal(record, "100a");
         if (firstAuthor != null)
         {
             matchkey.append(firstAuthor.split("[, ]+")[0].toLowerCase());
         }        
+        
+        matchkey.append(":");
         
         String title = getFirstFieldVal(record, "245a");
         if (title != null)
@@ -93,16 +108,20 @@ public class GVIIndexer extends SolrIndexer
             title = punctuationSingleNormalizer.normalize(title);
             String[] words = title.split(" ");
             int maxWord = Math.min(5, words.length);
-            for (int i=0; i<maxWord; i++)
+            for (int i = 0; i < maxWord; i++)
+            {
                 matchkey.append(words[i]);
+            }
         }
-                
+        
         return matchkey.toString();
     }
     
-    public String matchkeyMaterialAuthorTitlePublisherYear (Record record)
+    public String matchkeyMaterialAuthorTitlePublisherYear(Record record)
     {
         StringBuilder matchkey = new StringBuilder(matchkeyMaterialAuthorTitle(record));
+        
+        matchkey.append(":");
         
         String publisher = getFirstFieldVal(record, "260b:264b");
         if (publisher != null)
@@ -110,40 +129,58 @@ public class GVIIndexer extends SolrIndexer
             publisher = punctuationSingleNormalizer.normalize(publisher);
             matchkey.append(publisher.split(" ")[0]);
         }
-     
+        
+        matchkey.append(":");
+        
         String year = getDate26xc(record);
-        matchkey.append(year);
-
+        if (year != null)
+            matchkey.append(year);
+        
         return matchkey.toString();
     }
-    
+
     /**
-    * Beispiel für den Abruf von Titelexpansionen aus dem GND Repo
-    * 
-    * @param record Der aktuelle Titeldatensatz
-    * @param tagStr Die zu untersuchenden (Sub)Felder
-    * @return ein Set mit der gefundenen Bezeichnungen
-    */
-   public Set<String> expandGnd(Record record, String tagStr) {
-      AuthorityBean normdata = null;
-      HashSet<String> result = new HashSet<>();
-      for (String testId : getFieldList(record, tagStr)) {
-         if (!testId.startsWith("(DE-588)")) continue; // nur GND nutzen
-         try {
-            normdata = gndFinder.getAuthorityBean(testId); // Normdatensatz suchen
-         } catch (AuthorityRecordException e) {
-            LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
-         }
-         if (normdata == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
-         result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
-         if (normdata.synonyms == null) continue;
-         for (String alias : normdata.synonyms) {
-            // Synonyme übernehmen            
-            result.add(alias);
-         }
-      }
-      return result;
-   }
+     * Beispiel für den Abruf von Titelexpansionen aus dem GND Repo
+     *
+     * @param record Der aktuelle Titeldatensatz
+     * @param tagStr Die zu untersuchenden (Sub)Felder
+     * @return ein Set mit der gefundenen Bezeichnungen
+     */
+    public Set<String> expandGnd(Record record, String tagStr)
+    {
+        AuthorityBean normdata = null;
+        HashSet<String> result = new HashSet<>();
+        for (String testId : getFieldList(record, tagStr))
+        {
+            if (!testId.startsWith("(DE-588)"))
+            {
+                continue; // nur GND nutzen
+            }
+            try
+            {
+                normdata = gndFinder.getAuthorityBean(testId); // Normdatensatz suchen
+            }
+            catch (AuthorityRecordException e)
+            {
+                LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
+            }
+            if (normdata == null)
+            {
+                continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
+            }
+            result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
+            if (normdata.synonyms == null)
+            {
+                continue;
+            }
+            for (String alias : normdata.synonyms)
+            {
+                // Synonyme übernehmen            
+                result.add(alias);
+            }
+        }
+        return result;
+    }
 
     /**
      * Return the date in 260c/264c as a string
@@ -185,20 +222,20 @@ public class GVIIndexer extends SolrIndexer
         String field008 = getFirstFieldVal(record, "008");
         String pubDate26xc = getDate26xc(record);
         String pubDate26xcJustDigits = null;
-
+        
         if (pubDate26xc != null)
         {
             pubDate26xcJustDigits = pubDate26xc.replaceAll("[^0-9]", "");
         }
-
+        
         if (field008 == null || field008.length() < 16)
         {
             return (pubDate26xc);
         }
-
+        
         String field008_d1 = field008.substring(7, 11);
         String field008_d2 = field008.substring(11, 15);
-
+        
         String retVal = null;
         char dateType = field008.charAt(6);
         if (dateType == 'r' && field008_d2.equals(pubDate26xc))
@@ -234,57 +271,61 @@ public class GVIIndexer extends SolrIndexer
         }
         return (retVal);
     }
-
+    
     public Set<String> getProductYear(final Record record)
     {
         Set<String> values912b = getFieldList(record, "912b");
         Set<String> productYears = new HashSet<>();
-        for (String yearExpr: values912b)
+        for (String yearExpr : values912b)
         {
             String yearExprs[] = yearExpr.replaceAll("[^0-9,^\\-,^\\,]", "").split(",");
-            for (String y: yearExprs)
+            for (String y : yearExprs)
             {
-                String range[] = y.split("\\-",-1);
+                String range[] = y.split("\\-", -1);
                 String year = Utils.cleanDate(range[0]);
                 if (year != null)
-                    productYears.add(year); 
+                {
+                    productYears.add(year);
+                }                
                 
                 if (range.length > 1)
                 {
                     year = Utils.cleanDate(range[1]);
                     if (year != null)
-                        productYears.add(year); 
+                    {
+                        productYears.add(year);
+                    }                    
                 }
             }
         }
         return productYears;
     }
-
+    
     public String getCollection(final Record record)
     {
         return collection;
     }
-
+    
     public String getCatalog(final Record record)
     {
         return catalog;
     }
-
+    
     public Set<String> getConsortium(final Record record)
     {
         return consortium;
     }
-
+    
     public Set<String> getInstitutionID(final Record record)
     {
         return institutionSet;
     }
-
+    
     public String getRecordID(final Record record)
     {
         return recordId;
     }
-
+    
     @Override
     protected void perRecordInit(Record record)
     {
@@ -295,12 +336,12 @@ public class GVIIndexer extends SolrIndexer
         institutionSet = findInstitutionID(record, catalog);
         consortium = findConsortium(record, catalog, institutionSet, institutionToConsortiumMap);
     }
-
+    
     protected String findCollection()
     {
         return System.getProperty("data.collection", "UNDEFINED");
     }
-
+    
     protected String findCatalog(Record record, String f001)
     {
         // guess catalog
@@ -332,7 +373,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return catalog;
     }
-
+    
     protected Set<String> getKobvInstitutions(Record record)
     {
         Set<String> kobvInstitutions = new LinkedHashSet<>();
@@ -380,7 +421,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return kobvInstitutions;
     }
-
+    
     protected Set<String> findInstitutionID(Record record, String catalogId)
     {
         Set<String> institution = new LinkedHashSet<>();
@@ -403,7 +444,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return institution;
     }
-
+    
     protected Set<String> findConsortium(Record record,
                                          String catalog,
                                          Set<String> institutionSet,
@@ -448,7 +489,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return consortiumSet;
     }
-
+    
     protected Set<String> findConsortiumByInstitution(String defaultCatalog,
                                                       Set<String> institutionSet,
                                                       Map<String, String> institutionToConsortiumMap)
@@ -470,7 +511,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return consortiumSet;
     }
-
+    
     public Set<String> getTermID(Record record, String tagStr, String prefixStr, String keepPrefixStr)
     {
         boolean keepPrefix = Boolean.parseBoolean(keepPrefixStr);
@@ -505,7 +546,7 @@ public class GVIIndexer extends SolrIndexer
         if (fields != null)
         {
             Iterator iterator = fields.iterator();
-
+            
             while (iterator.hasNext())
             {
                 DataField field = (DataField) iterator.next();
@@ -565,12 +606,12 @@ public class GVIIndexer extends SolrIndexer
                 }
             }
         }
-
+        
         if (result.isEmpty())
         {
             result.add(IllFlag.Undefined.toString());
         }
-
+        
         return result;
     }
 
@@ -583,7 +624,7 @@ public class GVIIndexer extends SolrIndexer
     public Set getMaterialMedium(Record record)
     {
         Set result = new LinkedHashSet();
-
+        
         if (result.isEmpty())
         {
             result.add("UNDEFINED");
@@ -653,7 +694,7 @@ public class GVIIndexer extends SolrIndexer
             //System.out.println("DEBUG "+field007.getData());
             String accessCode = field007.getData();
             DataField data856 = (DataField) record.getVariableField("856");
-
+            
             if (accessCode.length() > 1 && "cr".equals(accessCode.substring(0, 2))
                 || (data856 != null && data856.getIndicator1() == '4' && data856.getIndicator1() == '0'))
             {
@@ -673,55 +714,55 @@ public class GVIIndexer extends SolrIndexer
                 }
             }
         }
-
+        
         if (result.isEmpty())
         {
             result.add("Physical");
         }
-
+        
         return result;
     }
-
+    
     public Set<String> getSubjectTopicalTerm(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.TOPICAL_TERM);
     }
-
+    
     public Set<String> getSubjectGeographicalName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.GEOGRAPHIC_NAME);
     }
-
+    
     public Set<String> getSubjectGenreForm(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.GENRE_FORM);
     }
-
+    
     public Set<String> getSubjectPersonalName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.PERSONAL_NAME);
     }
-
+    
     public Set<String> getSubjectCorporateName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CORPORATE_NAME);
     }
-
+    
     public Set<String> getSubjectMeetingName(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.MEETING_NAME);
     }
-
+    
     public Set<String> getSubjectUniformTitle(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.UNIFORM_TITLE);
     }
-
+    
     public Set<String> getSubjectChronologicalTerm(Record record, String tagStr)
     {
         return getSubject(record, tagStr, MARCSubjectCategory.CHRONOLOGICAL_TERM);
     }
-
+    
     public Set<String> getSubject(Record record, String tagStr, MARCSubjectCategory subjectCategory)
     {
         Set<String> result = getFieldList(record, tagStr);
@@ -729,7 +770,7 @@ public class GVIIndexer extends SolrIndexer
         result.addAll(getSWDSubject(record, subjectCategory));
         return result;
     }
-
+    
     public Set<String> getSubjectUncontrolled(Record record, MARCSubjectCategory subjectCategory)
     {
         Set<String> result = new LinkedHashSet<>();
@@ -757,7 +798,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return result;
     }
-
+    
     public Set<String> getSWDSubject(Record record, MARCSubjectCategory subjectCategory)
     {
         Set<String> result = new LinkedHashSet<>();
@@ -801,7 +842,7 @@ public class GVIIndexer extends SolrIndexer
                             {
                                 result.add(subject.getData());
                             }
-
+                            
                         }
                     }
                 }
@@ -809,7 +850,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return result;
     }
-
+    
     public Set<String> getZdbId(Record record)
     {
         Set<String> result = new LinkedHashSet<>();
@@ -831,7 +872,7 @@ public class GVIIndexer extends SolrIndexer
         }
         return result;
     }
-
+    
     enum IllFlag
     {
         Undefined(0),
@@ -839,19 +880,19 @@ public class GVIIndexer extends SolrIndexer
         Ecopy(2),
         Copy(3),
         Loan(4);
-
+        
         private final int value;
-
+        
         IllFlag(int value)
         {
             this.value = value;
         }
-
+        
         public int intValue()
         {
             return this.value;
         }
-
+        
         @Override
         public String toString()
         {
@@ -891,7 +932,7 @@ public class GVIIndexer extends SolrIndexer
         GEOGRAPHIC_NAME,
         GENRE_FORM,
         UNCONTROLLED_TERM;
-
+        
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final int indicator2From653)
         {
             final MARCSubjectCategory marcSubjectCategory;
@@ -923,9 +964,9 @@ public class GVIIndexer extends SolrIndexer
             }
             return marcSubjectCategory;
         }
-
+        
     }
-
+    
     public enum GNDSubjectCategory
     {
         PERSON_NONINDIVIDUAL('n'),
@@ -936,12 +977,12 @@ public class GVIIndexer extends SolrIndexer
         SACHBEGRIFF('s'),
         WERK('u');
         private final char value;
-
+        
         private GNDSubjectCategory(char c)
         {
             this.value = c;
         }
-
+        
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final char gndCategory)
         {
             final MARCSubjectCategory marcSubjectCategory;
@@ -973,13 +1014,13 @@ public class GVIIndexer extends SolrIndexer
             }
             return marcSubjectCategory;
         }
-
+        
         public final char valueOf()
         {
             return value;
         }
     }
-
+    
     public enum SWDSubjectCategory
     {
         SACHBEGRIFF('a'),
@@ -988,14 +1029,14 @@ public class GVIIndexer extends SolrIndexer
         KOERPERSCHAFT('d'),
         FORMSCHLAGWORT('f'),
         ZEITSCHLAGWORT('z');
-
+        
         private final char value;
-
+        
         private SWDSubjectCategory(char c)
         {
             this.value = c;
         }
-
+        
         public static final MARCSubjectCategory mapToMARCSubjectCategory(final char swdCategory)
         {
             final MARCSubjectCategory marcSubjectCategory;
@@ -1024,24 +1065,32 @@ public class GVIIndexer extends SolrIndexer
             }
             return marcSubjectCategory;
         }
-
+        
         public final char valueOf()
         {
             return value;
         }
     }
-    
+
     /**
      * Poor mens test of {@link #expandGnd(Record, String)}
-    * @param args
-    */
-   public static void main (String[] args) {
-      // Testtitel zu Werk von Goethe (DE-588)118540238 
-      String testTitel = "00475cam a2200157 ca4500001001000000003000700010005001700017006001900034008004100053035002500094040003900119041000800158100008100166245003800247264003200285#30;36411536X#30;DE-603#30;20150917230906.0#30;a          u00  u #30;150917s        xx           u00  u ger c#30;  #31;a(DE-599)HEB36411536X#30;  #31;aDE-603#31;bger#31;cDE-603#31;dDE-603#31;erakwb#30;  #31;ager#30;1 #31;0(DE-588)118540238#31;0(DE-603)086881264#31;aGoethe, Johann Wolfgang von#31;d1749-1832#30;00#31;aWerke#31;cJohann Wolfgang von Goethe#30; 1#31;aMünchen#31;bArtemis &amp; Winkler#30;#29;";
-      GVIIndexer me = new GVIIndexer();
-      Record test = MarcWrapper.string2Marc(testTitel);
-      Set<String> synonyms = me.expandGnd(test, "1000");
-      if (synonyms.isEmpty()) System.err.print("Keine Normdaten zu (DE-588)118540238 gefunden.");
-      for (String out : synonyms) System.out.println(" > " + out);  
-}
+     *
+     * @param args
+     */
+    public static void main(String[] args)
+    {
+        // Testtitel zu Werk von Goethe (DE-588)118540238 
+        String testTitel = "00475cam a2200157 ca4500001001000000003000700010005001700017006001900034008004100053035002500094040003900119041000800158100008100166245003800247264003200285#30;36411536X#30;DE-603#30;20150917230906.0#30;a          u00  u #30;150917s        xx           u00  u ger c#30;  #31;a(DE-599)HEB36411536X#30;  #31;aDE-603#31;bger#31;cDE-603#31;dDE-603#31;erakwb#30;  #31;ager#30;1 #31;0(DE-588)118540238#31;0(DE-603)086881264#31;aGoethe, Johann Wolfgang von#31;d1749-1832#30;00#31;aWerke#31;cJohann Wolfgang von Goethe#30; 1#31;aMünchen#31;bArtemis &amp; Winkler#30;#29;";
+        GVIIndexer me = new GVIIndexer();
+        Record test = MarcWrapper.string2Marc(testTitel);
+        Set<String> synonyms = me.expandGnd(test, "1000");
+        if (synonyms.isEmpty())
+        {
+            System.err.print("Keine Normdaten zu (DE-588)118540238 gefunden.");
+        }
+        for (String out : synonyms)
+        {
+            System.out.println(" > " + out);
+        }        
+    }
 }
