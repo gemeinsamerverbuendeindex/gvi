@@ -242,6 +242,10 @@
     <field name="id_related_datasource"          type="string" />
     <field name="id_related_other"               type="string" />
       
+    <!-- Experimentelle (!) Matchkeys -->
+    <field name="test_matchkey_1" type="string" stored="true" multiValued="false" />
+    <field name="test_matchkey_2" type="string" stored="true" multiValued="false" />
+
     <!-- 
     ###########################################
     Automatisches mitfüllen von Hilfsfeldern 
