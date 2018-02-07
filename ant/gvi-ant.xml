@@ -52,7 +52,8 @@
                 dir="${solrmarc.dist.path}"
                 error="@{logdir}/${basename}_err.log"
                 output="@{logdir}/${basename}_out.log"
-                maxmemory="3G"
+                maxmemory="5G"
+                minmemory="5G"
                 failonerror="true">
                 <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
                 <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
