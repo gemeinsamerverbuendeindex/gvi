@@ -52,12 +52,13 @@
                 dir="${solrmarc.dist.path}"
                 error="@{logdir}/${basename}_err.log"
                 output="@{logdir}/${basename}_out.log"
-                maxmemory="3G"
+                maxmemory="5G"
+                minmemory="5G"
                 failonerror="true">
                 <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
                 <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
                 <sysproperty key="solrmarc.log.level"      value="INFO"/>
-                <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
+                <sysproperty key="log4j.configurationFile" value="${basedir}/log4j2.xml"/>
                 <sysproperty key="data.collection"         value="${data.collection}"/>
                 <arg value="@{solrmarc.config}"/>
                 <arg value="@{file}"/>
