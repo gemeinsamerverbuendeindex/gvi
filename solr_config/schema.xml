@@ -82,6 +82,9 @@
     <!-- Wie 'title_unstemmed'  aber als Phrase indexiert -->
     <field name="title_phrase"            type="string_lc" />
     
+    <!-- Zusätzliches Feld entsprechend GVI-27 -->
+    <field name="title_slim"              type="text" />
+    
     <!-- Angaben zur Erscheinung -->
     <!-- Verlag und Verlagsort ohne Stemming und Phonetik -->
     <field name="publisher"               type="text" />
