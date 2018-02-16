@@ -33,6 +33,7 @@ import de.hebis.it.hds.tools.marc.MarcWrapper;
  * @author Thomas Kirchhoff <thomas.kirchhoff@bsz-bw.de>
  * @version 2017-06-26 uh, Synonyme aus File lesen und ergänzen
  */
+@Deprecated // Don't use. Just a example
 public class GVIIndexerNormdataSynonymfile extends SolrIndexer
 {
 

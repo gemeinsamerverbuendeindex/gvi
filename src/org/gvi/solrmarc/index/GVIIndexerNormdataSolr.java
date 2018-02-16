@@ -31,6 +31,7 @@ import de.hebis.it.hds.tools.marc.MarcWrapper;
  *
  * @author Thomas Kirchhoff <thomas.kirchhoff@bsz-bw.de>
  */
+@Deprecated // Don't use. Just a example
 public class GVIIndexerNormdataSolr extends SolrIndexer
 {
 
