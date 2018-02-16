@@ -47,16 +47,17 @@
             <echo>Indexing @{file}</echo>
             <java 
                 jar="${solrmarc.dist.path}/SolrMarc.jar"
+                classpath="${solrmarc.dist.path}/aut.jar"
                 fork="true" 
                 dir="${solrmarc.dist.path}"
                 error="@{logdir}/${basename}_err.log"
                 output="@{logdir}/${basename}_out.log"
-                maxmemory="1G"
+                maxmemory="10G"
                 failonerror="true">
                 <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
                 <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
                 <sysproperty key="solrmarc.log.level"      value="INFO"/>
-                <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
+                <sysproperty key="log4j.configurationFile" value="${basedir}/log4j2.xml"/>
                 <sysproperty key="data.collection"         value="${data.collection}"/>
                 <arg value="@{solrmarc.config}"/>
                 <arg value="@{file}"/>
@@ -359,4 +360,27 @@
         </sequential>
     </macrodef>
     
+    <macrodef name="solr-exec-batch">
+        <attribute name="file"/>
+        <attribute name="response-property"/>
+        <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
+        <attribute name="solr.core"       default="${solr.core}"/>
+        <sequential>
+            <property name="url">@{solr.baseurl}/@{solr.core}/update?commit=true&amp;wt=json&amp;indent=true</property>        
+            <property name="data">@{file}</property>
+            <property name="contenttype">Content-Type:text/xml</property>
+            <exec executable="curl" outputproperty="@{response-property}" failonerror="true">
+                <arg value="--silent"/>
+                <arg value="--show-error"/>
+                <arg value="--request"/>
+                <arg value="POST"/>
+                <arg value="${url}"/>
+                <arg value="--data-binary"/>
+                <arg value="@${data}"/>
+                <arg value="--header"/>
+                <arg value="${contenttype}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
 </project>

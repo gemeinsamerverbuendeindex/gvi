@@ -58,10 +58,7 @@
     <field name="author_sort"             type="string_lc" multiValued="false" />
     
     <!-- Alle Angaben mit Synonymen fehlertolerant aufgearbeitet. -->
-    <field name="author_norm"             type="text_sound_p" />
-    
-    <!-- Wie 'author_norm' aber ohne Stemming und Phonetik-->
-    <field name="author_norm_unstemmed"   type="text_p" />
+    <field name="author_norm"             type="text_p" />
     
     <!-- Wie 'author' aber ohne Stemming und Phonetik-->
     <field name="author_unstemmed"        type="text"/> 
@@ -84,6 +81,9 @@
     
     <!-- Wie 'title_unstemmed'  aber als Phrase indexiert -->
     <field name="title_phrase"            type="string_lc" />
+    
+    <!-- Zusätzliches Feld entsprechend GVI-27 -->
+    <field name="title_slim"              type="text" />
     
     <!-- Angaben zur Erscheinung -->
     <!-- Verlag und Verlagsort ohne Stemming und Phonetik -->
@@ -109,7 +109,7 @@
     <field name="material_pubform"        type="FacetPlus" />
     
     <!-- Zugriffsart (physikalisch, online) -->
-    <field name="material_access"         type="Facet" />
+    <field name="material_access"         type="FacetPlus" />
         
     <!-- IDs -->
     <!-- Intenatonale Standart Nummern (isbn, issn, ismn, ...) -->
@@ -142,13 +142,10 @@
     <field name="subject_all_facet"       type="Facet" />
 
     <!-- Schlagworte RSWK mit Synonymen aus GND -->
-    <field name="subject_all_norm"        type="text_stemm_s" />
+    <field name="subject_all_norm"        type="text" />
     
     <!-- Schlagworte RSWK -->
     <field name="subject_all_unstemmed"   type="text" />
-    
-    <!-- Schlagworte RSWK mit Synonymen aus GND -->
-    <field name="subject_all_norm_unstemmed"  type="text_s"       />
     
     <!-- Regensburger Verbund Klassifikation vollständig und erste drei Zeichen -->
     <field name="rvk"                     type="string_lc" />
@@ -232,22 +229,11 @@
          Verlinkt aber natürlich nur innerhalb des Subsets eines Verbundes.
     -->
     <field name="id_related"                     type="string" />
-    <field name="id_related_main_series"         type="string" />
-    <field name="id_related_subseries"           type="string" />
-    <field name="id_related_orig_language"       type="string" />
-    <field name="id_related_translated_language" type="string" />
-    <field name="id_related_supp_edition"        type="string" />
-    <field name="id_related_supp_parent"         type="string" />
-    <field name="id_related_host_item"           type="string" />
-    <field name="id_related_constituent_unit"    type="string" />
-    <field name="id_related_other_edition"       type="string" />
-    <field name="id_related_add_phys_form"       type="string" />
-    <field name="id_related_issued_with"         type="string" />
-    <field name="id_related_preceding"           type="string" />
-    <field name="id_related_succeeding"          type="string" />
-    <field name="id_related_datasource"          type="string" />
-    <field name="id_related_other"               type="string" />
-      
+        
+    <!-- Experimentelle (!) Matchkeys -->
+    <field name="test_matchkey_1" type="string" stored="true" multiValued="false" />
+    <field name="test_matchkey_2" type="string" stored="true" multiValued="false" />
+
     <!-- 
     ###########################################
     Automatisches mitfüllen von Hilfsfeldern 
@@ -263,7 +249,6 @@
     <copyField source="author"            dest="author_unstemmed" />
     <copyField source="author"            dest="author_phrase" />
     <copyField source="author"            dest="author_norm" />
-    <copyField source="author"            dest="author_norm_unstemmed" />
     <copyField source="author"            dest="author_norm_phrase" />
     
     <copyField source="title"             dest="title_unstemmed" />
@@ -281,7 +266,6 @@
     <copyField source="subject_*"         dest="subject_all_facet" />
     <copyField source="subject_*"         dest="subject_all_unstemmed" />
     <copyField source="subject_*"         dest="subject_all_norm" />
-    <copyField source="subject_*"         dest="subject_all_norm_unstemmed" />
 
     <!-- 
     ###########################################
