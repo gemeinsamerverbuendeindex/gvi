@@ -131,7 +131,7 @@ public class GVIIndexer extends SolrIndexer {
     * @param record The current data record
     * @return If found the duplicate key else the own id.
     */
-   public String setDupId(Record record) {
+   public String getDupId(Record record) {
       return dupIds.getProperty(recordId, recordId);
    }
 
