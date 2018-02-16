@@ -41,7 +41,7 @@
     ###########################################-->
     <!-- Vereinfachte SuchFelder für minimalistische Anwendungen -->
     <!-- Alle Textfelder ohne Normdaten  fehlertolerant aufgearbeitet. -->
-    <field name="allfields"               type="text_fuzzy" />
+    <field name="allfields"               type="text_stemm" />
     
     <!-- Wie 'allfields' aber ohne Stemming und Phonetik -->
     <field name="allfields_unstemmed"     type="text" />
@@ -50,7 +50,7 @@
     <!-- Verfasser ohne jegliche Aufbereitung. 
     (Nichtsortierzeichen sollten extern entfernt werden. -->
     <!-- Alle Angaben ohne Synonymen fehlertolerant aufgearbeitet. -->
-    <field name="author"                  type="text_fuzzy"   />
+    <field name="author"                  type="text_sound"   />
     
     <field name="author_facet"            type="Facet" />
     
@@ -71,7 +71,7 @@
     
     <!-- Titelangaben -->
     <!--  Alle Titelangaben fehlertolerant aufgearbeitet -->
-    <field name="title"                   type="text_fuzzy" />
+    <field name="title"                   type="text_stemm" />
     
     <!-- 1. Titel (HST wenn vorhanden) in Sortierform -->
     <field name="title_sort"              type="string_lc"    multiValued="false" />
@@ -138,7 +138,7 @@
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
-    <field name="subject_all"             type="text_fuzzy"/>
+    <field name="subject_all"             type="text_stemm"/>
     <field name="subject_all_facet"       type="Facet" />
 
     <!-- Schlagworte RSWK mit Synonymen aus GND -->
@@ -189,33 +189,33 @@
     <!-- Schlagworte  -->
     
     <!-- Sachbegriff -->
-    <field name="subject_topic"              type="text_fuzzy" />
+    <field name="subject_topic"              type="text_stemm" />
     <field name="subject_topic_facet"        type="Facet" />
     
     <!-- Inhaltliche Form -->
-    <field name="subject_genre"              type="text_fuzzy" />
+    <field name="subject_genre"              type="text_stemm" />
     <field name="subject_genre_facet"        type="Facet" />
     
     <!-- Regionaler Bezug -->
-    <field name="subject_geogname"           type="text_fuzzy" />
+    <field name="subject_geogname"           type="text_stemm" />
     <field name="subject_geogname_facet"     type="Facet" />
     
     <!-- Zeitlicher Bezug -->
-    <field name="subject_chrono"             type="text_fuzzy" />
+    <field name="subject_chrono"             type="text_stemm" />
     <field name="subject_chrono_facet"       type="Facet" />
     
     <!-- Personen, Köperschaften, Veranstaltungen als Sachbegriff -->
-    <field name="subject_persname"           type="text_fuzzy" />
+    <field name="subject_persname"           type="text_stemm" />
     <field name="subject_persname_facet"     type="Facet" />
     
-    <field name="subject_corpname"           type="text_fuzzy" />
+    <field name="subject_corpname"           type="text_stemm" />
     <field name="subject_corpname_facet"     type="Facet" />
     
-    <field name="subject_meetname"           type="text_fuzzy" />
+    <field name="subject_meetname"           type="text_stemm" />
     <field name="subject_meetname_facet"     type="Facet" />
     
     <!-- Werktitel -->
-    <field name="subject_worktitle"          type="text_fuzzy" />
+    <field name="subject_worktitle"          type="text_stemm" />
     <field name="subject_worktitle_facet"    type="Facet" />
     
     <!-- GND-IDs für externe Verlinkung http://de.wikipedia.org/wiki/Wikipedia:BEACON -->
@@ -449,8 +449,8 @@
         </analyzer>
     </fieldType>
     
-    <!-- Fehlertolerante Variante von 'text'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
-    <fieldType name="text_fuzzy" class="solr.TextField" 
+    <!-- Durch Stemming leicht fehlertolerante Variante von 'text'. (keine Phonetik)-->
+    <fieldType name="text_stemm" class="solr.TextField" 
                positionIncrementGap="100" 
                indexed="true" 
                stored="false" 
@@ -465,12 +465,30 @@
             <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Durch phonetische Abstraction leicht fehlertolerante Variante von 'text'. (kein Stemming) -->
+    <fieldType name="text_sound" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
+               required="false"  
+               multiValued="true">
+        <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
             <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
         </analyzer>
     </fieldType>
     
-    <!-- Fehlertollerante Variante von 'text_p'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
-    <fieldType name="text_fuzzy_p" class="solr.TextField" 
+    <!-- Fehlertollerante Variante von 'text_p'. Der Wortstamm wird gebildet -->
+    <fieldType name="text_stemm_p" class="solr.TextField" 
                positionIncrementGap="100" 
                indexed="true" 
                stored="false" 
@@ -485,7 +503,6 @@
             <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
-            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
         </analyzer>
         <analyzer type="query">           
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
@@ -497,12 +514,41 @@
             <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Fehlertollerante Variante von 'text_p'. Der Wortstamm wird phonetisch abgebildet -->
+    <fieldType name="text_sound_p" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
+               required="false"
+               multiValued="true">
+        <analyzer  type="index">
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
+        </analyzer>
+        <analyzer type="query">           
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
+            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
+            <filter class="solr.CJKBigramFilterFactory" />
             <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
         </analyzer>
     </fieldType>
     
-    <!-- Fehlertolerante Variante von 'text_s'. Der Wortstamm wird gebildet und phonetisch abgebildet -->
-    <fieldType name="text_fuzzy_s" class="solr.TextField" 
+    <!-- Fehlertolerante Variante von 'text_s'. Der Wortstamm wird gebildet -->
+    <fieldType name="text_stemm_s" class="solr.TextField" 
                positionIncrementGap="100" 
                indexed="true" 
                stored="false" 
@@ -517,7 +563,6 @@
             <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
             <filter class="solr.CJKBigramFilterFactory" />
-            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
         </analyzer>
         <analyzer type="query">           
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
@@ -528,6 +573,35 @@
             <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
             <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
             <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
+            <filter class="solr.CJKBigramFilterFactory" />
+        </analyzer>
+    </fieldType>
+    
+    <!-- Fehlertolerante Variante von 'text_s'. Der Wortstamm wird phonetisch abgebildet -->
+    <fieldType name="text_sound_s" class="solr.TextField" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
+               required="false"
+               multiValued="true" >
+        <analyzer  type="index">
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
+            <filter class="solr.CJKBigramFilterFactory" />
+            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
+        </analyzer>
+        <analyzer type="query">           
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
+            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
+            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
+            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
+            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
             <filter class="solr.CJKBigramFilterFactory" />
             <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
         </analyzer>
@@ -565,15 +639,26 @@
                stored="false" 
                required="false" 
                multiValued="true">
-        <analyzer>
+        <analyzer  type="index">
+            <!-- Normalize 'X' to 'x -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="(X)" replacement="x" />
+                    pattern="X" replacement="x" />
+                 <!-- Remove separators '-' -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="(-)" replacement="" />
+                    pattern="-" replacement="" />
+            <!-- Take only the leading -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="([^0-9x])" replacement="" />
+                    pattern="^\s*(\d+x?).*" replacement="$1" />
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+        </analyzer>
+        <analyzer  type="query">
+            <!-- Normalize 'X' to 'x -->
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="X" replacement="x" />
+            <!-- Remove separators '-' -->
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="-" replacement="" />
             <tokenizer class="solr.WhitespaceTokenizerFactory" />
-            <filter class="solr.LengthFilterFactory" min="8" max="8" />
         </analyzer>
     </fieldType>
 
