@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.LogManager;
@@ -50,11 +51,14 @@ public class GVIIndexer extends SolrIndexer {
    private AutorityRecordFileFinder    gndFinder                     = new AutorityRecordFileFinder();
    private PunctuationSingleNormalizer punctuationSingleNormalizer   = new PunctuationSingleNormalizer();
 
+   private Properties                  dupIds                        = null;
+
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) {
       super(indexingPropsFile, propertyDirs);
       gndFinder = new AutorityRecordFileFinder();
       institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
       kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
+      dupIds = Utils.loadProperties(propertyDirs, "kobvDups.properties");
    }
 
    public GVIIndexer() {
@@ -122,11 +126,21 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * Beispiel für den Abruf von Titelexpansionen aus dem GND Repo
+    * Lookup to get the duplicate key to the record's id
+    * 
+    * @param record The current data record
+    * @return If found the duplicate key else the own id.
+    */
+   public String setDupId(Record record) {
+      return dupIds.getProperty(recordId, recordId);
+   }
+
+   /**
+    * Expand GND synonyms from file
     *
-    * @param record Der aktuelle Titeldatensatz
-    * @param tagStr Die zu untersuchenden (Sub)Felder
-    * @return ein Set mit der gefundenen Bezeichnungen
+    * @param record The current data record
+    * @param tagStr The (sub)fields to expand
+    * @return The found expansions
     */
    public Set<String> expandGnd(Record record, String tagStr) {
       AuthorityBean normdata = null;
@@ -260,12 +274,13 @@ public class GVIIndexer extends SolrIndexer {
    public String getRecordID(final Record record) {
       return recordId;
    }
-   
+
    /**
     * Extension for VuFind clients.<br>
     * The interpretation of perfect MARC may be depend on the source.<br>
     * Having a own 'recordtyp' may help to select a tailored record driver.<br>
     * See GVI-87
+    * 
     * @param record
     * @return The concatination of "GviMarc_" and the isil of the source.
     */
