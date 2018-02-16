@@ -565,15 +565,26 @@
                stored="false" 
                required="false" 
                multiValued="true">
-        <analyzer>
+        <analyzer  type="index">
+            <!-- Normalize 'X' to 'x -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="(X)" replacement="x" />
+                    pattern="X" replacement="x" />
+                 <!-- Remove separators '-' -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="(-)" replacement="" />
+                    pattern="-" replacement="" />
+            <!-- Take only the leading -->
             <charFilter class="solr.PatternReplaceFilterFactory"
-                    pattern="([^0-9x])" replacement="" />
+                    pattern="^\s*(\d+x?).*" replacement="$1" />
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+        </analyzer>
+        <analyzer  type="query">
+            <!-- Normalize 'X' to 'x -->
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="X" replacement="x" />
+            <!-- Remove separators '-' -->
+            <charFilter class="solr.PatternReplaceFilterFactory"
+                    pattern="-" replacement="" />
             <tokenizer class="solr.WhitespaceTokenizerFactory" />
-            <filter class="solr.LengthFilterFactory" min="8" max="8" />
         </analyzer>
     </fieldType>
 
