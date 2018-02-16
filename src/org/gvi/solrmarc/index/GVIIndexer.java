@@ -260,6 +260,18 @@ public class GVIIndexer extends SolrIndexer {
    public String getRecordID(final Record record) {
       return recordId;
    }
+   
+   /**
+    * Extension for VuFind clients.<br>
+    * The interpretation of perfect MARC may be depend on the source.<br>
+    * Having a own 'recordtyp' may help to select a tailored record driver.<br>
+    * See GVI-87
+    * @param record
+    * @return The concatination of "GviMarc_" and the isil of the source.
+    */
+   public String getMarcTypByConsortium(final Record record) {
+      return "GviMarc_" + catalog;
+   }
 
    @Override
    protected void perRecordInit(Record record) {
