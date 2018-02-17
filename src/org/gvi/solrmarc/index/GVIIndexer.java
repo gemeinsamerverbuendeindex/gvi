@@ -88,7 +88,10 @@ public class GVIIndexer extends SolrIndexer {
 
       String firstAuthor = getFirstFieldVal(record, "100a");
       if (firstAuthor != null) {
-         matchkey.append(firstAuthor.split("[, ]+")[0].toLowerCase());
+         String[] nameParts = firstAuthor.split("[, ]+");
+         if (nameParts.length >0 ) { // yes in some titles the given author is "," (sik)
+            matchkey.append(nameParts[0].toLowerCase());
+         }
       }
 
       matchkey.append(":");
