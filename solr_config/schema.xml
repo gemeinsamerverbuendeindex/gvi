@@ -147,10 +147,14 @@
     <!-- Schlagworte RSWK -->
     <field name="subject_all_unstemmed"   type="text" />
     
-    <!-- Regensburger Verbund Klassifikation vollständig und erste drei Zeichen -->
+    <!-- Dynamisches Feld für Klassifikationen entsprechend GVI-95. -->
+    <!-- Z.B. rvk, ddc, lcc, udc, bkl, bcl, ssgn, ... -->
+    <field name="classification_*"        type="string_lc" />
+    
+    <!-- @Deprecated : Altes Feld der Regensburger Verbund Klassifikation vollständig und erste drei Zeichen -->
     <field name="rvk"                     type="string_lc" />
     
-    <!-- Dewey Decimal Classifiction vollständig und erste drei Zeichen-->
+    <!-- @Deprecated : Altes Feld der Dewey Decimal Classifiction vollständig und erste drei Zeichen-->
     <field name="ddc"                     type="string_lc" />
 
     <!-- Zusammenfassungen: 500a:501a:502a:504a:505a -->
