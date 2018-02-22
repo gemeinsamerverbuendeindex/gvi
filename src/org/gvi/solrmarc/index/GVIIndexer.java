@@ -288,7 +288,8 @@ public class GVIIndexer extends SolrIndexer {
     * @return The concatination of "GviMarc_" and the isil of the source.
     */
    public String getMarcTypByConsortium(final Record record) {
-      return "GviMarc_" + catalog;
+      if ((catalog == null) || (catalog.length()<4)) return "GviMarcUnknown";
+      return "GviMarcDE" + catalog.substring(3);
    }
 
    @Override
