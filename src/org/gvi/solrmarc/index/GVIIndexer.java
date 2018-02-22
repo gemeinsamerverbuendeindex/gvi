@@ -59,9 +59,8 @@ public class GVIIndexer extends SolrIndexer {
       institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
       kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
       try {
-      dupIds = Utils.loadProperties(propertyDirs, "kobvDups.properties");
-      }
-      catch (IllegalArgumentException e) {
+         dupIds = Utils.loadProperties(propertyDirs, "kobvDups.properties");
+      } catch (IllegalArgumentException e) {
          LOG.warn("No property file with doublet info found. \"kobvDups.properties\"");
          dupIds = new Properties();
       }
@@ -95,7 +94,7 @@ public class GVIIndexer extends SolrIndexer {
       String firstAuthor = getFirstFieldVal(record, "100a");
       if (firstAuthor != null) {
          String[] nameParts = firstAuthor.split("[, ]+");
-         if (nameParts.length >0 ) { // yes in some titles the given author is "," (sik)
+         if (nameParts.length > 0) { // yes in some titles the given author is "," (sik)
             matchkey.append(nameParts[0].toLowerCase());
          }
       }
@@ -294,7 +293,7 @@ public class GVIIndexer extends SolrIndexer {
     * @return The concatination of "GviMarc_" and the isil of the source.
     */
    public String getMarcTypByConsortium(final Record record) {
-      if ((catalog == null) || (catalog.length()<4)) return "GviMarcUnknown";
+      if ((catalog == null) || (catalog.length() < 4)) return "GviMarcUnknown";
       return "GviMarcDE" + catalog.substring(3);
    }
 
@@ -441,6 +440,36 @@ public class GVIIndexer extends SolrIndexer {
          }
       }
       return result;
+   }
+
+   /**
+    * Get value(s) of selected classification schema
+    * 
+    * @param record The title data
+    * @param notationField The marc field to inspect
+    * @param schemaName The name of the classification schema
+    * @return value(s) of subfield 'a' of the given field if subfield '2' matches the schemaName.<br>
+    *         If no entry was found, an empty list will be returned
+    */
+   public Set<String> getClassification(Record record, String notationField, String schemaName) {
+      Set<String> ret = new HashSet<>();
+      List<VariableField> fields = record.getVariableFields(notationField);
+      if (fields != null) {
+         for (VariableField candidat : fields) {
+            Subfield schemaSubField = ((DataField) candidat).getSubfield('2');
+            if (schemaSubField == null) continue;
+            if (schemaName.equals(schemaSubField.getData())) {
+               List<Subfield> notationSubFields = ((DataField) candidat).getSubfields('a');
+               for (Subfield notationSubField : notationSubFields) {
+                  if (notationSubField == null) continue;
+                  String notation = notationSubField.getData();
+                  if ((notation == null) || notation.isEmpty()) continue;
+                  ret.add(notation);
+               }
+            }
+         }
+      }
+      return ret;
    }
 
    /**
