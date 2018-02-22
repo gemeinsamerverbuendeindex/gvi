@@ -58,7 +58,13 @@ public class GVIIndexer extends SolrIndexer {
       gndFinder = new AutorityRecordFileFinder();
       institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
       kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
+      try {
       dupIds = Utils.loadProperties(propertyDirs, "kobvDups.properties");
+      }
+      catch (IllegalArgumentException e) {
+         LOG.warn("No property file with doublet info found. \"kobvDups.properties\"");
+         dupIds = new Properties();
+      }
    }
 
    public GVIIndexer() {
