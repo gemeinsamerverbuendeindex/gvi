@@ -51,11 +51,18 @@
         <solrmarc-delete-dir src="${data.full.dir}" logdir="${data.full.log.dir}"/>                
     </target>
 
+    <!-- Komplettabzug und Updates indexieren -->
     <target name="index-all" depends="init-index-date-for-delete">
         <antcall target="index-full-b3kat"/>
         <antcall target="index-all-updates-b3kat"/>
         <antcall target="index-updates-b3kat"/>
         <antcall target="delete-by-collection-and-index-date"/>
     </target>
-    
+	 
+    <!-- Nur den Komplettabzug indexieren -->
+	<target name="index-onlyFull" depends="init-index-date-for-delete">
+	     <antcall target="index-full-b3kat"/>
+	        <antcall target="delete-by-collection-and-index-date"/>
+	    </target>
+	    
 </project>

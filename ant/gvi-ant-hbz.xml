@@ -73,7 +73,15 @@
                                 includeAll="true"/> 
     </target>
     
-    <target name="index-all-hbz" depends="init,init-index-date-for-delete">
+	<!-- Komplettabzug und Updates indexieren -->
+	<target name="index-all-hbz" depends="init,init-index-date-for-delete">
+        <antcall target="index-full-hbz"/>
+        <antcall target="index-all-updates-hbz"/>
+        <antcall target="delete-by-collection-and-index-date"/>
+    </target>
+
+	<!-- Nur den Komplettabzug indexieren -->
+	<target name="index-onlyFull-hbz" depends="init,init-index-date-for-delete">
         <antcall target="index-full-hbz"/>
         <antcall target="index-all-updates-hbz"/>
         <antcall target="delete-by-collection-and-index-date"/>

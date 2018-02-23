@@ -57,10 +57,17 @@
         <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
     </target>
 
+    <!-- Komplettabzug und Updates indexieren -->
     <target name="index-all-gbv" depends="init-index-date-for-delete">
         <antcall target="index-full-gbv"/>
         <antcall target="index-all-updates-gbv"/>
         <antcall target="delete-all-updates-gbv"/>
+        <antcall target="delete-by-collection-and-index-date"/>
+    </target>
+
+	<!-- Nur den Komplettabzug indexieren -->
+    <target name="index-onlyFull-gbv" depends="init-index-date-for-delete">
+        <antcall target="index-full-gbv"/>
         <antcall target="delete-by-collection-and-index-date"/>
     </target>
 

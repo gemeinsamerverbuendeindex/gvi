@@ -61,7 +61,7 @@
         </for>
     </target>
 
-    <!-- Komplettabzug indexieren -->
+    <!-- Komplettabzug und Updates indexieren -->
     <target name="index-full-hebis" depends="init">
         <delete>
             <fileset dir="${full.dir}/log" includes="*.log" erroronmissingdir="false"/>
@@ -69,12 +69,12 @@
         <solrmarc-index-dir src="${full.dir}"   suffix=".xml" logdir="${full.dir}/log"/>
     </target>
     
-    <target name="index-all-hebis" depends="init,init-index-date-for-delete">
-        <antcall target="index-full-hebis"/>
-        <antcall target="index-all-updates-hebis"/>
-        <antcall target="delete-by-collection-and-index-date"/>
-    </target>
-    
+    <!-- Nur den Komplettabzug indexieren -->
+	   <target name="index-onlyFull-hebis" depends="init,init-index-date-for-delete">
+	        <antcall target="index-full-hebis"/>
+	        <antcall target="delete-by-collection-and-index-date"/>
+	    </target>
+	    
     <target name="test" depends="init">
         <solr-ping />
     </target>
