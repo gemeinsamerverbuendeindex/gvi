@@ -30,12 +30,15 @@ import de.hebis.it.hds.gnd.in.Loader;
 import de.hebis.it.hds.gnd.out.AuthorityBean;
 import de.hebis.it.hds.gnd.out.AuthorityRecordException;
 import de.hebis.it.hds.gnd.out.AutorityRecordFileFinder;
+import de.hebis.it.hds.gnd.out.AutorityRecordFinder;
+import de.hebis.it.hds.gnd.out.AutorityRecordSolrFinder;
 import de.hebis.it.hds.tools.marc.MarcWrapper;
 
 /**
  *
  * @author Thomas Kirchhoff <thomas.kirchhoff@bsz-bw.de>
  * @version 2017-06-26 uh, Synonyme aus File lesen und ergänzen
+ * @version 2018-03-02 uh, GND-Synonyme vom remote repository lesen und ergänzen
  */
 public class GVIIndexer extends SolrIndexer {
 
@@ -48,7 +51,7 @@ public class GVIIndexer extends SolrIndexer {
    private Set<String>                 consortium                    = new LinkedHashSet<>();
 
    private static final Logger         LOG                           = LogManager.getLogger(Loader.class);
-   private AutorityRecordFileFinder    gndFinder                     = new AutorityRecordFileFinder();
+   private AutorityRecordFinder        gndFinder                     = new AutorityRecordSolrFinder();
    private PunctuationSingleNormalizer punctuationSingleNormalizer   = new PunctuationSingleNormalizer();
 
    private Properties                  dupIds                        = null;
