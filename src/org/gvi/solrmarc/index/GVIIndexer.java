@@ -26,10 +26,8 @@ import org.solrmarc.index.GetFormatMixin;
 import org.solrmarc.index.SolrIndexer;
 import org.solrmarc.tools.Utils;
 
-import de.hebis.it.hds.gnd.in.Loader;
 import de.hebis.it.hds.gnd.out.AuthorityBean;
 import de.hebis.it.hds.gnd.out.AuthorityRecordException;
-import de.hebis.it.hds.gnd.out.AutorityRecordFileFinder;
 import de.hebis.it.hds.gnd.out.AutorityRecordFinder;
 import de.hebis.it.hds.gnd.out.AutorityRecordSolrFinder;
 import de.hebis.it.hds.tools.marc.MarcWrapper;
@@ -49,8 +47,7 @@ public class GVIIndexer extends SolrIndexer {
    private String                      collection;
    private Set<String>                 institutionSet                = new LinkedHashSet<>();
    private Set<String>                 consortium                    = new LinkedHashSet<>();
-
-   private static final Logger         LOG                           = LogManager.getLogger(Loader.class);
+   private static final Logger         LOG                           = LogManager.getLogger(GVIIndexer.class);
    private AutorityRecordFinder        gndFinder                     = new AutorityRecordSolrFinder();
    private PunctuationSingleNormalizer punctuationSingleNormalizer   = new PunctuationSingleNormalizer();
 
@@ -58,7 +55,6 @@ public class GVIIndexer extends SolrIndexer {
 
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) {
       super(indexingPropsFile, propertyDirs);
-      gndFinder = new AutorityRecordFileFinder();
       institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
       kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
       try {
