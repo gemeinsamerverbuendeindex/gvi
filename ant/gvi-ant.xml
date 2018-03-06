@@ -52,7 +52,7 @@
                 dir="${solrmarc.dist.path}"
                 error="@{logdir}/${basename}_err.log"
                 output="@{logdir}/${basename}_out.log"
-                maxmemory="10G"
+                maxmemory="15G"
                 failonerror="true">
                 <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
                 <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
@@ -88,7 +88,7 @@
                         dir="${solrmarc.dist.path}"
                         error="@{logdir}/${basename}_err.log"
                         output="@{logdir}/${basename}_out.log"
-                        maxmemory="1G"
+                        maxmemory="15G"
                         failonerror="true">
                         <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
                         <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
