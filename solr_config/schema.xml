@@ -149,7 +149,7 @@
     
     <!-- Dynamisches Feld für Klassifikationen entsprechend GVI-95. -->
     <!-- Z.B. rvk, ddc, lcc, udc, bkl, bcl, ssgn, ... -->
-    <field name="classification_*"        type="string_lc" />
+    <dynamicField  name="classification_*"        type="string_lc" />
     
     <!-- @Deprecated : Altes Feld der Regensburger Verbund Klassifikation vollständig und erste drei Zeichen -->
     <field name="rvk"                     type="string_lc" />
