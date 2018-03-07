@@ -13,5 +13,9 @@
     <target name="solr-optimize">
         <solr-optimize maxSegments="5"/>
     </target>
+
+    <target name="solr-purge">
+        <solr-purge />
+    </target>
     
 </project>
