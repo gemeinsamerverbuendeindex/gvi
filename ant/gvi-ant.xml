@@ -186,6 +186,21 @@
         </sequential>
     </macrodef>
     
+    <macrodef name="solr-purge">
+        <sequential>
+            <property name="solr_del_query"      value="&lt;delete&gt;&lt;query&gt;*:*&lt;/query&gt;&lt;/delete&gt;"/>
+            <var name="solr-response-file" unset="true"/>
+            <tempfile property="solr-response-file" prefix="solr-response-" destDir="/tmp"/>
+            <get src="${solr.baseurl}/${solr.core}/update?commit=true&amp;stream.body=${solr_del_query}"
+                 dest="${solr-response-file}"
+                 verbose="true"/>
+            <var name="solr-response" unset="true"/>
+            <loadfile property="solr-response" srcFile="${solr-response-file}"/>
+            <echo message="${solr-response}"/>
+            <delete file="${solr-response-file}"/>
+        </sequential>
+    </macrodef>
+
     <macrodef name="solr-backup">
         <attribute name="collection"/>
         <attribute name="location"/>
