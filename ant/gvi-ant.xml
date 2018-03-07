@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="index-updates" name="GVI Jenkins">
+<project basedir="." name="GVI Jenkins">
 
     <property file="gvi-ant.local.properties"/>
     <property file="gvi-ant.properties"/>
