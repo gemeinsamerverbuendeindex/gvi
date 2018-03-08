@@ -27,7 +27,7 @@ then
     SOLRMARC_MEM_ARGS='-Xmx3G'
 fi
 
-java -cp /opt/gvi/solrmarc/aut.jar $SOLRMARC_MEM_ARGS -jar $scriptdir/SolrMarc.jar $1 $2 $3
+java $SOLRMARC_MEM_ARGS -jar $scriptdir/SolrMarc.jar $1 $2 $3
 
 exit 0
 
