@@ -28,6 +28,7 @@ import org.solrmarc.tools.Utils;
 
 import de.hebis.it.hds.gnd.out.AuthorityBean;
 import de.hebis.it.hds.gnd.out.AuthorityRecordException;
+import de.hebis.it.hds.gnd.out.AutorityRecordFileFinder;
 import de.hebis.it.hds.gnd.out.AutorityRecordFinder;
 import de.hebis.it.hds.gnd.out.AutorityRecordSolrFinder;
 import de.hebis.it.hds.tools.marc.MarcWrapper;
@@ -48,7 +49,8 @@ public class GVIIndexer extends SolrIndexer {
    private Set<String>                 institutionSet                = new LinkedHashSet<>();
    private Set<String>                 consortium                    = new LinkedHashSet<>();
    private static final Logger         LOG                           = LogManager.getLogger(GVIIndexer.class);
-   private AutorityRecordFinder        gndFinder                     = new AutorityRecordSolrFinder();
+   private AutorityRecordFinder        gndFinderOnline               = new AutorityRecordSolrFinder();
+   private AutorityRecordFinder        gndFinderFile                 = new AutorityRecordFileFinder();
    private PunctuationSingleNormalizer punctuationSingleNormalizer   = new PunctuationSingleNormalizer();
 
    private Properties                  dupIds                        = null;
@@ -149,7 +151,42 @@ public class GVIIndexer extends SolrIndexer {
     * @param tagStr The (sub)fields to expand
     * @return The found expansions
     */
+   public Set<String> expandGndOffline(Record record, String tagStr) {
+      return expandGnd(gndFinderFile, record, tagStr);
+   }
+
+   /**
+    * Shortcut to {@link #expandGndOfflineline(Record, String)}
+    * 
+    * @param record
+    * @param tagStr
+    * @return
+    */
    public Set<String> expandGnd(Record record, String tagStr) {
+      return expandGnd(gndFinderFile, record, tagStr);
+   }
+
+   /**
+    * Expand GND synonyms from remote repository<br>
+    * The usage of this method is discouraged. Because it is to slow.
+    *
+    * @param record The current data record
+    * @param tagStr The (sub)fields to expand
+    * @return The found expansions
+    */
+   @Deprecated
+   public Set<String> expandGndOnline(Record record, String tagStr) {
+      return expandGnd(gndFinderOnline, record, tagStr);
+   }
+
+   /**
+    * Expand GND synonyms from provided finder<br>
+    *
+    * @param record The current data record
+    * @param tagStr The (sub)fields to expand
+    * @return The found expansions
+    */
+   private Set<String> expandGnd(AutorityRecordFinder gndFinder, Record record, String tagStr) {
       AuthorityBean normdata = null;
       HashSet<String> result = new HashSet<>();
       for (String testId : getFieldList(record, tagStr)) {
