@@ -2,6 +2,7 @@
 
 <!-- Datenmodel für die Version 1.0 des Datenmodells des Gemeinsamen Verbünde Index. -->
 <!-- 2014-07-11 Reh Kommentierung und Umstellung des Datenmodells der Testversion. --> 
+<!-- 2018-04-06 Reh Synonyme für Normdaten entfernt und für Dubletten ergänzt. (mit Bereinigung obsoleter Feldtypen)--> 
 
 <schema name="GVI_1.0" version="1.7">
     <!-- 
@@ -40,34 +41,33 @@
     Felder der Kernfunktionalität 
     ###########################################-->
     <!-- Vereinfachte SuchFelder für minimalistische Anwendungen -->
-    <!-- Alle Textfelder ohne Normdaten  fehlertolerant aufgearbeitet. -->
+    <!-- allfields:
+         Alle Textfelder ohne Normdaten  fehlertolerant aufgearbeitet. -->
     <field name="allfields"               type="text_stemm" />
     
-    <!-- Wie 'allfields' aber ohne Stemming und Phonetik -->
+    <!-- allfields_unstemmed:
+         Wie 'allfields' aber ohne Stemming und Phonetik -->
     <field name="allfields_unstemmed"     type="text" />
     
-    <!-- Alle Verfasser (auch Körperschaften) und beteiligte Personen -->
-    <!-- Verfasser ohne jegliche Aufbereitung. 
-    (Nichtsortierzeichen sollten extern entfernt werden. -->
-    <!-- Alle Angaben ohne Synonymen fehlertolerant aufgearbeitet. -->
+    <!-- author:
+         Alle Verfasser (auch Körperschaften) und beteiligte Personen.
+         Nichtsortierzeichen sollten extern entfernt werden.
+         Ohne Synonyme aber mit phonetischer Unschärfe. -->
     <field name="author"                  type="text_sound"   />
     
+    <!-- author_facet: -->
     <field name="author_facet"            type="Facet" />
     
     <!-- 1. Verfasser in Sortierform -->
     <field name="author_sort"             type="string_lc" multiValued="false" />
     
-    <!-- Alle Angaben mit Synonymen fehlertolerant aufgearbeitet. -->
-    <field name="author_norm"             type="text_p" />
+    <!-- author_norm:
+         Mit Synonymen (extern) ohne Stemming und Phonetik. -->
+    <field name="author_norm"             type="text" />
     
-    <!-- Wie 'author' aber ohne Stemming und Phonetik-->
+    <!-- author_unstemmed:
+         Ohne Synonyme, Stemming und Phonetik. -->
     <field name="author_unstemmed"        type="text"/> 
-    
-    <!-- Wie 'author_norm_unstemmed' aber als Phrase indexiert-->
-    <field name="author_norm_phrase"      type="string_lc_p" />
-    
-    <!-- Wie 'author_phrase' aber als Phrase indexiert-->
-    <field name="author_phrase"           type="string_lc" />
     
     <!-- Titelangaben -->
     <!--  Alle Titelangaben fehlertolerant aufgearbeitet -->
@@ -134,14 +134,14 @@
     <field name="eki_id"                  type="GenericID" />
     
     <!-- Deduplikationsidentifikationsnummer -->
-    <field name="dup_id"                  type="GenericID" stored="true" multiValued="false" />
+    <field name="dup_id"                  type="DublettID" />
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
     <field name="subject_all"             type="text_stemm"/>
     <field name="subject_all_facet"       type="Facet" />
 
-    <!-- Schlagworte RSWK mit Synonymen aus GND -->
+    <!-- Schlagworte mit Synonymen aus GND -->
     <field name="subject_all_norm"        type="text" />
     
     <!-- Schlagworte RSWK -->
@@ -251,9 +251,7 @@
     
     <copyField source="author"            dest="author_facet" />
     <copyField source="author"            dest="author_unstemmed" />
-    <copyField source="author"            dest="author_phrase" />
     <copyField source="author"            dest="author_norm" />
-    <copyField source="author"            dest="author_norm_phrase" />
     
     <copyField source="title"             dest="title_unstemmed" />
     <copyField source="title"             dest="title_phrase" />
@@ -339,32 +337,11 @@
         </analyzer>
     </fieldType>
     
-    <!-- 
-         Für Phrasensuche: Abweichend zu 'string' wird auf Kleinbuchstaben 
-         abgebildet, Punktierungszeichen entfernt und mehere 'white-space' 
-         zu einem Leerzeichen normiert 
+    <!-- string_lc:
+         Abweichend zu 'string' wird auf Kleinbuchstaben abgebildet, Punktierungszeichen werden entfernt und 
+         mehrere 'white-space' werden zu einem Leerzeichen normiert 
     -->
     <fieldType name="string_lc" class="solr.TextField"
-               sortMissingLast="true" 
-               positionIncrementGap="100" 
-               indexed="true" 
-               stored="false" 
-               required="false" 
-               multiValued="true">
-        <analyzer>
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\p{Punct}" replacement="" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\s{2,}"    replacement=" " />
-            <tokenizer class="solr.KeywordTokenizerFactory" />
-            <filter class="solr.LowerCaseFilterFactory" />
-        </analyzer>
-    </fieldType>
-    
-    <!-- 
-        Für Phrasensuche: Abweichend zu 'string' wird auf Kleinbuchstaben a
-        bgebildet, Punktierungszeichen entfernt und mehere 
-        'white-space' zu einem Leerzeichen normiert
-    -->
-    <fieldType name="string_lc_p" class="solr.TextField"
                sortMissingLast="true" 
                positionIncrementGap="100" 
                indexed="true" 
@@ -396,63 +373,7 @@
             <filter class="solr.CJKBigramFilterFactory" />
         </analyzer>
     </fieldType>
-    
-    <!-- Wie 'text' aber für die Verfassersuche werden auch Synonyme aus den Normdaten genutzt -->
-    <fieldType name="text_p" class="solr.TextField" 
-               positionIncrementGap="100" 
-               indexed="true" 
-               stored="false" 
-               required="false"
-               multiValued="true" >
-        <analyzer  type="index">
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.CJKBigramFilterFactory" />
-        </analyzer>
-        <analyzer type="query">           
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
-            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.CJKBigramFilterFactory" />
-        </analyzer>
-    </fieldType>
-    
-    <!-- Wie 'text' aber für die Schlagwortsuche werden auch Synonyme aus den Normdaten genutzt -->
-    <fieldType name="text_s" class="solr.TextField" 
-               positionIncrementGap="100" 
-               indexed="true" 
-               stored="false" 
-               required="false"  
-               multiValued="true">
-        <analyzer  type="index">
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.CJKBigramFilterFactory" />
-        </analyzer>
-        <analyzer type="query">           
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
-            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.CJKBigramFilterFactory" />
-        </analyzer>
-    </fieldType>
-    
+       
     <!-- Durch Stemming leicht fehlertolerante Variante von 'text'. (keine Phonetik)-->
     <fieldType name="text_stemm" class="solr.TextField" 
                positionIncrementGap="100" 
@@ -491,125 +412,6 @@
         </analyzer>
     </fieldType>
     
-    <!-- Fehlertollerante Variante von 'text_p'. Der Wortstamm wird gebildet -->
-    <fieldType name="text_stemm_p" class="solr.TextField" 
-               positionIncrementGap="100" 
-               indexed="true" 
-               stored="false" 
-               required="false"
-               multiValued="true">
-        <analyzer  type="index">
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
-            <filter class="solr.CJKBigramFilterFactory" />
-        </analyzer>
-        <analyzer type="query">           
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
-            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
-            <filter class="solr.CJKBigramFilterFactory" />
-        </analyzer>
-    </fieldType>
-    
-    <!-- Fehlertollerante Variante von 'text_p'. Der Wortstamm wird phonetisch abgebildet -->
-    <fieldType name="text_sound_p" class="solr.TextField" 
-               positionIncrementGap="100" 
-               indexed="true" 
-               stored="false" 
-               required="false"
-               multiValued="true">
-        <analyzer  type="index">
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.CJKBigramFilterFactory" />
-            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
-        </analyzer>
-        <analyzer type="query">           
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
-            <filter class="solr.CJKBigramFilterFactory" />
-            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
-        </analyzer>
-    </fieldType>
-    
-    <!-- Fehlertolerante Variante von 'text_s'. Der Wortstamm wird gebildet -->
-    <fieldType name="text_stemm_s" class="solr.TextField" 
-               positionIncrementGap="100" 
-               indexed="true" 
-               stored="false" 
-               required="false"
-               multiValued="true" >
-        <analyzer  type="index">
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
-            <filter class="solr.CJKBigramFilterFactory" />
-        </analyzer>
-        <analyzer type="query">           
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
-            <filter class="solr.SnowballPorterFilterFactory" language="German2"/>
-            <filter class="solr.CJKBigramFilterFactory" />
-        </analyzer>
-    </fieldType>
-    
-    <!-- Fehlertolerante Variante von 'text_s'. Der Wortstamm wird phonetisch abgebildet -->
-    <fieldType name="text_sound_s" class="solr.TextField" 
-               positionIncrementGap="100" 
-               indexed="true" 
-               stored="false" 
-               required="false"
-               multiValued="true" >
-        <analyzer  type="index">
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.CJKBigramFilterFactory" />
-            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
-        </analyzer>
-        <analyzer type="query">           
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
-            <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
-            <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
-            <filter class="org.apache.lucene.analysis.icu.ICUFoldingFilterFactory" />
-            <filter class="solr.SynonymFilterFactory" synonyms="synonyme.txt" ignoreCase="true" expand="false"/>
-            <filter class="solr.CJKBigramFilterFactory" />
-            <filter class="solr.BeiderMorseFilterFactory" nameType="GENERIC" ruleType="EXACT" concat="true" languageSet="german, english" />
-        </analyzer>
-    </fieldType>
     
     <!-- Standort als WGS84 Längen- und Breitengrade (siehe https://cwiki.apache.org/confluence/display/solr/Spatial+Search) -->
     <fieldType name="GeoLocation" class="solr.SpatialRecursivePrefixTreeFieldType"
@@ -698,6 +500,28 @@
             <filter class="solr.TrimFilterFactory" />
             <filter class="solr.LowerCaseFilterFactory"/>
             <filter class="solr.LengthFilterFactory" min="1" max="100" />
+        </analyzer>
+    </fieldType>
+
+   <fieldType name="DublettID" class="solr.TextField" 
+               sortMissingLast="true" 
+               omitNorms="true" 
+               indexed="true" 
+               stored="true" 
+               required="false" 
+               multiValued="false">
+        <analyzer type="index">
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+            <filter class="solr.SynonymGraphFilterFactory" 
+                    synonyms="ClusterSynonyms.txt"
+                    expand="false"
+                    ignoreCase="true" />
+            <filter class="solr.FlattenGraphFilterFactory" />
+        </analyzer>
+        <analyzer type="query">
+            <tokenizer class="solr.KeywordTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
         </analyzer>
     </fieldType>
 

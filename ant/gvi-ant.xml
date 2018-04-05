@@ -73,6 +73,7 @@
         <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
         <attribute name="solr.core"       default="${solr.core}"/>
         <sequential>
+            <var name="fileSizeGreaterNull" unset="true"/>
             <condition property="fileSizeGreaterNull">
                 <length file="@{file}" when="greater" length="0" />                
             </condition>
