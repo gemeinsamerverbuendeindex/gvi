@@ -148,22 +148,37 @@ public class GVIIndexer extends SolrIndexer {
     * Expand GND synonyms from file
     *
     * @param record The current data record
-    * @param tagStr The (sub)fields to expand
+    * @param tagStr1 The (sub)fields to expand
+    * @param tagStr2 Additional (sub)fields to expand.<br>
+    *           Used for individual handling of marc:689
     * @return The found expansions
     */
-   public Set<String> expandGndOffline(Record record, String tagStr) {
-      return expandGnd(gndFinderFile, record, tagStr);
+   public Set<String> expandGndOffline(Record record, String tagStr1, String tagStr2) {
+      return expandGnd(gndFinderFile, record, tagStr1, tagStr2);
+   }
+
+   /**
+    * Shortcut to {@link #expandGndOfflineline(Record, String, String)}
+    * 
+    * @param record The current data record
+    * @param tagStr1 The (sub)fields to expand
+    * @param tagStr2 Additional (sub)fields to expand.<br>
+    *           Used for individual handling of marc:689
+    * @return The found expansions
+    */
+   public Set<String> expandGnd(Record record, String tagStr1, String tagStr2) {
+      return expandGnd(gndFinderOnline, record, tagStr1, tagStr2);
    }
 
    /**
     * Shortcut to {@link #expandGndOfflineline(Record, String)}
     * 
-    * @param record
-    * @param tagStr
-    * @return
+    * @param record The current data record
+    * @param tagStr The (sub)fields to expand
+    * @return The found expansions
     */
    public Set<String> expandGnd(Record record, String tagStr) {
-      return expandGnd(gndFinderFile, record, tagStr);
+      return expandGnd(gndFinderOnline, record, tagStr);
    }
 
    /**
@@ -171,43 +186,48 @@ public class GVIIndexer extends SolrIndexer {
     * The usage of this method is discouraged. Because it is to slow.
     *
     * @param record The current data record
-    * @param tagStr The (sub)fields to expand
+    * @param tagStr1 The (sub)fields to expand
+    * @param tagStr2 Additional (sub)fields to expand.<br>
+    *           Used for individual handling of marc:689
     * @return The found expansions
     */
    @Deprecated
-   public Set<String> expandGndOnline(Record record, String tagStr) {
-      return expandGnd(gndFinderOnline, record, tagStr);
+   public Set<String> expandGndOnline(Record record, String tagStr1, String tagStr2) {
+      return expandGnd(gndFinderOnline, record, tagStr1, tagStr2);
    }
 
    /**
     * Expand GND synonyms from provided finder<br>
     *
     * @param record The current data record
-    * @param tagStr The (sub)fields to expand
+    * @param tagArr The (sub)fields to expand
     * @return The found expansions
     */
-   private Set<String> expandGnd(AutorityRecordFinder gndFinder, Record record, String tagStr) {
+   private Set<String> expandGnd(AutorityRecordFinder gndFinder, Record record, String... tagArr) {
       AuthorityBean normdata = null;
-      HashSet<String> result = new HashSet<>();
-      for (String testId : getFieldList(record, tagStr)) {
-         if (!testId.startsWith("(DE-588)")) {
-            continue; // nur GND nutzen
-         }
-         try {
-            normdata = gndFinder.getAuthorityBean(testId); // Normdatensatz suchen
-         } catch (AuthorityRecordException e) {
-            LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
-         }
-         if (normdata == null) {
-            continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
-         }
-         result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
-         if (normdata.synonyms == null) {
-            continue;
-         }
-         for (String alias : normdata.synonyms) {
-            // Synonyme übernehmen
-            result.add(alias);
+      Set<String> alreadyProcessed = new HashSet<>();
+      Set<String> result = new HashSet<>();
+      for (String tagStr : tagArr) {
+         if (tagStr.length() < 4) tagStr += "0"; // if needed add subfield '0'
+         for (String testId : getFieldList(record, tagStr)) {
+            if (!testId.startsWith("(DE-588)")) continue; // nur GND nutzen
+            if (alreadyProcessed.contains(testId)) continue; // only once
+            alreadyProcessed.add(testId);
+            try {
+               normdata = gndFinder.getAuthorityBean(testId); // Normdatensatz suchen
+            } catch (AuthorityRecordException e) {
+               LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
+            }
+            if (normdata == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
+            if (tagStr.startsWith("689")) { // workaround for RSWK
+               if (!normdata.authorityType.equals("s")) continue;
+            }
+            result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
+            if (normdata.synonyms != null) { // Synonyme übernehmen
+               for (String alias : normdata.synonyms) {
+                  result.add(alias);
+               }
+            }
          }
       }
       return result;
