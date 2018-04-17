@@ -134,7 +134,7 @@
     <field name="eki_id"                  type="GenericID" />
     
     <!-- Deduplikationsidentifikationsnummer -->
-    <field name="dup_id"                  type="DublettID" />
+    <field name="cluster_id"                  type="ClusterId" />
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
@@ -248,6 +248,7 @@
     <!-- macht Probleme, wenn der Term > 32k Byte ist
     <copyField source="allfields"         dest="allfields_suggest" />
     -->
+    <copyField source="id"                dest="cluster_id" />
     
     <copyField source="author"            dest="author_facet" />
     <copyField source="author"            dest="author_unstemmed" />
@@ -503,7 +504,7 @@
         </analyzer>
     </fieldType>
 
-   <fieldType name="DublettID" class="solr.TextField" 
+   <fieldType name="ClusterId" class="solr.TextField" 
                sortMissingLast="true" 
                omitNorms="true" 
                indexed="true" 
@@ -511,17 +512,11 @@
                required="false" 
                multiValued="false">
         <analyzer type="index">
-            <tokenizer class="solr.KeywordTokenizerFactory" />
-            <filter class="solr.LowerCaseFilterFactory" />
-            <filter class="solr.SynonymGraphFilterFactory" 
-                    synonyms="ClusterSynonyms.txt"
-                    expand="false"
-                    ignoreCase="true" />
-            <filter class="solr.FlattenGraphFilterFactory" />
+            <tokenizer class="de.hebis.solr.analysis.gvi.ClusterSynonymTokenizerFactory" 
+                       clusterinfofile="/home/uwe/git/SolrFilter/test/data/cluster.xml" />
         </analyzer>
         <analyzer type="query">
             <tokenizer class="solr.KeywordTokenizerFactory" />
-            <filter class="solr.LowerCaseFilterFactory" />
         </analyzer>
     </fieldType>
 
