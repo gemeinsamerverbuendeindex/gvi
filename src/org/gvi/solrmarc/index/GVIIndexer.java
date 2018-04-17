@@ -53,18 +53,10 @@ public class GVIIndexer extends SolrIndexer {
    private AutorityRecordFinder        gndFinderFile                 = new AutorityRecordFileFinder();
    private PunctuationSingleNormalizer punctuationSingleNormalizer   = new PunctuationSingleNormalizer();
 
-   private Properties                  dupIds                        = null;
-
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) {
       super(indexingPropsFile, propertyDirs);
       institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
       kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
-      try {
-         dupIds = Utils.loadProperties(propertyDirs, "kobvDups.properties");
-      } catch (IllegalArgumentException e) {
-         LOG.warn("No property file with doublet info found. \"kobvDups.properties\"");
-         dupIds = new Properties();
-      }
    }
 
    public GVIIndexer() {
@@ -132,16 +124,6 @@ public class GVIIndexer extends SolrIndexer {
       if (year != null) matchkey.append(year);
 
       return matchkey.toString();
-   }
-
-   /**
-    * Lookup to get the duplicate key to the record's id
-    * 
-    * @param record The current data record
-    * @return If found the duplicate key else the own id.
-    */
-   public String getDupId(Record record) {
-      return dupIds.getProperty(recordId, recordId);
    }
 
    /**
