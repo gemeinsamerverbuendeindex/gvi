@@ -135,6 +135,9 @@
     
     <!-- Deduplikationsidentifikationsnummer -->
     <field name="cluster_id"                  type="ClusterId" />
+   <!-- Deprecated, just until all data is new indexed.  -->
+    <field name="dup_id"                  type="GenericID" stored="true" multiValued="false" />
+
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
@@ -513,7 +516,7 @@
                multiValued="false">
         <analyzer type="index">
             <tokenizer class="de.hebis.solr.analysis.gvi.ClusterSynonymTokenizerFactory" 
-                       clusterinfofile="/home/uwe/git/SolrFilter/test/data/cluster.xml" />
+                       clusterinfofile="/data/input/gvi/Dubletten/CL/clusters.xml" />
         </analyzer>
         <analyzer type="query">
             <tokenizer class="solr.KeywordTokenizerFactory" />
