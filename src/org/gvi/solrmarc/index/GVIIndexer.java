@@ -148,7 +148,7 @@ public class GVIIndexer extends SolrIndexer {
     * @return The found expansions
     */
    public Set<String> expandGnd(Record record, String tagStr1, String tagStr2) {
-      return expandGnd(gndFinderOnline, record, tagStr1, tagStr2);
+      return expandGnd(gndFinderFile, record, tagStr1, tagStr2);
    }
 
    /**
@@ -159,7 +159,7 @@ public class GVIIndexer extends SolrIndexer {
     * @return The found expansions
     */
    public Set<String> expandGnd(Record record, String tagStr) {
-      return expandGnd(gndFinderOnline, record, tagStr);
+      return expandGnd(gndFinderFile, record, tagStr);
    }
 
    /**
@@ -200,9 +200,12 @@ public class GVIIndexer extends SolrIndexer {
                LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
             }
             if (normdata == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
-            if (tagStr.startsWith("689")) { // workaround for RSWK
-               if (!normdata.authorityType.equals("s")) continue;
-            }
+            // FIXME
+            if (tagStr.startsWith("689")) continue;
+//            if (tagStr.startsWith("689")) { // workaround for RSWK
+//               if (!normdata.authorityType.equals("s")) continue;
+//            }
+            // FIXME End
             result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
             if (normdata.synonyms != null) { // Synonyme übernehmen
                for (String alias : normdata.synonyms) {
