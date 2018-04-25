@@ -59,6 +59,8 @@
                 <sysproperty key="solrmarc.log.level"      value="INFO"/>
                 <sysproperty key="log4j.configurationFile" value="${basedir}/log4j2.xml"/>
                 <sysproperty key="data.collection"         value="${data.collection}"/>
+                <sysproperty key="gnd.configfile"          value="AutorityRecord.properties"/>
+                <sysproperty key="gnd.configdir"           value="${solrmarc.dist.path}"/>
                 <arg value="@{solrmarc.config}"/>
                 <arg value="@{file}"/>
             </java>
@@ -94,7 +96,7 @@
                         <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
                         <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
                         <sysproperty key="solrmarc.log.level"      value="INFO"/>
-                        <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
+                        <sysproperty key="log4j.configurationFile" value="${basedir}/log4j2.xml"/>
                         <sysproperty key="data.collection"         value="${data.collection}"/>
                         <sysproperty key="marc.ids_to_delete"      value="@{file}"/>
                         <arg value="@{solrmarc.config}"/>

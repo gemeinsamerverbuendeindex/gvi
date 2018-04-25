@@ -23,7 +23,6 @@ then
   fi
 fi
 
-java -Dsolrmarc.main.class="org.solrmarc.marc.MarcPrinter" -jar $scriptdir/SolrMarc.jar index $1 $2 $3 $4 $5 $6
-
+java -Dgnd.configdir="/opt/gvi/solrmarc" -Dlog4j.configurationFile="log4j2.xml" -Dsolrmarc.main.class="org.solrmarc.marc.MarcPrinter" -jar $scriptdir/SolrMarc.jar index $1 $2 $3 $4 $5 $6 
 exit 0
 
