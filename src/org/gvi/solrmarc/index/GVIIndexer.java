@@ -200,12 +200,10 @@ public class GVIIndexer extends SolrIndexer {
                LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
             }
             if (normdata == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
-            // FIXME
-            if (tagStr.startsWith("689")) continue;
-//            if (tagStr.startsWith("689")) { // workaround for RSWK
-//               if (!normdata.authorityType.equals("s")) continue;
-//            }
-            // FIXME End
+            if (tagStr.startsWith("689")) { // workaround for RSWK
+               // TODO check file finder.  'authorityType' may still contain 's' as dummy
+               if (!normdata.authorityType.equals("s")) continue;
+            }
             result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
             if (normdata.synonyms != null) { // Synonyme übernehmen
                for (String alias : normdata.synonyms) {
