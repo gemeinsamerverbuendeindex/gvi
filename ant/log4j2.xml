@@ -14,35 +14,21 @@
         </Async>
     </Appenders>
     <Loggers>
-        <Root level="warn">
+      <Root level="warn">
+            <AppenderRef ref="STD" />
             <AppenderRef ref="ERR" />
         </Root>
 		      
-        <Logger name="de" level="info" additivity="false">
+        <Logger name="de" level="debug" additivity="false">
             <AppenderRef ref="STD" />
             <AppenderRef ref="ERR" />
         </Logger>
 
-        <Logger name="org.solrmarc.tools.Utils" level="info" additivity="false">
+        <Logger name="org.solrmarc" level="info" additivity="false">
             <AppenderRef ref="STD" />
             <AppenderRef ref="ERR" />
         </Logger>
         
-        <Logger name="org.solrmarc.MarcPrinter" level="warn" additivity="false">
-            <AppenderRef ref="STD" />
-            <AppenderRef ref="ERR" />
-        </Logger>
-
-        <Logger name="org.solrmarc.MarcImporter" level="info" additivity="false">
-            <AppenderRef ref="STD" />
-            <AppenderRef ref="ERR" />
-        </Logger>
-
-        <Logger name="org.solrmarc.MarcHandler" level="info" additivity="false">
-            <AppenderRef ref="STD" />
-            <AppenderRef ref="ERR" />
-        </Logger>
-      
         <Logger name="org.apache.commons" level="error" additivity="false">
             <AppenderRef ref="ERR" />
         </Logger>
