@@ -28,6 +28,7 @@ public class PunctuationSingleNormalizer implements
         }
         return value.replaceAll(reNotVis, "").toLowerCase().
                 replaceAll(rePunct, " ").
-                replaceAll(reSpaces, " ").trim();
+                replaceAll(reSpaces, " ").
+                replaceAll("'", "").trim();
     }
 }

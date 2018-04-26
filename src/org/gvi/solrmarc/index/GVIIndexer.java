@@ -69,21 +69,51 @@ public class GVIIndexer extends SolrIndexer {
       GetFormatMixin formatMixin = new GetFormatMixin();
       formatMixin.setMainIndexer(this);
 
-      Set<String> contentTypes = formatMixin.getContentTypes(record);
+      Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
       StringBuilder matchkey = new StringBuilder();
-      if (contentTypes.contains("Book")) {
-         matchkey.append("b");
-      } else if (contentTypes.contains("Article")) {
-         matchkey.append("a");
-      } else if (contentTypes.contains("Journal/Magazine")) {
+      
+      // EJournal
+      if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
+         matchkey.append("ej");
+      }
+      // Journal
+      else if (contentTypes.contains("Journal/Magazine")) {
          matchkey.append("j");
-      } else {
+      }
+      // E-Book
+      else if (contentTypes.contains("EBook")) {
+          matchkey.append("eb");
+      }
+      // Book 
+      else if (contentTypes.contains("Book")) {
+          matchkey.append("b");
+      } 
+      // Article
+      else if (contentTypes.contains("Article")) {  
+         matchkey.append("a");
+      }
+      // Musical Score
+      else if (contentTypes.contains("Musical Score")) {
+         matchkey.append("m");
+      }      
+      // Sound
+      else if (contentTypes.contains("Sound Recording")) {
+         matchkey.append("s");
+      }
+      // Video
+      else if (contentTypes.contains("Video"))
+      {
+         matchkey.append("v");
+      }
+      // Undetermined
+      else 
+      {
          matchkey.append("u");
       }
 
       matchkey.append(":");
 
-      String firstAuthor = getFirstFieldVal(record, "100a");
+      String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a");
       if (firstAuthor != null) {
          String[] nameParts = firstAuthor.split("[, ]+");
          if (nameParts.length > 0) { // yes in some titles the given author is "," (sik)
@@ -93,9 +123,10 @@ public class GVIIndexer extends SolrIndexer {
 
       matchkey.append(":");
 
-      String title = getFirstFieldVal(record, "245a");
+      String title = getSortableMainTitle(record);
       if (title != null) {
          title = punctuationSingleNormalizer.normalize(title);
+         title = title.replaceAll("§", "");
          String[] words = title.split(" ");
          int maxWord = Math.min(5, words.length);
          for (int i = 0; i < maxWord; i++) {
@@ -114,7 +145,9 @@ public class GVIIndexer extends SolrIndexer {
       String publisher = getFirstFieldVal(record, "260b:264b");
       if (publisher != null) {
          publisher = punctuationSingleNormalizer.normalize(publisher);
-         matchkey.append(publisher.split(" ")[0]);
+         publisher = publisher.replaceAll("verlag", "");
+         if (publisher.length()>0)
+            matchkey.append(publisher.split(" ")[0]);
       }
 
       matchkey.append(":");
@@ -124,6 +157,29 @@ public class GVIIndexer extends SolrIndexer {
 
       return matchkey.toString();
    }
+   
+    public String getSortableMainTitle(Record record)
+    {
+        DataField titleField = (DataField) record.getVariableField("245");
+        if (titleField == null)
+            return "";
+          
+        int nonFilingInt = getInd2AsInt(titleField);
+        
+        String title = getFirstFieldVal(record, "245a");
+        title = title.toLowerCase();
+        
+        //Skip non-filing chars, if possible. 
+        if ( title.length() > nonFilingInt )  {
+          title = title.substring(nonFilingInt);          
+        }
+        
+        if ( title.length() == 0) {
+          return null;
+        }                
+        
+        return title;
+    }
 
    /**
     * Expand GND synonyms from file
