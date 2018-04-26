@@ -18,7 +18,7 @@
 			<AppenderRef ref="ERR" />
 		</Root>
 		      
-  		<Logger name="de" level="info" additivity="false">
+  		<Logger name="de" level="trace" additivity="false">
 			<AppenderRef ref="STD" />
 			<AppenderRef ref="ERR" />
 		</Logger>
