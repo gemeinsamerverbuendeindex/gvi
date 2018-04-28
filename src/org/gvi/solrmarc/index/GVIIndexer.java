@@ -28,8 +28,6 @@ import org.solrmarc.tools.Utils;
 import de.hebis.it.hds.gnd.out.AuthorityBean;
 import de.hebis.it.hds.gnd.out.AuthorityRecordException;
 import de.hebis.it.hds.gnd.out.AutorityRecordFileFinder;
-import de.hebis.it.hds.gnd.out.AutorityRecordFinder;
-import de.hebis.it.hds.gnd.out.AutorityRecordSolrFinder;
 import de.hebis.it.hds.tools.marc.MarcWrapper;
 
 /**
@@ -48,9 +46,8 @@ public class GVIIndexer extends SolrIndexer {
    private Set<String>                 institutionSet                = new LinkedHashSet<>();
    private Set<String>                 consortium                    = new LinkedHashSet<>();
    private static final Logger         LOG                           = LogManager.getLogger(GVIIndexer.class);
-   private AutorityRecordFinder        gndFinderOnline               = new AutorityRecordSolrFinder();
-   private AutorityRecordFinder        gndFinderFile                 = new AutorityRecordFileFinder();
    private PunctuationSingleNormalizer punctuationSingleNormalizer   = new PunctuationSingleNormalizer();
+   private AutorityRecordFileFinder gndFinderFile = new AutorityRecordFileFinder();
 
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) {
       super(indexingPropsFile, propertyDirs);
@@ -71,7 +68,7 @@ public class GVIIndexer extends SolrIndexer {
 
       Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
       StringBuilder matchkey = new StringBuilder();
-      
+
       // EJournal
       if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
          matchkey.append("ej");
@@ -82,32 +79,30 @@ public class GVIIndexer extends SolrIndexer {
       }
       // E-Book
       else if (contentTypes.contains("EBook")) {
-          matchkey.append("eb");
+         matchkey.append("eb");
       }
-      // Book 
+      // Book
       else if (contentTypes.contains("Book")) {
-          matchkey.append("b");
-      } 
+         matchkey.append("b");
+      }
       // Article
-      else if (contentTypes.contains("Article")) {  
+      else if (contentTypes.contains("Article")) {
          matchkey.append("a");
       }
       // Musical Score
       else if (contentTypes.contains("Musical Score")) {
          matchkey.append("m");
-      }      
+      }
       // Sound
       else if (contentTypes.contains("Sound Recording")) {
          matchkey.append("s");
       }
       // Video
-      else if (contentTypes.contains("Video"))
-      {
+      else if (contentTypes.contains("Video")) {
          matchkey.append("v");
       }
       // Undetermined
-      else 
-      {
+      else {
          matchkey.append("u");
       }
 
@@ -146,8 +141,7 @@ public class GVIIndexer extends SolrIndexer {
       if (publisher != null) {
          publisher = punctuationSingleNormalizer.normalize(publisher);
          publisher = publisher.replaceAll("verlag", "");
-         if (publisher.length()>0)
-            matchkey.append(publisher.split(" ")[0]);
+         if (publisher.length() > 0) matchkey.append(publisher.split(" ")[0]);
       }
 
       matchkey.append(":");
@@ -157,45 +151,31 @@ public class GVIIndexer extends SolrIndexer {
 
       return matchkey.toString();
    }
-   
-    public String getSortableMainTitle(Record record)
-    {
-        DataField titleField = (DataField) record.getVariableField("245");
-        if (titleField == null)
-            return "";
-          
-        int nonFilingInt = getInd2AsInt(titleField);
-        
-        String title = getFirstFieldVal(record, "245a");
-        title = title.toLowerCase();
-        
-        //Skip non-filing chars, if possible. 
-        if ( title.length() > nonFilingInt )  {
-          title = title.substring(nonFilingInt);          
-        }
-        
-        if ( title.length() == 0) {
-          return null;
-        }                
-        
-        return title;
-    }
 
-   /**
-    * Expand GND synonyms from file
-    *
-    * @param record The current data record
-    * @param tagStr1 The (sub)fields to expand
-    * @param tagStr2 Additional (sub)fields to expand.<br>
-    *           Used for individual handling of marc:689
-    * @return The found expansions
-    */
-   public Set<String> expandGndOffline(Record record, String tagStr1, String tagStr2) {
-      return expandGnd(gndFinderFile, record, tagStr1, tagStr2);
+   public String getSortableMainTitle(Record record) {
+      DataField titleField = (DataField) record.getVariableField("245");
+      if (titleField == null) return "";
+
+      int nonFilingInt = getInd2AsInt(titleField);
+
+      String title = getFirstFieldVal(record, "245a");
+      title = title.toLowerCase();
+
+      // Skip non-filing chars, if possible.
+      if (title.length() > nonFilingInt) {
+         title = title.substring(nonFilingInt);
+      }
+
+      if (title.length() == 0) {
+         return null;
+      }
+
+      return title;
    }
 
    /**
-    * Shortcut to {@link #expandGndOfflineline(Record, String, String)}
+    * Wrapper to {@link #expandGnd2(Record, String...)}<br>
+    * (SolrMarc's reflection can't resolve varargs) 
     * 
     * @param record The current data record
     * @param tagStr1 The (sub)fields to expand
@@ -204,33 +184,19 @@ public class GVIIndexer extends SolrIndexer {
     * @return The found expansions
     */
    public Set<String> expandGnd(Record record, String tagStr1, String tagStr2) {
-      return expandGnd(gndFinderFile, record, tagStr1, tagStr2);
+      return expandGnd2(record, tagStr1, tagStr2);
    }
 
    /**
-    * Shortcut to {@link #expandGndOfflineline(Record, String)}
+     * Wrapper to {@link #expandGnd2(Record, String...)}<br>
+    * (SolrMarc's reflection can't resolve varargs) 
     * 
     * @param record The current data record
     * @param tagStr The (sub)fields to expand
     * @return The found expansions
     */
    public Set<String> expandGnd(Record record, String tagStr) {
-      return expandGnd(gndFinderFile, record, tagStr);
-   }
-
-   /**
-    * Expand GND synonyms from remote repository<br>
-    * The usage of this method is discouraged. Because it is to slow.
-    *
-    * @param record The current data record
-    * @param tagStr1 The (sub)fields to expand
-    * @param tagStr2 Additional (sub)fields to expand.<br>
-    *           Used for individual handling of marc:689
-    * @return The found expansions
-    */
-   @Deprecated
-   public Set<String> expandGndOnline(Record record, String tagStr1, String tagStr2) {
-      return expandGnd(gndFinderOnline, record, tagStr1, tagStr2);
+      return expandGnd2(record, tagStr);
    }
 
    /**
@@ -240,7 +206,7 @@ public class GVIIndexer extends SolrIndexer {
     * @param tagArr The (sub)fields to expand
     * @return The found expansions
     */
-   private Set<String> expandGnd(AutorityRecordFinder gndFinder, Record record, String... tagArr) {
+   private Set<String> expandGnd2(Record record, String... tagArr) {
       AuthorityBean normdata = null;
       Set<String> alreadyProcessed = new HashSet<>();
       Set<String> result = new HashSet<>();
@@ -251,13 +217,13 @@ public class GVIIndexer extends SolrIndexer {
             if (alreadyProcessed.contains(testId)) continue; // only once
             alreadyProcessed.add(testId);
             try {
-               normdata = gndFinder.getAuthorityBean(testId); // Normdatensatz suchen
+               normdata = gndFinderFile .getAuthorityBean(testId); // Normdatensatz suchen
             } catch (AuthorityRecordException e) {
                LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
             }
             if (normdata == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
             if (tagStr.startsWith("689")) { // workaround for RSWK
-               // TODO check file finder.  'authorityType' may still contain 's' as dummy
+               // TODO check file finder. 'authorityType' may still contain 's' as dummy
                if (!normdata.authorityType.equals("s")) continue;
             }
             result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
