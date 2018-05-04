@@ -5,7 +5,9 @@
     <lib dir="${solr.solr.home:}/../../lib" />    
     <dataDir>${solr.data.dir:}</dataDir>
    
-    <directoryFactory name="DirectoryFactory" class="solr.MMapDirectoryFactory" />
+    <directoryFactory name="DirectoryFactory" class="solr.MMapDirectoryFactory" >
+        <bool name="preload">true</bool>
+    </directoryFactory>
 
     <indexConfig>
         <maxIndexingThreads>16</maxIndexingThreads>
