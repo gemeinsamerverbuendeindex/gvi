@@ -300,7 +300,7 @@
                stored="false" 
                required="false"  
                multiValued="true"
-               docValues="false"/>
+               docValues="true"/>
     
     <!-- Wie 'Facet' aber abrufbar (stored). -->
     <fieldType name="FacetPlus" class="solr.StrField" 
@@ -309,7 +309,7 @@
                stored="true" 
                required="false"  
                multiValued="true"
-               docValues="false"/>
+               docValues="true"/>
     
     <fieldType name="UnIndexed" class="solr.StrField" 
                indexed="false" 
