@@ -237,6 +237,7 @@
     <!-- Experimentelle (!) Matchkeys -->
     <field name="test_matchkey_1" type="string" stored="true" multiValued="false" />
     <field name="test_matchkey_2" type="string" stored="true" multiValued="false" />
+    <field name="test_matchkey_3" type="string" stored="true" multiValued="false" />
 
     <!-- 
     ###########################################
