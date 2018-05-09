@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
  * and open the template in the editor.
  */
 
+import java.io.FileInputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -24,7 +24,7 @@ import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
 import org.marc4j.marc.VariableField;
-import org.solrmarc.index.GetFormatMixin;
+import org.solrmarc.mixin.GetFormatMixin;
 import org.solrmarc.index.SolrIndexer;
 import org.solrmarc.tools.Utils;
 
@@ -42,8 +42,8 @@ import org.gvi.solrmarc.normalizer.ISBNNormalizer;
  */
 public class GVIIndexer extends SolrIndexer {
 
-   private Map<String, String>         institutionToConsortiumMap    = null;
-   private Map<String, String>         kobvInstitutionReplacementMap = null;
+   private Properties                  institutionToConsortiumMap    = new Properties();
+   private Properties                  kobvInstitutionReplacementMap = new Properties();
    private String                      recordId;
    private String                      catalog;
    private String                      collection;
@@ -54,10 +54,11 @@ public class GVIIndexer extends SolrIndexer {
    private AutorityRecordFileFinder    gndFinderFile                 = new AutorityRecordFileFinder();
    private Properties                  clusterMappings               = null;
 
-   public GVIIndexer(String indexingPropsFile, String[] propertyDirs) {
+   public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception
+    {
       super(indexingPropsFile, propertyDirs);
-      institutionToConsortiumMap = findMap(loadTranslationMap("kobv.properties"));
-      kobvInstitutionReplacementMap = findMap(loadTranslationMap("kobv_replacement.properties"));
+      institutionToConsortiumMap.load(new FileInputStream("translation_maps/kobv.properties"));
+      kobvInstitutionReplacementMap.load(new FileInputStream("kobv_replacement.properties"));
       try {
          if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
          clusterMappings = Utils.loadProperties(propertyDirs, "clusters.properties");
@@ -75,7 +76,7 @@ public class GVIIndexer extends SolrIndexer {
    public String matchkeyISBN(Record record) {
       String isbn = getFirstFieldVal(record, "020a");
       if (isbn != null) {
-         isbn = ISBNNormalizer.normalize(isbn);
+            isbn = ISBNNormalizer.normalize(isbn);
       } else {
          isbn = "";
       }
@@ -85,8 +86,7 @@ public class GVIIndexer extends SolrIndexer {
    public String matchkeyMaterial(Record record) {
       String material = "";
 
-      GetFormatMixin formatMixin = new GetFormatMixin();
-      formatMixin.setMainIndexer(this);
+      GetFormatMixin formatMixin = new GetFormatMixin();      
       Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
 
       // Thesis
@@ -249,19 +249,19 @@ public class GVIIndexer extends SolrIndexer {
       DataField titleField = (DataField) record.getVariableField("245");
       if (titleField == null) return "";
 
-      int nonFilingInt = getInd2AsInt(titleField);
+      int nonFilingInt = 0;//getInd2AsInt(titleField);
 
       String title = getFirstFieldVal(record, "245a");
-      title = title.toLowerCase();
+          title = title.toLowerCase();
 
-      // Skip non-filing chars, if possible.
-      if (title.length() > nonFilingInt) {
-         title = title.substring(nonFilingInt);
-      }
+          // Skip non-filing chars, if possible.
+        if (title.length() > nonFilingInt) {
+            title = title.substring(nonFilingInt);
+        }
 
-      if (title.length() == 0) {
-         return null;
-      }
+        if (title.length() == 0) {
+            return null;
+        }
 
       return title;
    }
@@ -461,8 +461,7 @@ public class GVIIndexer extends SolrIndexer {
       return "GviMarcDE" + catalog.substring(3);
    }
 
-   @Override
-   protected void perRecordInit(Record record) {
+   public void perRecordInit(Record record) {
       collection = findCollection();
       String f001 = getFirstFieldVal(record, "001");
       catalog = findCatalog(record, f001);
@@ -513,7 +512,7 @@ public class GVIIndexer extends SolrIndexer {
             for (String oneisil : isils) {
                if (!oneisil.isEmpty()) {
                   if (kobvInstitutionReplacementMap.containsKey(oneisil)) {
-                     kobvInstitutions.add(kobvInstitutionReplacementMap.get(oneisil));
+                     kobvInstitutions.add(kobvInstitutionReplacementMap.getProperty(oneisil));
                   } else {
                      kobvInstitutions.add(oneisil);
                   }
@@ -521,7 +520,7 @@ public class GVIIndexer extends SolrIndexer {
             }
          } else {
             if (kobvInstitutionReplacementMap.containsKey(value049a)) {
-               kobvInstitutions.add(kobvInstitutionReplacementMap.get(value049a));
+               kobvInstitutions.add(kobvInstitutionReplacementMap.getProperty(value049a));
             } else {
                kobvInstitutions.add(value049a);
             }
@@ -551,7 +550,9 @@ public class GVIIndexer extends SolrIndexer {
       return institution;
    }
 
-   protected Set<String> findConsortium(Record record, String catalog, Set<String> institutionSet, Map<String, String> institutionToConsortiumMap) {
+   protected Set<String> findConsortium(Record record, String catalog,
+					Set<String> institutionSet,
+					Properties institutionToConsortiumMap) {
       Set<String> consortiumSet = new HashSet<>();
       switch (catalog) {
          case "DE-101": // DNB
@@ -579,12 +580,14 @@ public class GVIIndexer extends SolrIndexer {
       return consortiumSet;
    }
 
-   protected Set<String> findConsortiumByInstitution(String defaultCatalog, Set<String> institutionSet, Map<String, String> institutionToConsortiumMap) {
+   protected Set<String> findConsortiumByInstitution(String defaultCatalog,
+						     Set<String> institutionSet,
+						     Properties institutionToConsortiumMap) {
       Set<String> consortiumSet = new HashSet<>();
       int numOtherConsortium = 0;
       for (String i : institutionSet) {
          if (institutionToConsortiumMap.containsKey(i)) {
-            consortiumSet.add(institutionToConsortiumMap.get(i));
+            consortiumSet.add(institutionToConsortiumMap.getProperty(i));
             numOtherConsortium++;
          }
       }
