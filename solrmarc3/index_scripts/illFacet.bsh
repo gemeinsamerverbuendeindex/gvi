@@ -1,0 +1,82 @@
+/**
+ * Custom format determination script.
+ *
+ * This can be used to override built-in SolrMarc custom functions.  If you change
+ * this script, you will need to activate it in import/marc_local.properties before
+ * it will be applied during indexing.
+ */
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import org.marc4j.marc.Record;
+import org.marc4j.marc.DataField;
+import org.marc4j.marc.Subfield;
+
+/**
+ * Determine Record Format(s)
+ *
+ * @param  Record          record
+ * @return Set     format of record
+ */
+public Set getIllFacet(Record record)
+{	
+    // a = Fernleihe (nur Ausleihe)
+    // e = Fernleihe (Kopie, elektronischer Versand an Endnutzer möglich)
+    // k = Fernleihe (Nur Kopie)
+    // l = Fernleihe (Kopie und Ausleihe)
+    // n = Keine Fernleihe    
+
+    Set result = new LinkedHashSet();
+    List fields = record.getVariableFields("924");
+    Iterator iterator = fields.iterator();
+
+    if (fields != null) 
+    {
+        while(iterator.hasNext()) 
+        {
+            DataField field = (DataField) iterator.next();
+            if (field.getSubfield('d') != null) 
+            {
+                String data = field.getSubfield('d').getData();
+                String illCodeString = data.toUpperCase();
+                char illCode = illCodeString.length() > 0 ? illCodeString.charAt(0) : 'U';
+                switch (illCode) 
+                {
+                    case 'U':
+                        result.add("unknown");
+                        break;
+                    case 'N':
+                        result.add("none");
+                        break;
+                    case 'A':
+                        result.add("loan");
+                        break;
+                    case 'E':
+                        result.add("copy");
+                        result.add("ecopy");
+                        break;
+                    case 'K':
+                        result.add("copy");
+                        break;
+                    case 'L':
+                        result.add("copy");
+                        result.add("loan");
+                        break;
+                    default:
+                        result.add("unknown");
+                        break;  
+                }
+            }
+        }
+    }
+
+    if (result.isEmpty()) 
+    {
+        result.add("unknown");
+    }
+    
+    
+    return result;
+}
+

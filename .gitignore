@@ -1,4 +1,6 @@
+/build
+/dist/
 /nbproject/private/
-/solrmarc/solrmarc.log
 /ant/gvi-ant*local.properties
-/bin
+/solrmarc3/index_java/bin/
+
