@@ -73,198 +73,286 @@ public class GVIIndexer extends SolrIndexer {
       super(null, null);
    }
 
-   public String matchkeyISBN(Record record) {
-      String isbn = getFirstFieldVal(record, "020a");
-      if (isbn != null) {
+    public String matchkeyISBN(Record record)
+    {
+        String isbn = getFirstFieldVal(record, "020a");
+        if (isbn != null)
+        {
             isbn = ISBNNormalizer.normalize(isbn);
-      } else {
-         isbn = "";
-      }
-      return isbn;
-   }
+        }
+        else
+        {
+            isbn = "";
+        }
+        return isbn;
+    }
 
-   public String matchkeyMaterial(Record record) {
-      String material = "";
+    public String matchkeyMaterial(Record record)
+    {
+        String material = "";
 
-      GetFormatMixin formatMixin = new GetFormatMixin();      
-      Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
+        GetFormatMixin formatMixin = new GetFormatMixin();
+        Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
 
-      // Thesis
-      if (contentTypes.contains("Thesis/Dissertation")) {
-         material = "thesis";
-      }
-      // EJournal
-      else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
-         material = "ejournal";
-      }
-      // Journal
-      else if (contentTypes.contains("Journal/Magazine")) {
-         material = "journal";
-      }
-      // E-Book
-      else if (contentTypes.contains("EBook")) {
-         material = "ebook";
-      }
-      // Book
-      else if (contentTypes.contains("Book")) {
-         material = "book";
-      }
-      // Article
-      else if (contentTypes.contains("Article")) {
-         material = "article";
-      }
-      // Musical Score
-      else if (contentTypes.contains("Musical Score")) {
-         material = "music";
-      }
-      // Sound
-      else if (contentTypes.contains("Sound Recording")) {
-         material = "sound";
-      }
-      // Video
-      else if (contentTypes.contains("Video")) {
-         material = "video";
-      }
-      // Map
-      else if (contentTypes.contains("Map")) {
-         material = "map";
-      }
-      // Undetermined
-      else {
-         material = "other";
-      }
-
-      return material;
-   }
-
-   public String matchkeyAuthor(Record record) {
-      String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a:245c");
-      String lastName = "";
-      if (firstAuthor != null) {
-         String[] nameParts = firstAuthor.split("[, ]+");
-         if (nameParts.length > 0) { // yes in some titles the given author is "," (sik)
-            lastName = punctuationSingleNormalizer.normalize(nameParts[0].toLowerCase());
-            lastName = lastName.replaceAll(" ", "");
-         }
-      }
-      return lastName;
-   }
-
-   public String matchkeyPublisher(Record record) {
-      String publisherKey = "";
-      String publisher = getFirstFieldVal(record, "260b:264b:502c");
-      if (publisher != null) {
-         publisher = publisher.replaceAll("[Vv]erlag", "");
-         publisher = publisher.replaceAll("[Vv]erl[\\.]", "");
-         publisher = publisher.replaceAll("\\.", "");
-         publisherKey = extractWords(publisher, 2);
-      }
-      return publisherKey;
-   }
-
-   public String matchkeyPubdate(Record record) {
-      return getPublicationDate008or26xc(record);
-   }
-
-   public String extractWords(String text, int nwords) {
-      String result = "";
-      if (text != null) {
-         text = punctuationSingleNormalizer.normalize(text);
-         text = text.replaceAll("§", "");
-         String[] words = text.split(" ");
-         int maxWord = Math.min(nwords, words.length);
-         for (int i = 0; i < maxWord; i++) {
-            result += words[i];
-         }
-      }
-      return result;
-   }
-
-   public String matchkeyTitle(Record record) {
-      String title = "";
-      String mainTitle = getSortableMainTitle(record);
-      if (mainTitle != null) {
-         title = extractWords(mainTitle, 5);
-      }
-      return title;
-   }
-
-   public String matchkeyNumParts(Record record) {
-      String volume = "";
-      String field = getFirstFieldVal(record, "245n:800n:810n:811n:830n");
-      if (field != null) {
-         volume = punctuationSingleNormalizer.normalize(field);
-      }
-      return volume;
-   }
-
-   public String matchkeyVolume(Record record) {
-      String volume = "";
-      String field = getFirstFieldVal(record, "800v:810v:811v:830v");
-      if (field != null) {
-         volume = punctuationSingleNormalizer.normalize(field);
-      }
-      return volume;
-   }
-
-   public String matchkeyMaterialISBNYear(Record record) {
-      String material = matchkeyMaterial(record);
-      String isbn = matchkeyISBN(record);
-      String pubdate = matchkeyPubdate(record);
-      String matchkey = "";
-      if (!isbn.isEmpty()) matchkey = String.format("%s:%s:%s", material, isbn, pubdate);
-      return matchkey;
-   }
-
-   public String matchkeyMaterialAuthorTitle(Record record) {
-      String material = matchkeyMaterial(record);
-      String author = matchkeyAuthor(record);
-      String title = matchkeyTitle(record);
-      String matchkey = String.format("%s:%s:%s", material, author, title);
-      if (material.equals("map")) {
-         String volume = matchkeyVolume(record);
-         if (!volume.isEmpty()) matchkey = String.format("%s:%s", matchkey, volume);
-      } else if (material.equals("article")) {
-         String hostTitle = extractWords(getFirstFieldVal(record, "773t"), 3);
-         String relatedPart = extractWords(getFirstFieldVal(record, "773g"), 3);
-         if (!hostTitle.isEmpty()) matchkey = String.format("%s:%s", matchkey, hostTitle);
-         if (!relatedPart.isEmpty()) matchkey = String.format("%s:%s", matchkey, relatedPart);
-      }
-      return matchkey;
-   }
-
-   public String matchkeyMaterialAuthorTitleYear(Record record) {
-      String pubdate = matchkeyPubdate(record);
-      String matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitle(record), pubdate);
-      return matchkey;
-   }
-
-   public String matchkeyMaterialAuthorTitleYearPublisher(Record record) {
-      String publisher = matchkeyPublisher(record);
-      String matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitleYear(record), publisher);
-      return matchkey;
-   }
-
-   public String getSortableMainTitle(Record record) {
-      DataField titleField = (DataField) record.getVariableField("245");
-      if (titleField == null) return "";
-
-      int nonFilingInt = 0;//getInd2AsInt(titleField);
-
-      String title = getFirstFieldVal(record, "245a");
-          title = title.toLowerCase();
-
-          // Skip non-filing chars, if possible.
-        if (title.length() > nonFilingInt) {
-            title = title.substring(nonFilingInt);
+        // Thesis
+        if (contentTypes.contains("Thesis/Dissertation"))
+        {
+            material = "thesis";
+        }
+        // EJournal
+        else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online"))
+        {
+            material = "ejournal";
+        }
+        // Journal
+        else if (contentTypes.contains("Journal/Magazine"))
+        {
+            material = "journal";
+        }
+        // E-Book
+        else if (contentTypes.contains("EBook"))
+        {
+            material = "ebook";
+        }
+        // Book
+        else if (contentTypes.contains("Book"))
+        {
+            material = "book";
+        }
+        // Article
+        else if (contentTypes.contains("Article"))
+        {
+            material = "article";
+        }
+        // Musical Score
+        else if (contentTypes.contains("Musical Score"))
+        {
+            material = "music";
+        }
+        // Sound
+        else if (contentTypes.contains("Sound Recording"))
+        {
+            material = "sound";
+        }
+        // Video
+        else if (contentTypes.contains("Video"))
+        {
+            material = "video";
+        }
+        // Map
+        else if (contentTypes.contains("Map"))
+        {
+            material = "map";
+        }
+        // Undetermined
+        else
+        {
+            material = "other";
         }
 
-        if (title.length() == 0) {
-            return null;
+        return material;
+    }
+
+    public String matchkeyAuthor(Record record)
+    {
+        String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a:245c");
+        String lastName = "";
+        if (firstAuthor != null)
+        {
+            String[] nameParts = firstAuthor.split("[, ]+");
+            if (nameParts.length > 0)
+            { // yes in some titles the given author is "," (sik)
+                lastName = punctuationSingleNormalizer.normalize(nameParts[0].toLowerCase());
+                lastName = lastName.replaceAll(" ", "");
+            }
+        }
+        return lastName;
+    }
+
+    public String matchkeyPublisher(Record record)
+    {
+        String publisherKey = "";
+        String publisher = getFirstFieldVal(record, "260b:264b:502c");
+        if (publisher != null)
+        {
+            publisher = publisher.replaceAll("[Vv]erlag", "");
+            publisher = publisher.replaceAll("[Vv]erl[\\.]", "");
+            publisher = publisher.replaceAll("\\.", "");
+            publisherKey = extractWords(publisher, 2);
+        }
+        return publisherKey;
+    }
+
+    public String matchkeyPubdate(Record record)
+    {
+        String pubdateKey = getPublicationDate008or26xc(record);
+        if (pubdateKey == null)
+        {
+            pubdateKey = "";
+        }
+        return pubdateKey;
+    }
+
+    public String extractWords(String text, int nwords)
+    {
+        String result = "";
+        if (text != null)
+        {
+            text = punctuationSingleNormalizer.normalize(text);
+            text = text.replaceAll("§", "");
+            String[] words = text.split(" ");
+            int maxWord = Math.min(nwords, words.length);
+            for (int i = 0; i < maxWord; i++)
+            {
+                result += words[i];
+            }
+        }
+        return result;
+    }
+
+    public String matchkeyTitle(Record record)
+    {
+        String title = "";
+        String mainTitle = getSortableMainTitle(record);
+        if (mainTitle != null)
+        {
+            title = extractWords(mainTitle, 5);
+        }
+        return title;
+    }
+
+    public String matchkeyNumParts(Record record)
+    {
+        String volume = "";
+        String field = getFirstFieldVal(record, "245n:800n:810n:811n:830n");
+        if (field != null)
+        {
+            volume = punctuationSingleNormalizer.normalize(field);
+        }
+        return volume;
+    }
+
+    public String matchkeyVolume(Record record)
+    {
+        String volume = "";
+        String field = getFirstFieldVal(record, "800v:810v:811v:830v");
+        if (field != null)
+        {
+            volume = punctuationSingleNormalizer.normalize(field);
+        }
+        return volume;
+    }
+
+    public String matchkeyMaterialISBNYear(Record record)
+    {
+        String material = matchkeyMaterial(record);
+        String isbn = matchkeyISBN(record);
+        String pubdate = matchkeyPubdate(record);
+        String matchkey = "";
+        if (!isbn.isEmpty())
+        {
+            matchkey = String.format("%s:%s:%s", material, isbn, pubdate);
+        }
+        return matchkey;
+    }
+
+    public String matchkeyMaterialAuthorTitle(Record record)
+    {
+        String matchkey = null;
+        String material = null;
+        String author = null;
+        String title = null;
+        String volume = null;
+        String hostTitle = null;
+        String relatedPart = null;
+
+        try
+        {
+            material = matchkeyMaterial(record);
+            author = matchkeyAuthor(record);
+            title = matchkeyTitle(record);
+            matchkey = String.format("%s:%s:%s", material, author, title);
+            if (material.equals("map"))
+            {
+                volume = matchkeyVolume(record);
+                if (!volume.isEmpty())
+                {
+                    matchkey = String.format("%s:%s", matchkey, volume);
+                }
+            }
+            else if (material.equals("article"))
+            {
+                hostTitle = extractWords(getFirstFieldVal(record, "773t"), 3);
+                relatedPart = extractWords(getFirstFieldVal(record, "773g"), 3);
+                if (!hostTitle.isEmpty())
+                {
+                    matchkey = String.format("%s:%s", matchkey, hostTitle);
+                }
+                if (!relatedPart.isEmpty())
+                {
+                    matchkey = String.format("%s:%s", matchkey, relatedPart);
+                }
+            }
+        }
+        catch (Throwable e)
+        {
+            LOG.error("MatchkeyException at record "+getRecordID(record), e);
         }
 
-      return title;
-   }
+        return matchkey;
+    }
+
+    public String matchkeyMaterialAuthorTitleYear(Record record)
+    {
+        String matchkey = null;
+        String pubdate = null;
+        try
+        {
+            pubdate = matchkeyPubdate(record);
+            matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitle(record), pubdate);
+        }
+        catch (Throwable e)
+        {
+            LOG.error("MatchkeyException at record "+getRecordID(record), e);
+        }
+        return matchkey;
+    }
+
+    public String matchkeyMaterialAuthorTitleYearPublisher(Record record)
+    {
+        String publisher = matchkeyPublisher(record);
+        String matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitleYear(record), publisher);
+        return matchkey;
+    }
+
+    public String getSortableMainTitle(Record record)
+    {
+        String title = "";
+        DataField titleField = (DataField) record.getVariableField("245");
+        if (titleField == null)
+        {
+            return "";
+        }
+
+        int nonFilingInt = 0;//getInd2AsInt(titleField);
+
+        title = getFirstFieldVal(record, "245a");
+        if (title != null)
+        {
+            title = title.toLowerCase();
+
+            // Skip non-filing chars, if possible.
+            if (title.length() > nonFilingInt)
+            {
+                title = title.substring(nonFilingInt);
+            }
+        }
+        else
+        {
+            LOG.error("MatchkeyException because no title found at record "+getRecordID(record));
+        }
+        return title;
+    }
 
    /**
     * Lookup to get the duplicate key to the record's id
@@ -400,7 +488,6 @@ public class GVIIndexer extends SolrIndexer {
       } else {
          retVal = pubDate26xc;
       }
-      if (retVal == null) retVal = "";
       return (retVal);
    }
 

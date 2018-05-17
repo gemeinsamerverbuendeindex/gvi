@@ -8,7 +8,7 @@
     
     <target name="init">
         <tstamp>
-          <format property="date.dir" pattern="yyyy-MM-dd"/>
+            <format property="date.dir" pattern="yyyy-MM-dd"/>
         </tstamp>
         <tstamp>
             <format property="date.download" pattern="YYMMdd" offset="-1" unit="day"/>
@@ -21,13 +21,13 @@
     <target name="download-updates-swb" depends="init">
         <echo>Checking updates for ${date.download}</echo>
         <ftp action="get"
-                     server="${ftp.server}"
-                     userid="${ftp.userid}"
-                     password="${ftp.password}"
-                     remotedir="${ftp.remotedir}"
-                     verbose="true"
-                     newer="true"
-                     preservelastmodified="true">
+             server="${ftp.server}"
+             userid="${ftp.userid}"
+             password="${ftp.password}"
+             remotedir="${ftp.remotedir}"
+             verbose="true"
+             newer="true"
+             preservelastmodified="true">
             <fileset dir="${data.update.dir}">
                 <include name="SA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="TA-MARC-verbund-${date.download}*.tar.gz"/>
@@ -90,7 +90,7 @@
         <antcall target="delete-by-collection-and-index-date"/>
     </target>
 
-	<macrodef name="solrmarc-index-dir-swb">
+    <macrodef name="solrmarc-index-dir-swb">
         <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="logdir"/>

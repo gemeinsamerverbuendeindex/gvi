@@ -4,10 +4,6 @@
     <property file="gvi-ant.local.properties"/>
     <property file="gvi-ant.properties"/>
 
-    <path id="solrmarc.classpath">
-        <pathelement location="${solrmarc.dist.path}/SolrMarc.jar"/>
-    </path>
-    
     <taskdef resource="net/sf/antcontrib/antlib.xml">
         <classpath>
             <pathelement location="${solrmarc.dist.path}/../ant/lib/ant-contrib-1.0b3.jar"/>
@@ -31,49 +27,87 @@
             response-property="msg"/>
     </target>
         
-    
+    <target name="print-file" depends="init" description="Print index fields as would sent to solr">
+        <solrmarc-print-file file="${data.full.work.dir}/${file}" logdir="${data.full.log.dir}"/> 
+    </target>
 
-    <macrodef name="solrmarc-index-file" description="Index file or directory" >
+    <target name="index-file" depends="init" description="Index a single file from work dir">
+        <solrmarc-index-file file="${data.full.work.dir}/${file}" logdir="${data.full.log.dir}"/> 
+    </target>
+    
+    <target name="index-file-all" depends="init" description="Index all files from work dir">
+        <path id="filePath">
+            <fileset dir="${data.full.work.dir}" includes="*.mrc"/>
+        </path>
+        <pathconvert pathsep=" " refid="filePath" property="fileList"/>
+        <echo>FileList: ${fileList}</echo>
+        <solrmarc-index-file file="${fileList}" logdir="${data.full.log.dir}"/> 
+    </target>
+    
+    <macrodef name="solrmarc-run" description="Run SolrMarc">
         <attribute name="file"/>
         <attribute name="logdir"/>
-        <attribute name="suffix"          default=".mrc"/>
-        <attribute name="solrmarc.config" default="${solrmarc.config}"/>
-        <attribute name="solr.indexer"    default="${solr.indexer}"/>
-        <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
-        <attribute name="solr.core"       default="${solr.core}"/>
+        <attribute name="suffix"  default=".mrc"/>
+        <attribute name="action"  default=""/><!-- can be -print, -del, or empty -->
+        <attribute name="solrURL" default="${solr.baseurl}/${solr.core}"/>
         <sequential>
             <var name="basename" unset="true"/>	   
             <basename property="basename" file="@{file}" suffix="@{suffix}"/>
-            <echo>Indexing @{file}</echo>
-            <java 
-                jar="${solrmarc.dist.path}/SolrMarc.jar"
-                classpath="${solrmarc.dist.path}/aut.jar"
+            <property name="option.dir"     location="${solrmarc.option.dir}"/>
+            <property name="option.config"  location="${solrmarc.option.config}"/>
+            <property name="option.reader"  location="${solrmarc.option.reader}"/>
+            <property name="option.solrj"   location="${solrmarc.option.solrj}"/>
+            <property name="option.gndDir"  location="${solrmarc.option.gnd.dir}"/>
+            <var name="action" value="@{action} @{file}"/>
+            <java
                 fork="true" 
-                dir="${solrmarc.dist.path}"
+                failonerror="true"
+                logError="true"
+                maxmemory="${solrmarc.maxmemory}"
+                jar="${solrmarc.core.jar}"
+                dir="${solrmarc.base.dir}"
                 error="@{logdir}/${basename}_err.log"
-                output="@{logdir}/${basename}_out.log"
-                maxmemory="15G"
-                failonerror="true">
-                <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
-                <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
-                <sysproperty key="solrmarc.log.level"      value="INFO"/>
-                <sysproperty key="log4j.configurationFile" value="${basedir}/log4j2.xml"/>
+                output="@{logdir}/${basename}_out.log">
+                <sysproperty key="org.marc4j.MarcPermissiveStreamReader.upperCaseSubfields" value="true"/>
+                <sysproperty key="log4j.configurationFile" value="${basedir}/log4j.properties"/>
                 <sysproperty key="data.collection"         value="${data.collection}"/>
-                <sysproperty key="gnd.configfile"          value="AutorityRecord.properties"/>
-                <sysproperty key="gnd.configdir"           value="${solrmarc.dist.path}"/>
-                <arg value="@{solrmarc.config}"/>
-                <arg value="@{file}"/>
-            </java>
+                <sysproperty key="gnd.configdir"           value="${option.gndDir}"/>
+                <arg value="IndexDriver"/>
+                <arg line="-dir ${option.dir}"/>
+                <arg line="-config ${option.config}"/>
+                <arg line="-reader_opts ${option.reader}"/>
+                <arg line="-solrj ${option.solrj}"/>
+                <arg line="-solrURL @{solrURL}"/>
+                <arg line="${action}"/>
+            </java>            
+        </sequential>
+    </macrodef>
+
+    <macrodef name="solrmarc-print-file" description="Print file">
+        <attribute name="file"/>
+        <attribute name="logdir"/>
+        <attribute name="suffix" default=".mrc"/>
+        <sequential>
+            <echo>Printing @{file}</echo>
+            <solrmarc-run action="-print" solrURL="stdout"
+                          file="@{file}" suffix="@{suffix}" logdir="@{logdir}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="solrmarc-index-file" description="Index file or directory">
+        <attribute name="file"/>
+        <attribute name="logdir"/>
+        <attribute name="suffix" default=".mrc"/>
+        <sequential>
+            <echo>Indexing @{file}</echo>
+            <solrmarc-run file="@{file}"  suffix="@{suffix}" logdir="@{logdir}"/>
         </sequential>
     </macrodef>
 
     <macrodef name="solrmarc-delete-file" description="Delete records by ID" >
         <attribute name="file"/>
         <attribute name="logdir"/>
-        <attribute name="solrmarc.config" default="${solrmarc.config}"/> 
-        <attribute name="solr.indexer"    default="${solr.indexer}"/>
-        <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
-        <attribute name="solr.core"       default="${solr.core}"/>
+        <attribute name="suffix" default=".txt"/>
         <sequential>
             <var name="fileSizeGreaterNull" unset="true"/>
             <condition property="fileSizeGreaterNull">
@@ -82,26 +116,8 @@
             <if>
                 <equals arg1="${fileSizeGreaterNull}" arg2="true"/>
                 <then>                    
-                    <var name="basename" unset="true"/>	   
-                    <basename property="basename" file="@{file}" suffix=".txt"/>
-                    <echo>Deleting from Index @{file}</echo>
-                    <java 
-                        jar="${solrmarc.dist.path}/SolrMarc.jar"
-                        fork="true" 
-                        dir="${solrmarc.dist.path}"
-                        error="@{logdir}/${basename}_err.log"
-                        output="@{logdir}/${basename}_out.log"
-                        maxmemory="15G"
-                        failonerror="true">
-                        <sysproperty key="solr.hosturl"            value="@{solr.baseurl}/@{solr.core}/update"/>
-                        <sysproperty key="solr.indexer"            value="@{solr.indexer}"/>
-                        <sysproperty key="solrmarc.log.level"      value="INFO"/>
-                        <sysproperty key="log4j.configurationFile" value="${basedir}/log4j2.xml"/>
-                        <sysproperty key="data.collection"         value="${data.collection}"/>
-                        <sysproperty key="marc.ids_to_delete"      value="@{file}"/>
-                        <arg value="@{solrmarc.config}"/>
-                        <arg value="NONE"/>
-                    </java>
+                    <echo>Deleting from index @{file}</echo>
+                    <solrmarc-run action="-del" file="@{file}" suffix="@{suffix}" logdir="@{logdir}" />
                 </then>  
             </if>
         </sequential>
@@ -109,10 +125,10 @@
     
     <macrodef name="solrmarc-index-dir">
         <attribute name="src"/>
-        <attribute name="suffix"          default=".mrc"/>
         <attribute name="logdir"/>
+        <attribute name="suffix" default=".mrc"/>
         <sequential>
-            <echo>Datadir @{src}</echo>
+            <echo>Indexing in datadir @{src}</echo>
             <mkdir dir="@{logdir}"/>
             <for param="file">
                 <path>
@@ -132,7 +148,7 @@
         <attribute name="logdir"/>
         <sequential>
             <mkdir dir="@{logdir}"/>
-            <echo>Datadir @{src}</echo>
+            <echo>Deleting in datadir @{src}</echo>
             <for param="file">
                 <path>
                     <fileset dir="@{src}" includes="*.txt"/>
