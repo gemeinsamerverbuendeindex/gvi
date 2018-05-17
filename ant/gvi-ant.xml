@@ -27,11 +27,11 @@
             response-property="msg"/>
     </target>
         
-    <target name="print-file" depends="init" description="Print index fields as would sent to solr">
+    <target name="print-file" description="Print index fields as would sent to solr">
         <solrmarc-print-file file="${data.full.work.dir}/${file}" logdir="${data.full.log.dir}"/> 
     </target>
 
-    <target name="index-file" depends="init" description="Index a single file from work dir">
+    <target name="index-file" description="Index a single file from work dir">
         <solrmarc-index-file file="${data.full.work.dir}/${file}" logdir="${data.full.log.dir}"/> 
     </target>
     
