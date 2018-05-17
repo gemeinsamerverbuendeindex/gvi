@@ -35,7 +35,7 @@
         <solrmarc-index-file file="${data.full.work.dir}/${file}" logdir="${data.full.log.dir}"/> 
     </target>
     
-    <target name="index-file-all" depends="init" description="Index all files from work dir">
+    <target name="index-file-all" description="Index all files from work dir">
         <path id="filePath">
             <fileset dir="${data.full.work.dir}" includes="*.mrc"/>
         </path>
