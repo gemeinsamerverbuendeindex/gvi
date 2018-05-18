@@ -146,16 +146,17 @@
     <macrodef name="solrmarc-delete-dir">
         <attribute name="src"/>
         <attribute name="logdir"/>
+        <attribute name="suffix" default=".txt"/>
         <sequential>
             <mkdir dir="@{logdir}"/>
             <echo>Deleting in datadir @{src}</echo>
             <for param="file">
                 <path>
-                    <fileset dir="@{src}" includes="*.txt"/>
+                    <fileset dir="@{src}" includes="*@{suffix}"/>
                 </path>
                 <sequential>
                     <echo>Delete @{file}</echo>
-                    <solrmarc-delete-file file="@{file}" logdir="@{logdir}"/>
+                    <solrmarc-delete-file file="@{file}" suffix="@{suffix}" logdir="@{logdir}"/>
                 </sequential>
             </for>
         </sequential>

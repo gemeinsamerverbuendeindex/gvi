@@ -48,7 +48,7 @@
             <fileset dir="${data.full.log.dir}" includes="*.log" erroronmissingdir="false"/>
         </delete>
         <solrmarc-index-dir  src="${data.full.dir}" logdir="${data.full.log.dir}" suffix=".xml"/>
-        <solrmarc-delete-dir src="${data.full.dir}" logdir="${data.full.log.dir}"/>                
+        <solrmarc-delete-dir src="${data.full.dir}" logdir="${data.full.log.dir}" suffix=".txt"/>                
     </target>
 
     <!-- Komplettabzug und Updates indexieren -->
