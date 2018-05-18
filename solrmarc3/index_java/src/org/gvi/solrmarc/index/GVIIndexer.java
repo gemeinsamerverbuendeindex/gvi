@@ -93,7 +93,8 @@ public class GVIIndexer extends SolrIndexer {
 
         GetFormatMixin formatMixin = new GetFormatMixin();
         Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
-
+        String materialForm = getMaterialForm(record);
+        
         // Thesis
         if (contentTypes.contains("Thesis/Dissertation"))
         {
@@ -143,6 +144,15 @@ public class GVIIndexer extends SolrIndexer {
         else if (contentTypes.contains("Map"))
         {
             material = "map";
+        }
+        // Mixed Materials
+        else if (contentTypes.contains("Mixed Materials") && materialForm.equals("m"))
+        {
+            material = "book";
+        }
+        else if (contentTypes.contains("Mixed Materials"))
+        {
+            material = "mixed";
         }
         // Undetermined
         else
