@@ -35,6 +35,10 @@
         <solrmarc-index-file file="${data.full.work.dir}/${file}" logdir="${data.full.log.dir}"/> 
     </target>
     
+    <target name="delete-file" description="Do deletions from index">
+        <solrmarc-delete-file file="${data.full.work.dir}/${file}" logdir="${data.full.log.dir}"/> 
+    </target>
+    
     <target name="index-file-all" description="Index all files from work dir">
         <path id="filePath">
             <fileset dir="${data.full.work.dir}" includes="*.mrc"/>
