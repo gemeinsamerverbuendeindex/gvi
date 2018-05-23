@@ -1,5 +1,0 @@
-Reparieren:
-int nonFilingInt = 0;//getInd2AsInt(titleField);
-
-run cmdline:
-java -jar dist/solrmarc_core_3.1-3-g76581a1.jar IndexDriver -dir .,../solrmarc-upstream/custom_methods/GetFormatMixin -config gvi_index.properties -r gvi_config.properties -solrj lib_solrj -print  SA-MARC-verbund-014.mrc
