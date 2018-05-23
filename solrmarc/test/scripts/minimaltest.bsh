@@ -1,0 +1,8 @@
+#! /bin/bash
+
+# In das Arbeitsverzeichnis wechseln.
+RealScriptPath="$(dirname $(readlink -f $0))"
+cd  $RealScriptPath/../..
+echo "Now in $(pwd)"
+
+java -jar solrmarc_core.jar IndexDriver -config gvi_index.properties -url stdout  /test/data/1Title_hebis.xml
