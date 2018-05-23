@@ -1,6 +1,0 @@
-#! /bin/bash
-
-## Globale Pfade und Parameter einstellen ##
-RealScriptPath="$(dirname $(readlink -f $0))"
-cd  $RealScriptPath/../..
-pwd
