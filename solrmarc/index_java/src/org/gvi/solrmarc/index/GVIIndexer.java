@@ -28,6 +28,11 @@ import org.solrmarc.mixin.GetFormatMixin;
 import org.solrmarc.index.SolrIndexer;
 import org.solrmarc.tools.Utils;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MemoryType;
+import java.lang.management.MemoryUsage;
+
 import org.gvi.solrmarc.normalizer.ISBNNormalizer;
 
 /**
@@ -40,13 +45,14 @@ public class GVIIndexer extends SolrIndexer {
 
    private static final String         institutionToConsortiumFile    = "translation_maps/kobv.properties";
    private static final Properties     institutionToConsortiumMap     = new Properties();
-   private static final String         kobvInstitutionReplacementFile = "kobv_replacement.properties";
+   private static final String         kobvInstitutionReplacementFile = "translation_maps/kobv_replacement.properties";
    private static final Properties     kobvInstitutionReplacementMap  = new Properties();
    private static final String         kobvClusterInfoFile            = "kobv_clusters.properties";
    private static final Properties     kobvClusterInfoMap             = new Properties();
    private static final String         gndSynonymFile                 = "gnd_synonyms.properties";
    private static final String         gndLineSeperator               = "!_#_!";
    private static final Properties     gndSynonymMap                  = new Properties();
+   private static boolean              isInitialized                  = false;
    private String                      recordId;
    private String                      catalog;
    private String                      collection;
@@ -55,23 +61,45 @@ public class GVIIndexer extends SolrIndexer {
    private static final Logger         LOG                            = LogManager.getLogger(GVIIndexer.class);
    private PunctuationSingleNormalizer punctuationSingleNormalizer    = new PunctuationSingleNormalizer();
 
-   public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
+  public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
       super(indexingPropsFile, propertyDirs);
-      if (institutionToConsortiumMap.isEmpty()) institutionToConsortiumMap.load(new FileInputStream(institutionToConsortiumFile));
-      if (kobvInstitutionReplacementMap.isEmpty()) kobvInstitutionReplacementMap.load(new FileInputStream(kobvInstitutionReplacementFile));
+      init();
+   }
 
+   public GVIIndexer() throws Exception {
+      super(null, null);
+      init();
+   }
+
+   private synchronized void init() throws Exception {
+      if (isInitialized) return;
+      institutionToConsortiumMap.load(new FileInputStream(institutionToConsortiumFile));
+      kobvInstitutionReplacementMap.load(new FileInputStream(kobvInstitutionReplacementFile));
+
+if (LOG.isDebugEnabled()) listMem();
       if (LOG.isDebugEnabled()) LOG.debug("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
-      if (gndSynonymMap.isEmpty()) gndSynonymMap.load(new FileInputStream(gndSynonymFile));
+      gndSynonymMap.load(new FileInputStream(gndSynonymFile));
       if (LOG.isDebugEnabled()) LOG.debug("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
+if (LOG.isDebugEnabled()) listMem();
 
       if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
-      if (kobvClusterInfoMap.isEmpty()) kobvClusterInfoMap.load(new FileInputStream(kobvClusterInfoFile));
+      kobvClusterInfoMap.load(new FileInputStream(kobvClusterInfoFile));
       if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map finished at: " + LocalDateTime.now().toString());
+if (LOG.isDebugEnabled()) listMem();
+      isInitialized = true;
    }
 
-   public GVIIndexer() {
-      super(null, null);
-   }
+private void listMem() {
+  for (MemoryPoolMXBean mpBean: ManagementFactory.getMemoryPoolMXBeans()) {
+    if (mpBean.getType() == MemoryType.HEAP) {
+        System.err.printf( "Name: %s max_used: %2.2fG now_used: %2.2fG (max_avail: %2.2fG)\n", mpBean.getName(), toGb(mpBean.getPeakUsage().getUsed()), toGb(mpBean.getUsage().getUsed()), toGb(mpBean.getUsage().getMax()));
+    }
+  }
+}
+private float toGb(long num) {
+   float ret = num / 1024;
+   return ret / 1024 / 1024;
+}   
 
    public String matchkeyISBN(Record record) {
       String isbn = getFirstFieldVal(record, "020a");
