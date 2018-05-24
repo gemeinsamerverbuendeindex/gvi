@@ -61,7 +61,7 @@ public class GVIIndexer extends SolrIndexer {
    private static final Logger         LOG                            = LogManager.getLogger(GVIIndexer.class);
    private PunctuationSingleNormalizer punctuationSingleNormalizer    = new PunctuationSingleNormalizer();
 
-  public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
+   public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
       super(indexingPropsFile, propertyDirs);
       init();
    }
@@ -76,30 +76,37 @@ public class GVIIndexer extends SolrIndexer {
       institutionToConsortiumMap.load(new FileInputStream(institutionToConsortiumFile));
       kobvInstitutionReplacementMap.load(new FileInputStream(kobvInstitutionReplacementFile));
 
-if (LOG.isDebugEnabled()) listMem();
-      if (LOG.isDebugEnabled()) LOG.debug("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
+      if (LOG.isDebugEnabled()) {
+         listMem();
+         LOG.debug("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
+      }
       gndSynonymMap.load(new FileInputStream(gndSynonymFile));
       if (LOG.isDebugEnabled()) LOG.debug("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
-if (LOG.isDebugEnabled()) listMem();
 
-      if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
+      if (LOG.isDebugEnabled()) {
+         listMem();
+         LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
+      }
       kobvClusterInfoMap.load(new FileInputStream(kobvClusterInfoFile));
-      if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map finished at: " + LocalDateTime.now().toString());
-if (LOG.isDebugEnabled()) listMem();
+      if (LOG.isDebugEnabled()) {
+         LOG.debug("Loading of cluster map finished at: " + LocalDateTime.now().toString());
+         listMem();
+      }
       isInitialized = true;
    }
 
-private void listMem() {
-  for (MemoryPoolMXBean mpBean: ManagementFactory.getMemoryPoolMXBeans()) {
-    if (mpBean.getType() == MemoryType.HEAP) {
-        System.err.printf( "Name: %s max_used: %2.2fG now_used: %2.2fG (max_avail: %2.2fG)\n", mpBean.getName(), toGb(mpBean.getPeakUsage().getUsed()), toGb(mpBean.getUsage().getUsed()), toGb(mpBean.getUsage().getMax()));
-    }
-  }
-}
-private float toGb(long num) {
-   float ret = num / 1024;
-   return ret / 1024 / 1024;
-}   
+   private void listMem() {
+      for (MemoryPoolMXBean mpBean : ManagementFactory.getMemoryPoolMXBeans()) {
+         if (mpBean.getType() == MemoryType.HEAP) {
+            System.err.printf("Name: %s max_used: %2.2fG now_used: %2.2fG (max_avail: %2.2fG)\n", mpBean.getName(), toGb(mpBean.getPeakUsage().getUsed()), toGb(mpBean.getUsage().getUsed()), toGb(mpBean.getUsage().getMax()));
+         }
+      }
+   }
+
+   private float toGb(long num) {
+      float ret = num / 1024;
+      return ret / 1024 / 1024;
+   }
 
    public String matchkeyISBN(Record record) {
       String isbn = getFirstFieldVal(record, "020a");
@@ -389,7 +396,7 @@ private float toGb(long num) {
             String normData = gndSynonymMap.getProperty(testId);
             if (normData == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
             if (tagStr.startsWith("689")) { // workaround for RSWK
-               // TODO "continue" if the type (subfield 'D') isn't 's' 
+               // TODO "continue" if the type (subfield 'D') isn't 's'
             }
             String[] normDataParts = normData.split(gndLineSeperator);
             result.add(normDataParts[0]); // Bevorzugte Benennung übernehmen
