@@ -7,7 +7,7 @@
         </Console>
         <Console name="ERR" target="SYSTEM_ERR">
             <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout pattern="%-5p[%t] %d: %c{2}.%M Zeile:%L - %m - (%r)%n" />
+            <PatternLayout pattern="%-5p[%t] %d: %c.%M Zeile:%L - %m - (%r)%n" />
         </Console>
         <Async name="ASYNC">
             <AppenderRef ref="STD" />
@@ -19,7 +19,12 @@
             <AppenderRef ref="ERR" />
         </Root>
 		      
-        <Logger name="de" level="debug" additivity="false">
+        <Logger name="de" level="info" additivity="false">
+            <AppenderRef ref="STD" />
+            <AppenderRef ref="ERR" />
+        </Logger>
+
+        <Logger name="org.gvi" level="debug" additivity="false">
             <AppenderRef ref="STD" />
             <AppenderRef ref="ERR" />
         </Logger>
