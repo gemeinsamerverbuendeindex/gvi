@@ -5,13 +5,14 @@ RealScriptPath="$(dirname $(readlink -f $0))"
 cd  $RealScriptPath/../solrmarc
 echo "Now in $(pwd)"
 
-JavaOpts="-Xmx2g -Xms2g"
+JavaOpts="-Xmx20g -Xms20g"
 
 # Mehr Ausgaben
-JavaParams="-Dgnd.configdir=/opt/gvi/solrmarc -Dlog4j.configurationFile=log4j2.debug.xml"
+JavaParams="-Dlog4j.configurationFile=log4j2.debug.xml"
 
 # Mit Profildaten
 JavaParams="-Dsolrmarc.method.report=true $JavaParams"
+JavaParams="-Dorg.marc4j.MarcPermissiveStreamReader.upperCaseSubfields=true $JavaParams"
 
 # Ausgabe an Console
 Target="-u stdout"
@@ -19,6 +20,8 @@ Target="-u stdout"
 SolrMarc="-jar solrmarc_core.jar IndexDriver"
 Config="-c gvi_index.properties"
 Input="../scripts/testdata/oneTitle_hebis.xml"
+#Input="/data/input/gvi/swb/current/update/2018-05-03/work/TA-MARC-verbund-180502.mrc"
+Input="/data/input/gvi/swb/current/update/2018-03-31/work/TA-MARC-verbund-180330.mrc"
 
 CMD="java $JavaOpts $JavaParams $SolrMarc $Config $Dirs $Target $Input"
 echo "runing: $CMD"
