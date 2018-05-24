@@ -28,10 +28,6 @@ import org.solrmarc.mixin.GetFormatMixin;
 import org.solrmarc.index.SolrIndexer;
 import org.solrmarc.tools.Utils;
 
-import de.hebis.it.hds.gnd.out.AuthorityBean;
-import de.hebis.it.hds.gnd.out.AuthorityRecordException;
-import de.hebis.it.hds.gnd.out.AutorityRecordFileFinder;
-import de.hebis.it.hds.tools.marc.MarcWrapper;
 import org.gvi.solrmarc.normalizer.ISBNNormalizer;
 
 /**
@@ -42,26 +38,34 @@ import org.gvi.solrmarc.normalizer.ISBNNormalizer;
  */
 public class GVIIndexer extends SolrIndexer {
 
-   private Properties                  institutionToConsortiumMap    = new Properties();
-   private Properties                  kobvInstitutionReplacementMap = new Properties();
+   private static final String         institutionToConsortiumFile    = "translation_maps/kobv.properties";
+   private static final Properties     institutionToConsortiumMap     = new Properties();
+   private static final String         kobvInstitutionReplacementFile = "kobv_replacement.properties";
+   private static final Properties     kobvInstitutionReplacementMap  = new Properties();
+   private static final String         kobvClusterInfoFile            = "kobv_clusters.properties";
+   private static final Properties     kobvClusterInfoMap             = new Properties();
+   private static final String         gndSynonymFile                 = "gnd_synonyms.properties";
+   private static final String         gndLineSeperator               = "!_#_!";
+   private static final Properties     gndSynonymMap                  = new Properties();
    private String                      recordId;
    private String                      catalog;
    private String                      collection;
-   private Set<String>                 institutionSet                = new LinkedHashSet<>();
-   private Set<String>                 consortium                    = new LinkedHashSet<>();
-   private static final Logger         LOG                           = LogManager.getLogger(GVIIndexer.class);
-   private PunctuationSingleNormalizer punctuationSingleNormalizer   = new PunctuationSingleNormalizer();
-   private AutorityRecordFileFinder    gndFinderFile                 = new AutorityRecordFileFinder();
-   private Properties                  clusterMappings               = new Properties();
+   private Set<String>                 institutionSet                 = new LinkedHashSet<>();
+   private Set<String>                 consortium                     = new LinkedHashSet<>();
+   private static final Logger         LOG                            = LogManager.getLogger(GVIIndexer.class);
+   private PunctuationSingleNormalizer punctuationSingleNormalizer    = new PunctuationSingleNormalizer();
 
-   public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception
-    {
+   public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
       super(indexingPropsFile, propertyDirs);
-      institutionToConsortiumMap.load(new FileInputStream("translation_maps/kobv.properties"));
-      kobvInstitutionReplacementMap.load(new FileInputStream("kobv_replacement.properties"));
+      if (institutionToConsortiumMap.isEmpty()) institutionToConsortiumMap.load(new FileInputStream(institutionToConsortiumFile));
+      if (kobvInstitutionReplacementMap.isEmpty()) kobvInstitutionReplacementMap.load(new FileInputStream(kobvInstitutionReplacementFile));
+
+      if (LOG.isDebugEnabled()) LOG.debug("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
+      if (gndSynonymMap.isEmpty()) gndSynonymMap.load(new FileInputStream(gndSynonymFile));
+      if (LOG.isDebugEnabled()) LOG.debug("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
 
       if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
-      clusterMappings.load(new FileInputStream("clusters.properties"));
+      if (kobvClusterInfoMap.isEmpty()) kobvClusterInfoMap.load(new FileInputStream(kobvClusterInfoFile));
       if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map finished at: " + LocalDateTime.now().toString());
    }
 
@@ -69,296 +73,238 @@ public class GVIIndexer extends SolrIndexer {
       super(null, null);
    }
 
-    public String matchkeyISBN(Record record)
-    {
-        String isbn = getFirstFieldVal(record, "020a");
-        if (isbn != null)
-        {
-            isbn = ISBNNormalizer.normalize(isbn);
-        }
-        else
-        {
-            isbn = "";
-        }
-        return isbn;
-    }
+   public String matchkeyISBN(Record record) {
+      String isbn = getFirstFieldVal(record, "020a");
+      if (isbn != null) {
+         isbn = ISBNNormalizer.normalize(isbn);
+      } else {
+         isbn = "";
+      }
+      return isbn;
+   }
 
-    public String matchkeyMaterial(Record record)
-    {
-        String material = "";
+   public String matchkeyMaterial(Record record) {
+      String material = "";
 
-        GetFormatMixin formatMixin = new GetFormatMixin();
-        Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
-        String materialForm = getMaterialForm(record);
-        
-        // Thesis
-        if (contentTypes.contains("Thesis/Dissertation"))
-        {
-            material = "thesis";
-        }
-        // EJournal
-        else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online"))
-        {
-            material = "ejournal";
-        }
-        // Journal
-        else if (contentTypes.contains("Journal/Magazine"))
-        {
-            material = "journal";
-        }
-        // E-Book
-        else if (contentTypes.contains("EBook"))
-        {
-            material = "ebook";
-        }
-        // Book
-        else if (contentTypes.contains("Book"))
-        {
-            material = "book";
-        }
-        // Article
-        else if (contentTypes.contains("Article"))
-        {
-            material = "article";
-        }
-        // Musical Score
-        else if (contentTypes.contains("Musical Score"))
-        {
-            material = "music";
-        }
-        // Sound
-        else if (contentTypes.contains("Sound Recording"))
-        {
-            material = "sound";
-        }
-        // Video
-        else if (contentTypes.contains("Video"))
-        {
-            material = "video";
-        }
-        // Map
-        else if (contentTypes.contains("Map"))
-        {
-            material = "map";
-        }
-        // Mixed Materials
-        else if (contentTypes.contains("Mixed Materials") && materialForm.equals("m"))
-        {
-            material = "book";
-        }
-        else if (contentTypes.contains("Mixed Materials"))
-        {
-            material = "mixed";
-        }
-        // Undetermined
-        else
-        {
-            material = "other";
-        }
+      GetFormatMixin formatMixin = new GetFormatMixin();
+      Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
+      String materialForm = getMaterialForm(record);
 
-        return material;
-    }
+      // Thesis
+      if (contentTypes.contains("Thesis/Dissertation")) {
+         material = "thesis";
+      }
+      // EJournal
+      else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
+         material = "ejournal";
+      }
+      // Journal
+      else if (contentTypes.contains("Journal/Magazine")) {
+         material = "journal";
+      }
+      // E-Book
+      else if (contentTypes.contains("EBook")) {
+         material = "ebook";
+      }
+      // Book
+      else if (contentTypes.contains("Book")) {
+         material = "book";
+      }
+      // Article
+      else if (contentTypes.contains("Article")) {
+         material = "article";
+      }
+      // Musical Score
+      else if (contentTypes.contains("Musical Score")) {
+         material = "music";
+      }
+      // Sound
+      else if (contentTypes.contains("Sound Recording")) {
+         material = "sound";
+      }
+      // Video
+      else if (contentTypes.contains("Video")) {
+         material = "video";
+      }
+      // Map
+      else if (contentTypes.contains("Map")) {
+         material = "map";
+      }
+      // Mixed Materials
+      else if (contentTypes.contains("Mixed Materials") && materialForm.equals("m")) {
+         material = "book";
+      } else if (contentTypes.contains("Mixed Materials")) {
+         material = "mixed";
+      }
+      // Undetermined
+      else {
+         material = "other";
+      }
 
-    public String matchkeyAuthor(Record record)
-    {
-        String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a:245c");
-        String lastName = "";
-        if (firstAuthor != null)
-        {
-            String[] nameParts = firstAuthor.split("[, ]+");
-            if (nameParts.length > 0)
-            { // yes in some titles the given author is "," (sik)
-                lastName = punctuationSingleNormalizer.normalize(nameParts[0].toLowerCase());
-                lastName = lastName.replaceAll(" ", "");
+      return material;
+   }
+
+   public String matchkeyAuthor(Record record) {
+      String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a:245c");
+      String lastName = "";
+      if (firstAuthor != null) {
+         String[] nameParts = firstAuthor.split("[, ]+");
+         if (nameParts.length > 0) { // yes in some titles the given author is "," (sik)
+            lastName = punctuationSingleNormalizer.normalize(nameParts[0].toLowerCase());
+            lastName = lastName.replaceAll(" ", "");
+         }
+      }
+      return lastName;
+   }
+
+   public String matchkeyPublisher(Record record) {
+      String publisherKey = "";
+      String publisher = getFirstFieldVal(record, "260b:264b:502c");
+      if (publisher != null) {
+         publisher = publisher.replaceAll("[Vv]erlag", "");
+         publisher = publisher.replaceAll("[Vv]erl[\\.]", "");
+         publisher = publisher.replaceAll("\\.", "");
+         publisherKey = extractWords(publisher, 2);
+      }
+      return publisherKey;
+   }
+
+   public String matchkeyPubdate(Record record) {
+      String pubdateKey = getPublicationDate008or26xc(record);
+      if (pubdateKey == null) {
+         pubdateKey = "";
+      }
+      return pubdateKey;
+   }
+
+   public String extractWords(String text, int nwords) {
+      String result = "";
+      if (text != null) {
+         text = punctuationSingleNormalizer.normalize(text);
+         text = text.replaceAll("§", "");
+         String[] words = text.split(" ");
+         int maxWord = Math.min(nwords, words.length);
+         for (int i = 0; i < maxWord; i++) {
+            result += words[i];
+         }
+      }
+      return result;
+   }
+
+   public String matchkeyTitle(Record record) {
+      String title = "";
+      String mainTitle = getSortableMainTitle(record);
+      if (mainTitle != null) {
+         title = extractWords(mainTitle, 5);
+      }
+      return title;
+   }
+
+   public String matchkeyNumParts(Record record) {
+      String volume = "";
+      String field = getFirstFieldVal(record, "245n:800n:810n:811n:830n");
+      if (field != null) {
+         volume = punctuationSingleNormalizer.normalize(field);
+      }
+      return volume;
+   }
+
+   public String matchkeyVolume(Record record) {
+      String volume = "";
+      String field = getFirstFieldVal(record, "800v:810v:811v:830v");
+      if (field != null) {
+         volume = punctuationSingleNormalizer.normalize(field);
+      }
+      return volume;
+   }
+
+   public String matchkeyMaterialISBNYear(Record record) {
+      String material = matchkeyMaterial(record);
+      String isbn = matchkeyISBN(record);
+      String pubdate = matchkeyPubdate(record);
+      String matchkey = "";
+      if (!isbn.isEmpty()) {
+         matchkey = String.format("%s:%s:%s", material, isbn, pubdate);
+      }
+      return matchkey;
+   }
+
+   public String matchkeyMaterialAuthorTitle(Record record) {
+      String matchkey = null;
+      String material = null;
+      String author = null;
+      String title = null;
+      String volume = null;
+      String hostTitle = null;
+      String relatedPart = null;
+
+      try {
+         material = matchkeyMaterial(record);
+         author = matchkeyAuthor(record);
+         title = matchkeyTitle(record);
+         matchkey = String.format("%s:%s:%s", material, author, title);
+         if (material.equals("map")) {
+            volume = matchkeyVolume(record);
+            if (!volume.isEmpty()) {
+               matchkey = String.format("%s:%s", matchkey, volume);
             }
-        }
-        return lastName;
-    }
-
-    public String matchkeyPublisher(Record record)
-    {
-        String publisherKey = "";
-        String publisher = getFirstFieldVal(record, "260b:264b:502c");
-        if (publisher != null)
-        {
-            publisher = publisher.replaceAll("[Vv]erlag", "");
-            publisher = publisher.replaceAll("[Vv]erl[\\.]", "");
-            publisher = publisher.replaceAll("\\.", "");
-            publisherKey = extractWords(publisher, 2);
-        }
-        return publisherKey;
-    }
-
-    public String matchkeyPubdate(Record record)
-    {
-        String pubdateKey = getPublicationDate008or26xc(record);
-        if (pubdateKey == null)
-        {
-            pubdateKey = "";
-        }
-        return pubdateKey;
-    }
-
-    public String extractWords(String text, int nwords)
-    {
-        String result = "";
-        if (text != null)
-        {
-            text = punctuationSingleNormalizer.normalize(text);
-            text = text.replaceAll("§", "");
-            String[] words = text.split(" ");
-            int maxWord = Math.min(nwords, words.length);
-            for (int i = 0; i < maxWord; i++)
-            {
-                result += words[i];
+         } else if (material.equals("article")) {
+            hostTitle = extractWords(getFirstFieldVal(record, "773t"), 3);
+            relatedPart = extractWords(getFirstFieldVal(record, "773g"), 3);
+            if (!hostTitle.isEmpty()) {
+               matchkey = String.format("%s:%s", matchkey, hostTitle);
             }
-        }
-        return result;
-    }
-
-    public String matchkeyTitle(Record record)
-    {
-        String title = "";
-        String mainTitle = getSortableMainTitle(record);
-        if (mainTitle != null)
-        {
-            title = extractWords(mainTitle, 5);
-        }
-        return title;
-    }
-
-    public String matchkeyNumParts(Record record)
-    {
-        String volume = "";
-        String field = getFirstFieldVal(record, "245n:800n:810n:811n:830n");
-        if (field != null)
-        {
-            volume = punctuationSingleNormalizer.normalize(field);
-        }
-        return volume;
-    }
-
-    public String matchkeyVolume(Record record)
-    {
-        String volume = "";
-        String field = getFirstFieldVal(record, "800v:810v:811v:830v");
-        if (field != null)
-        {
-            volume = punctuationSingleNormalizer.normalize(field);
-        }
-        return volume;
-    }
-
-    public String matchkeyMaterialISBNYear(Record record)
-    {
-        String material = matchkeyMaterial(record);
-        String isbn = matchkeyISBN(record);
-        String pubdate = matchkeyPubdate(record);
-        String matchkey = "";
-        if (!isbn.isEmpty())
-        {
-            matchkey = String.format("%s:%s:%s", material, isbn, pubdate);
-        }
-        return matchkey;
-    }
-
-    public String matchkeyMaterialAuthorTitle(Record record)
-    {
-        String matchkey = null;
-        String material = null;
-        String author = null;
-        String title = null;
-        String volume = null;
-        String hostTitle = null;
-        String relatedPart = null;
-
-        try
-        {
-            material = matchkeyMaterial(record);
-            author = matchkeyAuthor(record);
-            title = matchkeyTitle(record);
-            matchkey = String.format("%s:%s:%s", material, author, title);
-            if (material.equals("map"))
-            {
-                volume = matchkeyVolume(record);
-                if (!volume.isEmpty())
-                {
-                    matchkey = String.format("%s:%s", matchkey, volume);
-                }
+            if (!relatedPart.isEmpty()) {
+               matchkey = String.format("%s:%s", matchkey, relatedPart);
             }
-            else if (material.equals("article"))
-            {
-                hostTitle = extractWords(getFirstFieldVal(record, "773t"), 3);
-                relatedPart = extractWords(getFirstFieldVal(record, "773g"), 3);
-                if (!hostTitle.isEmpty())
-                {
-                    matchkey = String.format("%s:%s", matchkey, hostTitle);
-                }
-                if (!relatedPart.isEmpty())
-                {
-                    matchkey = String.format("%s:%s", matchkey, relatedPart);
-                }
-            }
-        }
-        catch (Throwable e)
-        {
-            LOG.error("MatchkeyException at record "+getRecordID(record), e);
-        }
+         }
+      } catch (Throwable e) {
+         LOG.error("MatchkeyException at record " + getRecordID(record), e);
+      }
 
-        return matchkey;
-    }
+      return matchkey;
+   }
 
-    public String matchkeyMaterialAuthorTitleYear(Record record)
-    {
-        String matchkey = null;
-        String pubdate = null;
-        try
-        {
-            pubdate = matchkeyPubdate(record);
-            matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitle(record), pubdate);
-        }
-        catch (Throwable e)
-        {
-            LOG.error("MatchkeyException at record "+getRecordID(record), e);
-        }
-        return matchkey;
-    }
+   public String matchkeyMaterialAuthorTitleYear(Record record) {
+      String matchkey = null;
+      String pubdate = null;
+      try {
+         pubdate = matchkeyPubdate(record);
+         matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitle(record), pubdate);
+      } catch (Throwable e) {
+         LOG.error("MatchkeyException at record " + getRecordID(record), e);
+      }
+      return matchkey;
+   }
 
-    public String matchkeyMaterialAuthorTitleYearPublisher(Record record)
-    {
-        String publisher = matchkeyPublisher(record);
-        String matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitleYear(record), publisher);
-        return matchkey;
-    }
+   public String matchkeyMaterialAuthorTitleYearPublisher(Record record) {
+      String publisher = matchkeyPublisher(record);
+      String matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitleYear(record), publisher);
+      return matchkey;
+   }
 
-    public String getSortableMainTitle(Record record)
-    {
-        String title = "";
-        DataField titleField = (DataField) record.getVariableField("245");
-        if (titleField == null)
-        {
-            return "";
-        }
+   public String getSortableMainTitle(Record record) {
+      String title = "";
+      DataField titleField = (DataField) record.getVariableField("245");
+      if (titleField == null) {
+         return "";
+      }
 
-        int nonFilingInt = 0;//getInd2AsInt(titleField);
+      int nonFilingInt = 0;// getInd2AsInt(titleField);
 
-        title = getFirstFieldVal(record, "245a");
-        if (title != null)
-        {
-            title = title.toLowerCase();
+      title = getFirstFieldVal(record, "245a");
+      if (title != null) {
+         title = title.toLowerCase();
 
-            // Skip non-filing chars, if possible.
-            if (title.length() > nonFilingInt)
-            {
-                title = title.substring(nonFilingInt);
-            }
-        }
-        else
-        {
-            LOG.error("MatchkeyException because no title found at record "+getRecordID(record));
-        }
-        return title;
-    }
+         // Skip non-filing chars, if possible.
+         if (title.length() > nonFilingInt) {
+            title = title.substring(nonFilingInt);
+         }
+      } else {
+         LOG.error("MatchkeyException because no title found at record " + getRecordID(record));
+      }
+      return title;
+   }
 
    /**
     * Lookup to get the duplicate key to the record's id
@@ -367,7 +313,7 @@ public class GVIIndexer extends SolrIndexer {
     * @return If found the duplicate key else the own id.
     */
    public String getDupId(Record record) {
-      return clusterMappings.getProperty(recordId, recordId);
+      return kobvClusterInfoMap.getProperty(recordId, recordId);
    }
 
    /**
@@ -404,7 +350,6 @@ public class GVIIndexer extends SolrIndexer {
     * @return The found expansions
     */
    private Set<String> expandGnd2(Record record, String... tagArr) {
-      AuthorityBean normdata = null;
       Set<String> alreadyProcessed = new HashSet<>();
       Set<String> result = new HashSet<>();
       for (String tagStr : tagArr) {
@@ -413,20 +358,16 @@ public class GVIIndexer extends SolrIndexer {
             if (!testId.startsWith("(DE-588)")) continue; // nur GND nutzen
             if (alreadyProcessed.contains(testId)) continue; // only once
             alreadyProcessed.add(testId);
-            try {
-               normdata = gndFinderFile.getAuthorityBean(testId); // Normdatensatz suchen
-            } catch (AuthorityRecordException e) {
-               LOG.error("Fehler beim Expandiern der NormdatenId: " + testId + " im Titel: " + record.getId(), e);
-            }
-            if (normdata == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
+            String normData = gndSynonymMap.getProperty(testId);
+            if (normData == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
             if (tagStr.startsWith("689")) { // workaround for RSWK
-               // TODO check file finder. 'authorityType' may still contain 's' as dummy
-               if (!normdata.authorityType.equals("s")) continue;
+               // TODO "continue" if the type (subfield 'D') isn't 's' 
             }
-            result.add(normdata.preferred); // Bevorzugte Benennung übernehmen
-            if (normdata.synonyms != null) { // Synonyme übernehmen
-               for (String alias : normdata.synonyms) {
-                  result.add(alias);
+            String[] normDataParts = normData.split(gndLineSeperator);
+            result.add(normDataParts[0]); // Bevorzugte Benennung übernehmen
+            if (normDataParts.length > 1) { // Synonyme übernehmen
+               for (int i = 1; i < normDataParts.length; i++) {
+                  result.add(normDataParts[i]);
                }
             }
          }
@@ -643,9 +584,7 @@ public class GVIIndexer extends SolrIndexer {
       return institution;
    }
 
-   protected Set<String> findConsortium(Record record, String catalog,
-					Set<String> institutionSet,
-					Properties institutionToConsortiumMap) {
+   protected Set<String> findConsortium(Record record, String catalog, Set<String> institutionSet, Properties institutionToConsortiumMap) {
       Set<String> consortiumSet = new HashSet<>();
       switch (catalog) {
          case "DE-101": // DNB
@@ -673,9 +612,7 @@ public class GVIIndexer extends SolrIndexer {
       return consortiumSet;
    }
 
-   protected Set<String> findConsortiumByInstitution(String defaultCatalog,
-						     Set<String> institutionSet,
-						     Properties institutionToConsortiumMap) {
+   protected Set<String> findConsortiumByInstitution(String defaultCatalog, Set<String> institutionSet, Properties institutionToConsortiumMap) {
       Set<String> consortiumSet = new HashSet<>();
       int numOtherConsortium = 0;
       for (String i : institutionSet) {
@@ -1178,22 +1115,4 @@ public class GVIIndexer extends SolrIndexer {
       }
    }
 
-   /**
-    * Poor mens test of {@link #expandGnd(Record, String)}
-    *
-    * @param args
-    */
-   public static void main(String[] args) {
-      // Testtitel zu Werk von Goethe (DE-588)118540238
-      String testTitel = "00475cam a2200157 ca4500001001000000003000700010005001700017006001900034008004100053035002500094040003900119041000800158100008100166245003800247264003200285#30;36411536X#30;DE-603#30;20150917230906.0#30;a          u00  u #30;150917s        xx           u00  u ger c#30;  #31;a(DE-599)HEB36411536X#30;  #31;aDE-603#31;bger#31;cDE-603#31;dDE-603#31;erakwb#30;  #31;ager#30;1 #31;0(DE-588)118540238#31;0(DE-603)086881264#31;aGoethe, Johann Wolfgang von#31;d1749-1832#30;00#31;aWerke#31;cJohann Wolfgang von Goethe#30; 1#31;aMünchen#31;bArtemis &amp; Winkler#30;#29;";
-      GVIIndexer me = new GVIIndexer();
-      Record test = MarcWrapper.string2Marc(testTitel);
-      Set<String> synonyms = me.expandGnd(test, "1000");
-      if (synonyms.isEmpty()) {
-         System.err.print("Keine Normdaten zu (DE-588)118540238 gefunden.");
-      }
-      for (String out : synonyms) {
-         System.out.println(" > " + out);
-      }
-   }
 }
