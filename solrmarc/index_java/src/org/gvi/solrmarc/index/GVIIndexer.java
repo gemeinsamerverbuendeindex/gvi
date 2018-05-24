@@ -257,11 +257,10 @@ public class GVIIndexer extends SolrIndexer {
       String material = matchkeyMaterial(record);
       String isbn = matchkeyISBN(record);
       String pubdate = matchkeyPubdate(record);
-      String matchkey = "";
       if (!isbn.isEmpty()) {
-         matchkey = String.format("%s:%s:%s", material, isbn, pubdate);
+         return String.format("%s:%s:%s", material, isbn, pubdate);
       }
-      return matchkey;
+      return matchkeyMaterialAuthorTitleYearPublisher(record);
    }
 
    public String matchkeyMaterialAuthorTitle(Record record) {
