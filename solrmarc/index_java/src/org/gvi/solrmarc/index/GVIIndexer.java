@@ -52,21 +52,17 @@ public class GVIIndexer extends SolrIndexer {
    private static final Logger         LOG                           = LogManager.getLogger(GVIIndexer.class);
    private PunctuationSingleNormalizer punctuationSingleNormalizer   = new PunctuationSingleNormalizer();
    private AutorityRecordFileFinder    gndFinderFile                 = new AutorityRecordFileFinder();
-   private Properties                  clusterMappings               = null;
+   private Properties                  clusterMappings               = new Properties();
 
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception
     {
       super(indexingPropsFile, propertyDirs);
       institutionToConsortiumMap.load(new FileInputStream("translation_maps/kobv.properties"));
       kobvInstitutionReplacementMap.load(new FileInputStream("kobv_replacement.properties"));
-      try {
-         if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
-         clusterMappings = Utils.loadProperties(propertyDirs, "clusters.properties");
-         if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map finished at: " + LocalDateTime.now().toString());
-      } catch (IllegalArgumentException e) {
-         LOG.warn("No property file with doublet info found. \"clusters.properties\"");
-         clusterMappings = new Properties();
-      }
+
+      if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
+      clusterMappings.load(new FileInputStream("clusters.properties"));
+      if (LOG.isDebugEnabled()) LOG.debug("Loading of cluster map finished at: " + LocalDateTime.now().toString());
    }
 
    public GVIIndexer() {
