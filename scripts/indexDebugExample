@@ -1,0 +1,25 @@
+#! /bin/bash
+
+# In das Arbeitsverzeichnis wechseln.
+RealScriptPath="$(dirname $(readlink -f $0))"
+cd  $RealScriptPath/../solrmarc
+echo "Now in $(pwd)"
+
+JavaOpts="-Xmx2g -Xms2g"
+
+# Mehr Ausgaben
+JavaParams="-Dgnd.configdir=/opt/gvi/solrmarc -Dlog4j.configurationFile=log4j2.debug.xml"
+
+# Mit Profildaten
+JavaParams="-Dsolrmarc.method.report=true $JavaParams"
+
+# Ausgabe an Console
+Target="-u stdout"
+
+SolrMarc="-jar solrmarc_core.jar IndexDriver"
+Config="-c gvi_index.properties"
+Input="../scripts/testdata/oneTitle_hebis.xml"
+
+CMD="java $JavaOpts $JavaParams $SolrMarc $Config $Dirs $Target $Input"
+echo "runing: $CMD"
+$CMD
