@@ -1,0 +1,36 @@
+#! /bin/bash
+
+# In das Arbeitsverzeichnis wechseln.
+RealScriptPath="$(dirname $(readlink -f $0))"
+cd  $RealScriptPath/../solrmarc
+echo "Now in $(pwd)"
+
+# Das Einlesen der PropertyDateien für GND und Cluster erfordert alleine 18G !!!!
+JavaOpts="-Xmx20g -Xms20g"
+
+# Konfig für Log4j
+JavaParams="-Dlog4j.configurationFile=log4j2.debug.xml"
+
+# Dateien für GND und Cluster Mapping nicht laden.  
+JavaParams="-DGviIndexer.skipBigFiles=bla $JavaParams"
+
+SolrMarc="-jar solrmarc_core.jar IndexDriver"
+
+Config="-c gvi_index.properties"
+
+# Kontrollausgabe auf Konsole
+Target="-u stdout"
+
+# URL zu Solr/Collection
+#Target="-u http://localhost:3082/solr/GVITEST"
+
+# SolrMarc will immer eine Datei zum Indexieren. Diese kann aber leer sein.
+Input="../scripts/testdata/noData.mrc"
+
+# Datei mit den Ids zum Löschen.
+# Jede Zeile wird als Id interpretiert. !! Auch Kommentare und Leerzeilen
+Delete="-del ../scripts/testdata/deleteListNoCommentsAllowed"
+
+CMD="java $JavaOpts $JavaParams $SolrMarc $Config $Dirs $Delete $Target $Input"
+echo "Running: $CMD"
+$CMD

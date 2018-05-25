@@ -1,0 +1,31 @@
+#! /bin/bash
+
+# In das Arbeitsverzeichnis wechseln.
+RealScriptPath="$(dirname $(readlink -f $0))"
+cd  $RealScriptPath/../solrmarc
+echo "Now in $(pwd)"
+
+# Das Einlesen der PropertyDateien für GND und Cluster erfordert alleine 18G !!!!
+JavaOpts="-Xmx20g -Xms20g"
+
+# Konfig für Log4j
+JavaParams="-Dlog4j.configurationFile=log4j2.debug.xml"
+
+# Großbuchstaben als Bezeichner für Subfelder erlauben. (wird bei XML nicht benötigt)
+JavaParams="-Dorg.marc4j.MarcPermissiveStreamReader.upperCaseSubfields=true $JavaParams"
+
+# Dateien für GND und Cluster Mapping nicht laden.  
+# JavaParams="-DGviIndexer.skipBigFiles=bla $JavaParams"
+
+SolrMarc="-jar solrmarc_core.jar IndexDriver"
+
+Config="-c gvi_index.properties"
+
+# Trockenlauf: Nur Konsolenausgabe ohne Daten.
+Target="-null"
+
+Input="$(ls ../scripts/testdata/allInDir/*)"
+
+CMD="java $JavaOpts $JavaParams $SolrMarc $Config $Dirs $Target $Input"
+echo "Running: $CMD"
+$CMD

@@ -3,11 +3,11 @@
     <Appenders>
         <Console name="STD" target="SYSTEM_OUT">
             <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="ACCEPT" />
-            <PatternLayout pattern="%-5p %d: %c{2} - %m - (%r)%n" />
+            <PatternLayout pattern="%-5p %d: %c{6} - %m - (%r)%n" />
         </Console>
         <Console name="ERR" target="SYSTEM_ERR">
             <ThresholdFilter level="WARN" onMatch="ACCEPT" onMismatch="DENY" />
-            <PatternLayout pattern="%-5p[%t] %d: %c.%M Zeile:%L - %m - (%r)%n" />
+            <PatternLayout pattern="%-5p[%t] %d: %c{2}.%M Zeile:%L - %m - (%r)%n" />
         </Console>
         <Async name="ASYNC">
             <AppenderRef ref="STD" />
@@ -29,7 +29,22 @@
             <AppenderRef ref="ERR" />
         </Logger>
 
-        <Logger name="org.solrmarc" level="info" additivity="false">
+        <Logger name="org.solrmarc" level="debug" additivity="false">
+            <AppenderRef ref="STD" />
+            <AppenderRef ref="ERR" />
+        </Logger>
+        
+        <Logger name="org.solrmarc.index.indexer.FullConditionalParser" level="info" additivity="false">
+            <AppenderRef ref="STD" />
+            <AppenderRef ref="ERR" />
+        </Logger>
+        
+        <Logger name="org.solrmarc.index.indexer.VerboseSymbolFactory" level="info" additivity="false">
+            <AppenderRef ref="STD" />
+            <AppenderRef ref="ERR" />
+        </Logger>
+        
+        <Logger name="org.solrmarc.index.utils.FastClasspathUtils" level="info" additivity="false">
             <AppenderRef ref="STD" />
             <AppenderRef ref="ERR" />
         </Logger>
