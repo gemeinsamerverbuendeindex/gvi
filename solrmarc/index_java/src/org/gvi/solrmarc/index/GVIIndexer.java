@@ -73,6 +73,9 @@ public class GVIIndexer extends SolrIndexer {
 
    private synchronized void init() throws Exception {
       if (isInitialized) return;
+      isInitialized = true;
+      if (System.getProperty("GviIndexer.skipBigFiles") != null) return;
+
       institutionToConsortiumMap.load(new FileInputStream(institutionToConsortiumFile));
       kobvInstitutionReplacementMap.load(new FileInputStream(kobvInstitutionReplacementFile));
 
@@ -92,7 +95,6 @@ public class GVIIndexer extends SolrIndexer {
          LOG.debug("Loading of cluster map finished at: " + LocalDateTime.now().toString());
          listMem();
       }
-      isInitialized = true;
    }
 
    private void listMem() {
