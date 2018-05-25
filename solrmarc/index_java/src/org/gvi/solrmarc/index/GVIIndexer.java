@@ -84,9 +84,8 @@ public class GVIIndexer extends SolrIndexer {
          LOG.debug("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
       }
       gndSynonymMap.load(new FileInputStream(gndSynonymFile));
-      if (LOG.isDebugEnabled()) LOG.debug("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
-
       if (LOG.isDebugEnabled()) {
+         LOG.debug("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
          listMem();
          LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
       }
@@ -100,7 +99,7 @@ public class GVIIndexer extends SolrIndexer {
    private void listMem() {
       for (MemoryPoolMXBean mpBean : ManagementFactory.getMemoryPoolMXBeans()) {
          if (mpBean.getType() == MemoryType.HEAP) {
-            System.err.printf("Name: %s max_used: %2.2fG now_used: %2.2fG (max_avail: %2.2fG)\n", mpBean.getName(), toGb(mpBean.getPeakUsage().getUsed()), toGb(mpBean.getUsage().getUsed()), toGb(mpBean.getUsage().getMax()));
+            LOG.debug(String.format("Name: %s max_used: %2.2fG now_used: %2.2fG (max_avail: %2.2fG)\n", mpBean.getName(), toGb(mpBean.getPeakUsage().getUsed()), toGb(mpBean.getUsage().getUsed()), toGb(mpBean.getUsage().getMax())));
          }
       }
    }
