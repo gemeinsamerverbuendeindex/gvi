@@ -9,16 +9,16 @@
 			<format property="time.stamp" pattern="yyyy-MM-dd'T'HH:mm:ss" />
 		</tstamp>
 		<property name="data.collection" value="HEBIS" />
-		<!--
 		<property name="base.dir" location="/data/input/gvi/hebis/current" />
 		<property name="full.dir" location="${base.dir}/full" />
 		<property name="drop.dir" location="${base.dir}/update/dropin" />
 		<property name="work.dir" location="${base.dir}/update/${time.stamp}" />
-		-->
+		<!--
 		<property name="base.dir" location="/work/tmp" />
 		<property name="full.dir" location="${base.dir}" />
 		<property name="drop.dir" location="${base.dir}" />
 		<property name="work.dir" location="${base.dir}" />
+		-->
 		<available property="update.available" file="${drop.dir}/gvi-update.tar" />
 	</target>
 
