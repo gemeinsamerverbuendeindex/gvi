@@ -40,13 +40,14 @@
 				dir="${solrmarc.base.dir}" error="@{logdir}/${basename}_err.log" output="@{logdir}/${basename}_out.log"
 				key="data.collection" value="${data.collection}"
 				arg line="-solrURL @{solrURL}"
+				arg line="-config ${solrmarc.indexconf}"
 			</echo>
 			<java fork="true" failonerror="true" logError="true" maxmemory="${solrmarc.maxmemory}" jar="${solrmarc.core.jar}" dir="${solrmarc.base.dir}" error="@{logdir}/${basename}_err.log" output="@{logdir}/${basename}_out.log">
 				<sysproperty key="org.marc4j.MarcPermissiveStreamReader.upperCaseSubfields" value="true" />
 				<sysproperty key="log4j.configurationFile" value="${solrmarc.base.dir}/log4j2.xml" />
 				<sysproperty key="data.collection" value="${data.collection}" />
 				<arg value="IndexDriver" />
-				<arg line="-config ${option.config}" />
+				<arg line="-config ${solrmarc.indexconf}" />
 				<arg line="-solrURL @{solrURL}" />
 			</java>
 		</sequential>
@@ -70,7 +71,7 @@
 						<sysproperty key="log4j.configurationFile" value="${solrmarc.base.dir}/log4j2.xml" />
 						<sysproperty key="data.collection" value="${data.collection}" />
 						<arg value="IndexDriver" />
-						<arg line="-config ${option.config}" />
+						<arg line="-config ${solrmarc.indexconf}" />
 						<arg line="-solrURL @{solrURL}" />
 						<arg line="-del file" />
 						<arg line="${basedir}/../scripts/testdata/noData.mrc" />
