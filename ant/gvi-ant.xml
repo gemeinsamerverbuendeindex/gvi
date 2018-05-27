@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." name="Basic configuration">
 
+	<property file="gvi-ant.local.properties" />
 	<property file="gvi-ant.properties" />
 
 	<taskdef resource="net/sf/antcontrib/antlib.xml">
