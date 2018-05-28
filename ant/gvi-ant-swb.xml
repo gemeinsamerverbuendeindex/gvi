@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="init" name="GVI SWB Jenkins">
-    
-    <property file="gvi-ant-swb.local.properties"/>
-    <property file="gvi-ant-swb.properties"/>
-    
-    <import file="gvi-ant.xml"/>
-    
-    <target name="init">
-        <tstamp>
-            <format property="date.dir" pattern="yyyy-MM-dd"/>
-        </tstamp>
-        <tstamp>
-            <format property="date.download" pattern="YYMMdd" offset="-1" unit="day"/>
-        </tstamp>
-        <property name="data.update.dir"      location="${data.update.base.dir}/${date.dir}"/>
-        <property name="data.update.work.dir" location="${data.update.dir}/work"/>
-        <property name="data.update.log.dir"  location="${data.update.dir}/log"/>
-    </target>
+<project basedir="." default="init" name="Targets to index SWB data">
+
+   <property file="gvi-ant-swb.local.properties"/>
+
+   <import file="gvi-solrmarc-ant.xml" />
+
+   <!-- Die Variablen definieren. -->
+   <target name="init">
+      <property name="data.collection" value="SWB" />
+      <property name="basename" value="index" />
+      <tstamp>
+         <format property="date.dir" pattern="yyyy-MM-dd"/>
+      </tstamp>
+      <property name="base.dir" location="/data/input/gvi/swb/current" />
+      <property name="full.dir" location="${base.dir}/full" />
+      <property name="full.work.dir" location="${full.dir}/work" />
+      <property name="full.log.dir" location="${full.dir}/log" />
+      <property name="update.dir"      location="${base.dir}/update/${date.dir}"/>
+      <property name="update.work.dir" location="${update.dir}/work"/>
+      <property name="update.log.dir"  location="${update.dir}/log"/>
+   </target>
     
     <target name="download-updates-swb" depends="init">
         <echo>Checking updates for ${date.download}</echo>
@@ -28,31 +31,31 @@
              verbose="true"
              newer="true"
              preservelastmodified="true">
-            <fileset dir="${data.update.dir}">
+            <fileset dir="${update.dir}">
                 <include name="SA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="TA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="WA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="od_del_bsz-tit_${date.download}*"/>
             </fileset>
         </ftp>
-        <available property="updates.found" file="${data.update.dir}"/>
+        <available property="updates.found" file="${update.dir}"/>
     </target>
 
     <target name="index-new-updates-swb" depends="download-updates-swb" if="updates.found">
-        <solrmarc-index-dir-swb src="${data.update.dir}" 
-                                dest="${data.update.work.dir}" 
-                                logdir="${data.update.log.dir}" 
+        <solrmarc-index-dir-swb src="${update.dir}" 
+                                dest="${update.work.dir}" 
+                                logdir="${update.log.dir}" 
                                 includeAll="false"/>
-        <solrmarc-delete-dir-swb src="${data.update.dir}" 
-                                 dest="${data.update.work.dir}" 
-                                 logdir="${data.update.log.dir}" 
+        <solrmarc-delete-dir-swb src="${update.dir}" 
+                                 dest="${update.work.dir}" 
+                                 logdir="${update.log.dir}" 
                                  includeAll="false"/>
     </target>
 
     <target name="index-all-updates-swb" depends="init">
         <for param="dir">
             <path>
-                <dirset dir="${data.update.base.dir}" includes="*"/>
+                <dirset dir="${update.base.dir}" includes="*"/>
             </path>
             <sequential>
                 <echo>Datadir @{dir}</echo>
@@ -68,11 +71,11 @@
     <!-- Komplettabzug und Updates indexieren -->
     <target name="index-all-swb" depends="init,init-index-date-for-delete">
         <delete>
-            <fileset dir="${data.full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
+            <fileset dir="${full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
         </delete>
-        <solrmarc-index-dir-swb src="${data.full.dir}" 
-                                dest="${data.full.work.dir}" 
-                                logdir="${data.full.log.dir}" 
+        <solrmarc-index-dir-swb src="${full.dir}" 
+                                dest="${full.work.dir}" 
+                                logdir="${full.log.dir}" 
                                 includeAll="true"/> 
         <antcall target="index-all-updates-swb"/>
         <antcall target="delete-by-collection-and-index-date"/>
@@ -81,11 +84,11 @@
     <!-- Nur den Komplettabzug indexieren -->
     <target name="index-onlyFull-swb" depends="init,init-index-date-for-delete">
         <delete>
-            <fileset dir="${data.full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
+            <fileset dir="${full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
         </delete>
-        <solrmarc-index-dir-swb src="${data.full.dir}" 
-                                dest="${data.full.work.dir}" 
-                                logdir="${data.full.log.dir}" 
+        <solrmarc-index-dir-swb src="${full.dir}" 
+                                dest="${full.work.dir}" 
+                                logdir="${full.log.dir}" 
                                 includeAll="true"/> 
         <antcall target="delete-by-collection-and-index-date"/>
     </target>
