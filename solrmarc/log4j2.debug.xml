@@ -44,6 +44,11 @@
             <AppenderRef ref="ERR" />
         </Logger>
         
+        <Logger name="org.solrmarc.tools.DataUtil" level="info" additivity="false">
+            <AppenderRef ref="STD" />
+            <AppenderRef ref="ERR" />
+        </Logger>
+        
         <Logger name="org.solrmarc.index.utils.FastClasspathUtils" level="info" additivity="false">
             <AppenderRef ref="STD" />
             <AppenderRef ref="ERR" />
