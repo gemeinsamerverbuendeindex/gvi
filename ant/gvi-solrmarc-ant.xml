@@ -35,24 +35,34 @@
 		<attribute name="solrURL" default="${solr.baseurl}/${solr.core}" />
 		<sequential>
 			<echo> 
-				maxmemory="${solrmarc.maxmemory}" 
-				jar="${solrmarc.core.jar}" 
-				dir="${solrmarc.base.dir}"
+				maxmemory = ${solrmarc.maxmemory} 
+				jar = ${solrmarc.core.jar} 
+				dir = ${solrmarc.base.dir}
 				org.marc4j.MarcPermissiveStreamReader.upperCaseSubfields = true
-				log4j.configurationFile" value="${solrmarc.log4j}"
-				error="@{logdir}/${basename}_err.log" 
-				output="@{logdir}/${basename}_out.log"
-				key="data.collection" value="${data.collection}"
-				arg line="-solrURL @{solrURL}"
-				arg line="-config ${solrmarc.indexconf}"
+				solrmarc.method.report = true
+				solrmarc.indexer.threadcount = 10
+				solrmarc.track.solr.progress = true
+				solrmarc.indexer.chunksize = 2000
+				log4j.configurationFile = ${solrmarc.log4j}
+				error = @{logdir}/${basename}_err.log
+				output = @{logdir}/${basename}_out.log
+				key = data.collection ${data.collection}
+				arg line = -solrURL @{solrURL}
+				arg line = -config ${solrmarc.indexconf}
+                                files = ${files}
 			</echo>
 			<java fork="true" failonerror="true" logError="true" maxmemory="${solrmarc.maxmemory}" jar="${solrmarc.core.jar}" dir="${solrmarc.base.dir}" error="@{logdir}/${basename}_err.log" output="@{logdir}/${basename}_out.log">
 				<sysproperty key="org.marc4j.MarcPermissiveStreamReader.upperCaseSubfields" value="true" />
+				<sysproperty key="solrmarc.method.report" value="true" />
+				<sysproperty key="solrmarc.indexer.threadcount" value="10" />
+				<sysproperty key="solrmarc.track.solr.progress" value="true" />
+				<sysproperty key="solrmarc.indexer.chunksize" value="2000" />
 				<sysproperty key="log4j.configurationFile" value="${solrmarc.log4j}" />
 				<sysproperty key="data.collection" value="${data.collection}" />
 				<arg value="IndexDriver" />
 				<arg line="-config ${solrmarc.indexconf}" />
 				<arg line="-solrURL @{solrURL}" />
+                                <arg line="${files}" />
 			</java>
 		</sequential>
 	</macrodef>
