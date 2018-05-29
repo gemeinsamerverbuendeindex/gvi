@@ -24,7 +24,7 @@
 		<property name="update.log.dir" location="${update.base.dir}/log" />
 	</target>
 
-   <!-- Get Raw Data from FTP server -->
+	<!-- Get Raw Data from FTP server -->
 	<target name="download-updates-hbz" depends="init" unless="hbz.skip.ftp">
 		<echo>Checking updates for ${date.download}</echo>
 		<ftp action="get" server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="${ftp.remotedir}" verbose="true" newer="true" preservelastmodified="true">
@@ -36,71 +36,70 @@
 		<available property="updates.found" file="${update.dir}" />
 	</target>
 
-	  <!-- Process current data set -->
-	   <target name="index-new-updates-hbz" depends="download-updates-hbz" if="updates.found">
-	      <delete dir="${update.work.dir}" quiet="false" failonerror="true" />
-	      <mkdir dir="${update.work.dir}" />
-	      <unpack_and_copy src="${update.dir}" dest="${update.work.dir}" />
-	      <solrmarc-index-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="current_update" />
-	      <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="current_delete" />
-	   </target>
+	<!-- Process current data set -->
+	<target name="index-new-updates-hbz" depends="download-updates-hbz" if="updates.found">
+		<delete dir="${update.work.dir}" quiet="false" failonerror="true" />
+		<mkdir dir="${update.work.dir}" />
+		<unpack_and_copy src="${update.dir}" dest="${update.work.dir}" />
+		<solrmarc-index-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="current_update" />
+		<solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="current_delete" />
+	</target>
 
-	  <!-- Collect data sets and process them all together -->
-	   <target name="index-all-updates-hbz" depends="init">
-	      <delete dir="${update.work.dir}" quiet="false" failonerror="true" />
-	      <mkdir dir="${update.work.dir}" />
-	      <for param="dir">
-	         <path>
-	            <dirset dir="${update.base.dir}" includes="*" />
-	         </path>
-	         <sequential>
-	            <echo>Datadir @{dir}</echo>
-	            <unpack src="@{dir}" dest="${update.work.dir}" />
-	         </sequential>
-	      </for>
-	      <solrmarc-index-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="all_updates"/>
-	      <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="all_deletes" />
-	   </target>
+	<!-- Collect data sets and process them all together -->
+	<target name="index-all-updates-hbz" depends="init">
+		<delete dir="${update.work.dir}" quiet="false" failonerror="true" />
+		<mkdir dir="${update.work.dir}" />
+		<for param="dir">
+			<path>
+				<dirset dir="${update.base.dir}" includes="*" />
+			</path>
+			<sequential>
+				<echo>Datadir @{dir}</echo>
+				<unpack src="@{dir}" dest="${update.work.dir}" />
+			</sequential>
+		</for>
+		<solrmarc-index-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="all_updates" />
+		<solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="all_deletes" />
+	</target>
 
-	  <!-- Komplettabzug und Updates indexieren -->
-	   <target name="index-all-hbz" depends="init,init-index-date-for-delete">
-	      <process_full />
-	      <antcall target="index-all-updates-hbz" />
-	      <antcall target="delete-by-collection-and-index-date" />
-	   </target>
+	<!-- Komplettabzug und Updates indexieren -->
+	<target name="index-all-hbz" depends="init,init-index-date-for-delete">
+		<process_full />
+		<antcall target="index-all-updates-hbz" />
+		<antcall target="delete-by-collection-and-index-date" />
+	</target>
 
-	   <!-- Nur den Komplettabzug indexieren -->
-	   <target name="index-onlyFull-hbz" depends="init,init-index-date-for-delete">
-	      <process_full />
-	      <antcall target="delete-by-collection-and-index-date" />
-	   </target>
+	<!-- Nur den Komplettabzug indexieren -->
+	<target name="index-onlyFull-hbz" depends="init,init-index-date-for-delete">
+		<process_full />
+		<antcall target="delete-by-collection-and-index-date" />
+	</target>
 
-	   <macrodef name="process_full">
-	      <sequential>
-	         <delete dir="${full.work.dir}" quiet="false" failonerror="true" />
-	         <mkdir dir="${full.work.dir}" />
-	         <unpack src="${full.dir}" dest="${full.work.dir}" />
-	         <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" basename="full"/>
-	      </sequential>
-	   </macrodef>
+	<macrodef name="process_full">
+		<sequential>
+			<delete dir="${full.work.dir}" quiet="false" failonerror="true" />
+			<mkdir dir="${full.work.dir}" />
+			<unpack src="${full.dir}" dest="${full.work.dir}" />
+			<solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" basename="full" />
+		</sequential>
+	</macrodef>
 
-	  <macrodef name="unpack">
-	      <attribute name="src" />
-	      <attribute name="dest" />
-	      <sequential>
-	         <mkdir dir="@{dest}" />
-	         <for param="filename">
-	            <path>
-                  <include name="*.gvi.f.mrc.gz" />
-                  <include name="*.gvi.i.*.mrc.gz" />
-	            </path>
-	            <sequential>
-	               <var name="basename" unset="true" />
-	               <basename property="basename" file="@{filename}" suffix=".mrc.gz" />
-	            	<gunzip src="@{filename}" />
-	            </sequential>
-	         </for>
-	      </sequential>
-	   </macrodef>
+	<macrodef name="unpack">
+		<attribute name="src" />
+		<attribute name="dest" />
+		<sequential>
+			<mkdir dir="@{dest}" />
+			<for param="filename">
+				<path>
+					<fileset dir="@{src}" includes="*.gvi.f.mrc.gz *.gvi.i.*.mrc.gz" />
+				</path>
+				<sequential>
+					<var name="basename" unset="true" />
+					<basename property="basename" file="@{filename}" suffix=".mrc.gz" />
+					<gunzip src="@{filename}" dest="@{dest}" />
+				</sequential>
+			</for>
+		</sequential>
+	</macrodef>
 
 </project>
