@@ -70,7 +70,7 @@
 
 	<!-- Komplettabzug und Updates indexieren -->
 	<target name="index-all-swb" depends="init,init-index-date-for-delete">
-      <process_full />
+		<process_full />
 		<antcall target="index-all-updates-swb" />
 		<antcall target="delete-by-collection-and-index-date" />
 	</target>
