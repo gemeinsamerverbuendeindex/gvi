@@ -1,68 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="init" name="GVI B3Kat Jenkins">
-    
-    <property file="gvi-ant-b3kat.properties"/>
-    
-    <import file="gvi-ant.xml"/>
+<project basedir="." default="init" name="Targets to index B3KAT data">
 
-    <target name="init">
-        <tstamp/>
-        <property name="data.update.dir" location="${data.update.base.dir}/${DSTAMP}"/>
-    </target>
-    
-    <target name="copy-updates-b3kat" depends="init">
-        <mkdir dir="${data.update.dir}"/>
-        <move todir="${data.update.dir}">
-            <fileset dir="${data.base.dir}">
-                <include name="*.xml"/>
-                <include name="*.txt"/>
-            </fileset>
-        </move>
-        <move file="${data.base.dir}/ready_to_index"
-              tofile="${data.base.dir}/ready_to_index.done"
-              failonerror="false"/>
-    </target>
-    
-    <target name="index-updates-b3kat" depends="copy-updates-b3kat">
-        <solrmarc-index-dir src="${data.update.dir}"   suffix=".xml" logdir="${data.update.dir}/log"/>
-        <solrmarc-delete-dir src="${data.update.dir}"  logdir="${data.update.dir}/log"/>
-    </target>
-    
-    <target name="index-all-updates-b3kat">
-        <for param="dir">
-            <path>
-                <dirset dir="${data.update.base.dir}" includes="*"/>
-            </path>
-            <sequential>
-                <delete>
-                    <fileset dir="@{dir}/log" includes="*.log" erroronmissingdir="false"/>
-                </delete>
-                <solrmarc-index-dir  src="@{dir}" logdir="@{dir}/log" suffix=".xml" />
-                <solrmarc-delete-dir src="@{dir}" logdir="@{dir}/log"/>                
-            </sequential>
-        </for>
-    </target>
-    
-    <target name="index-full-b3kat">
-        <delete>
-            <fileset dir="${data.full.log.dir}" includes="*.log" erroronmissingdir="false"/>
-        </delete>
-        <solrmarc-index-dir  src="${data.full.dir}" logdir="${data.full.log.dir}" suffix=".xml"/>
-        <solrmarc-delete-dir src="${data.full.dir}" logdir="${data.full.log.dir}" suffix=".txt"/>                
-    </target>
+   <import file="gvi-solrmarc-ant.xml" />
 
-    <!-- Komplettabzug und Updates indexieren -->
-    <target name="index-all" depends="init-index-date-for-delete">
-        <antcall target="index-full-b3kat"/>
-        <antcall target="index-all-updates-b3kat"/>
-        <antcall target="index-updates-b3kat"/>
-        <antcall target="delete-by-collection-and-index-date"/>
-    </target>
-	 
-    <!-- Nur den Komplettabzug indexieren -->
-	<target name="index-onlyFull" depends="init-index-date-for-delete">
-	     <antcall target="index-full-b3kat"/>
-	        <antcall target="delete-by-collection-and-index-date"/>
-	    </target>
-	    
+   <!-- Die Variablen definieren. -->
+   <target name="init">
+      <property name="data.collection" value="B3KAT" />
+      <property name="base.dir" location="/data/input/gvi/kobv_b3_kat/current" />
+      <property name="full.dir" location="${base.dir}/full" />
+      <property name="full.work.dir" location="${full.dir}/work" />
+      <property name="full.log.dir" location="${full.dir}/log" />
+      <property name="update.base.dir" location="${base.dir}/update" />
+      <property name="update.dir" location="${update.base.dir}${DSTAMP}" />
+      <property name="update.work.dir" location="${update.base.dir}/work" />
+      <property name="update.log.dir" location="${update.base.dir}/log" />
+   </target>
+
+   <!-- Get Raw Data from FTP server and patch 'del' files -->
+   <target name="download-updates-b3kat" depends="init">
+      <fail> Unimplemented </fail>
+   </target>
+
+   <!-- Process current data set -->
+   <target name="index-new-updates-b3kat" depends="download-updates-b3kat" if="updates.found">
+      <fail> Unimplemented </fail>
+   </target>
+
+   <!-- Collect data sets and process them all together -->
+   <target name="index-all-updates-b3kat" depends="init">
+      <fail> Unimplemented </fail>
+   </target>
+
+   <!-- Komplettabzug und Updates indexieren -->
+   <target name="index-all-b3kat" depends="init,init-index-date-for-delete">
+      <process_full />
+      <antcall target="index-all-updates-b3kat" />
+      <antcall target="delete-by-collection-and-index-date" />
+   </target>
+
+   <!-- Nur den Komplettabzug indexieren -->
+   <target name="index-onlyFull-b3kat" depends="init,init-index-date-for-delete">
+      <process_full />
+   	<solrmarc-index-dir src="${full.dir}" logdir="${full.log.dir}" basename="full"/>
+   </target>
+
 </project>
