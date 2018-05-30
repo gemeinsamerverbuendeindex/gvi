@@ -40,8 +40,7 @@
 
    <!-- Nur den Komplettabzug indexieren -->
    <target name="index-onlyFull-b3kat" depends="init,init-index-date-for-delete">
-      <process_full />
-   	<solrmarc-index-dir src="${full.dir}" logdir="${full.log.dir}" basename="full"/>
+   	<solrmarc-index-dir src="${full.dir}" logdir="${full.log.dir}" suffix=".xml" basename="full"/>
    </target>
 
 </project>
