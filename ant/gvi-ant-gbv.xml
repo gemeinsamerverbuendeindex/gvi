@@ -66,8 +66,8 @@
 			</untar>
 			<!-- Cleanup 'DEL'files -->
 			<echo> ! Check regex </echo>
-			<replaceregexp match="^\\s*(DE-601).*\\n" replace="" flags="gm" byline="true">
-				<fileset dir="@{src}" includes="*.txt" />
+			<replaceregexp match="^(?!(.*DE-601)).*\n" replace="" flags="gm" byline="false">
+				<fileset dir="@{dest}" includes="*.txt" />
 			</replaceregexp>
 		</sequential>
 	</macrodef>
