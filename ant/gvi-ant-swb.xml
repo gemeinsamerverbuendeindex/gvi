@@ -70,25 +70,20 @@
 
 	<!-- Komplettabzug und Updates indexieren -->
 	<target name="index-all-swb" depends="init,init-index-date-for-delete">
-		<process_full />
+		<antcall target="index-onlyFull-swb" />
 		<antcall target="index-all-updates-swb" />
-		<antcall target="delete-by-collection-and-index-date" />
 	</target>
 
 	<!-- Nur den Komplettabzug indexieren -->
 	<target name="index-onlyFull-swb" depends="init,init-index-date-for-delete">
-		<process_full />
-		<antcall target="delete-by-collection-and-index-date" />
-	</target>
-
-	<macrodef name="process_full">
 		<sequential>
 			<delete dir="${full.work.dir}" quiet="false" failonerror="true" />
 			<mkdir dir="${full.work.dir}" />
 			<unpack_and_copy src="${full.dir}" dest="${full.work.dir}" />
 			<solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" basename="full"/>
 		</sequential>
-	</macrodef>
+		<antcall target="delete-by-collection-and-index-date" />
+	</target>
 
 	<macrodef name="unpack_and_copy">
 		<attribute name="src" />
@@ -115,5 +110,5 @@
 			</copy>
 		</sequential>
 	</macrodef>
-
+	
 </project>

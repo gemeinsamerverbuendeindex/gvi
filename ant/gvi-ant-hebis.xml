@@ -75,8 +75,4 @@
 		<antcall target="delete-by-collection-and-index-date" />
 	</target>
 
-	<target name="test" depends="init">
-		<solr-ping />
-	</target>
-
 </project>

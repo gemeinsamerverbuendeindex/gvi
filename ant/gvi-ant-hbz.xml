@@ -64,25 +64,20 @@
 
 	<!-- Komplettabzug und Updates indexieren -->
 	<target name="index-all-hbz" depends="init,init-index-date-for-delete">
-		<process_full />
+		<antcall target="index-onlyFull-hbz" />
 		<antcall target="index-all-updates-hbz" />
-		<antcall target="delete-by-collection-and-index-date" />
 	</target>
 
 	<!-- Nur den Komplettabzug indexieren -->
 	<target name="index-onlyFull-hbz" depends="init,init-index-date-for-delete">
-		<process_full />
-		<antcall target="delete-by-collection-and-index-date" />
-	</target>
-
-	<macrodef name="process_full">
 		<sequential>
 			<delete dir="${full.work.dir}" quiet="false" failonerror="true" />
 			<mkdir dir="${full.work.dir}" />
 			<unpack src="${full.dir}" dest="${full.work.dir}" />
 			<solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" basename="full" />
 		</sequential>
-	</macrodef>
+		<antcall target="delete-by-collection-and-index-date" />
+	</target>
 
 	<macrodef name="unpack">
 		<attribute name="src" />
