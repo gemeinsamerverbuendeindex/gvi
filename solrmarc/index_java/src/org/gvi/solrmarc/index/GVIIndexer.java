@@ -1,7 +1,5 @@
 package org.gvi.solrmarc.index;
 
-import java.time.LocalDateTime;
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -9,6 +7,10 @@ import java.time.LocalDateTime;
  */
 
 import java.io.FileInputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
+import java.lang.management.MemoryType;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -18,22 +20,16 @@ import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.gvi.solrmarc.normalizer.ISBNNormalizer;
 import org.gvi.solrmarc.normalizer.impl.PunctuationSingleNormalizer;
 import org.marc4j.marc.ControlField;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
 import org.marc4j.marc.VariableField;
-import org.solrmarc.mixin.GetFormatMixin;
 import org.solrmarc.index.SolrIndexer;
+import org.solrmarc.mixin.GetFormatMixin;
 import org.solrmarc.tools.Utils;
-
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryPoolMXBean;
-import java.lang.management.MemoryType;
-import java.lang.management.MemoryUsage;
-
-import org.gvi.solrmarc.normalizer.ISBNNormalizer;
 
 /**
  *
@@ -43,23 +39,18 @@ import org.gvi.solrmarc.normalizer.ISBNNormalizer;
  */
 public class GVIIndexer extends SolrIndexer {
 
-   private static final String         institutionToConsortiumFile    = "translation_maps/kobv.properties";
-   private static final Properties     institutionToConsortiumMap     = new Properties();
-   private static final String         kobvInstitutionReplacementFile = "translation_maps/kobv_replacement.properties";
-   private static final Properties     kobvInstitutionReplacementMap  = new Properties();
-   private static final String         kobvClusterInfoFile            = "kobv_clusters.properties";
-   private static final Properties     kobvClusterInfoMap             = new Properties();
-   private static final String         gndSynonymFile                 = "gnd_synonyms.properties";
-   private static final String         gndLineSeperator               = "!_#_!";
-   private static final Properties     gndSynonymMap                  = new Properties();
-   private static boolean              isInitialized                  = false;
-   private String                      recordId;
-   private String                      catalog;
-   private String                      collection;
-   private Set<String>                 institutionSet                 = new LinkedHashSet<>();
-   private Set<String>                 consortium                     = new LinkedHashSet<>();
-   private static final Logger         LOG                            = LogManager.getLogger(GVIIndexer.class);
-   private PunctuationSingleNormalizer punctuationSingleNormalizer    = new PunctuationSingleNormalizer();
+   private static final String                      institutionToConsortiumFile    = "translation_maps/kobv.properties";
+   private static final Properties                  institutionToConsortiumMap     = new Properties();
+   private static final String                      kobvInstitutionReplacementFile = "translation_maps/kobv_replacement.properties";
+   private static final Properties                  kobvInstitutionReplacementMap  = new Properties();
+   private static final String                      kobvClusterInfoFile            = "kobv_clusters.properties";
+   private static final Properties                  kobvClusterInfoMap             = new Properties();
+   private static final String                      gndSynonymFile                 = "gnd_synonyms.properties";
+   private static final String                      gndLineSeperator               = "!_#_!";
+   private static final Properties                  gndSynonymMap                  = new Properties();
+   private static final PunctuationSingleNormalizer punctuationSingleNormalizer    = new PunctuationSingleNormalizer();
+   private static boolean                           isInitialized                  = false;
+   private static final Logger                      LOG                            = LogManager.getLogger(GVIIndexer.class);
 
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
       super(indexingPropsFile, propertyDirs);
@@ -79,19 +70,19 @@ public class GVIIndexer extends SolrIndexer {
       institutionToConsortiumMap.load(new FileInputStream(institutionToConsortiumFile));
       kobvInstitutionReplacementMap.load(new FileInputStream(kobvInstitutionReplacementFile));
 
-      if (LOG.isDebugEnabled()) {
+      if (LOG.isInfoEnabled()) {
          listMem();
-         LOG.debug("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
+         LOG.info("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
       }
       gndSynonymMap.load(new FileInputStream(gndSynonymFile));
-      if (LOG.isDebugEnabled()) {
-         LOG.debug("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
+      if (LOG.isInfoEnabled()) {
+         LOG.info("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
          listMem();
-         LOG.debug("Loading of cluster map started at: " + LocalDateTime.now().toString());
+         LOG.info("Loading of cluster map started at: " + LocalDateTime.now().toString());
       }
       kobvClusterInfoMap.load(new FileInputStream(kobvClusterInfoFile));
-      if (LOG.isDebugEnabled()) {
-         LOG.debug("Loading of cluster map finished at: " + LocalDateTime.now().toString());
+      if (LOG.isInfoEnabled()) {
+         LOG.info("Loading of cluster map finished at: " + LocalDateTime.now().toString());
          listMem();
       }
    }
@@ -99,7 +90,7 @@ public class GVIIndexer extends SolrIndexer {
    private void listMem() {
       for (MemoryPoolMXBean mpBean : ManagementFactory.getMemoryPoolMXBeans()) {
          if (mpBean.getType() == MemoryType.HEAP) {
-            LOG.debug(String.format("Name: %s max_used: %2.2fG now_used: %2.2fG (max_avail: %2.2fG)\n", mpBean.getName(), toGb(mpBean.getPeakUsage().getUsed()), toGb(mpBean.getUsage().getUsed()), toGb(mpBean.getUsage().getMax())));
+            LOG.info(String.format("Name: %s max_used: %2.2fG now_used: %2.2fG (max_avail: %2.2fG)\n", mpBean.getName(), toGb(mpBean.getPeakUsage().getUsed()), toGb(mpBean.getUsage().getUsed()), toGb(mpBean.getUsage().getMax())));
          }
       }
    }
@@ -230,7 +221,7 @@ public class GVIIndexer extends SolrIndexer {
    public String matchkeyTitle(Record record) {
       String title = "";
       String mainTitle = getSortableMainTitle(record);
-      if (mainTitle != null) {
+      if ((mainTitle != null) && !mainTitle.isEmpty()) {
          title = extractWords(mainTitle, 5);
       }
       return title;
@@ -335,10 +326,10 @@ public class GVIIndexer extends SolrIndexer {
          if (title.length() > nonFilingInt) {
             title = title.substring(nonFilingInt);
          }
-      } else {
-         LOG.error("MatchkeyException because no title found at record " + getRecordID(record));
+         return title;
       }
-      return title;
+      LOG.debug("MatchkeyException because no title found at record " + getRecordID(record));
+      return "";
    }
 
    /**
@@ -348,7 +339,8 @@ public class GVIIndexer extends SolrIndexer {
     * @return If found the duplicate key else the own id.
     */
    public String getDupId(Record record) {
-      return kobvClusterInfoMap.getProperty(recordId, recordId);
+      String id = getRecordID(record);
+      return kobvClusterInfoMap.getProperty(id, id);
    }
 
    /**
@@ -496,24 +488,25 @@ public class GVIIndexer extends SolrIndexer {
       return productYears;
    }
 
-   public String getCollection(final Record record) {
-      return collection;
+   public String getLocalId(final Record record) {
+      return getFirstFieldVal(record, "001");
    }
 
    public String getCatalog(final Record record) {
-      return catalog;
+      return findCatalog(record, getLocalId(record));
    }
 
    public Set<String> getConsortium(final Record record) {
-      return consortium;
+      String catalog = getCatalog(record);
+      return findConsortium(record, catalog, findInstitutionID(record, catalog), institutionToConsortiumMap);
    }
 
    public Set<String> getInstitutionID(final Record record) {
-      return institutionSet;
+      return findInstitutionID(record, getCatalog(record));
    }
 
    public String getRecordID(final Record record) {
-      return recordId;
+      return "(" + getCatalog(record) + ")" + getLocalId(record);
    }
 
    /**
@@ -526,24 +519,14 @@ public class GVIIndexer extends SolrIndexer {
     * @return The concatination of "GviMarc_" and the isil of the source.
     */
    public String getMarcTypByConsortium(final Record record) {
+      String catalog = getCatalog(record);
       if ((catalog == null) || (catalog.length() < 4)) return "GviMarcUnknown";
       return "GviMarcDE" + catalog.substring(3);
    }
 
-   public void perRecordInit(Record record) {
-      collection = findCollection();
-      String f001 = getFirstFieldVal(record, "001");
-      catalog = findCatalog(record, f001);
-      recordId = "(" + catalog + ")" + f001;
-      institutionSet = findInstitutionID(record, catalog);
-      consortium = findConsortium(record, catalog, institutionSet, institutionToConsortiumMap);
-   }
-
-   protected String findCollection() {
-      return System.getProperty("data.collection", "UNDEFINED");
-   }
-
    protected String findCatalog(Record record, String f001) {
+      String catalog = "UNSET";
+      String collection = System.getProperty("data.collection", "UNDEFINED");
       // guess catalog
       String field003 = getFirstFieldVal(record, "003");
       String field040a = getFirstFieldVal(record, "040a");
@@ -621,6 +604,7 @@ public class GVIIndexer extends SolrIndexer {
 
    protected Set<String> findConsortium(Record record, String catalog, Set<String> institutionSet, Properties institutionToConsortiumMap) {
       Set<String> consortiumSet = new HashSet<>();
+      String collection = System.getProperty("data.collection", "UNDEFINED");
       switch (catalog) {
          case "DE-101": // DNB
             if (collection.equals("ZDB")) {
