@@ -496,7 +496,7 @@ public class GVIIndexer extends SolrIndexer {
       return findCatalog(record, getLocalId(record));
    }
    
-   protected String getCollection(final Record record) {
+   public String getCollection(final Record record) {
       return System.getProperty("data.collection", "UNDEFINED");
    }
    public Set<String> getConsortium(final Record record) {
