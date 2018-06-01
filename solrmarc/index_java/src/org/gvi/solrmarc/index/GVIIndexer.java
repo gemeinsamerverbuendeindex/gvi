@@ -495,7 +495,10 @@ public class GVIIndexer extends SolrIndexer {
    public String getCatalog(final Record record) {
       return findCatalog(record, getLocalId(record));
    }
-
+   
+   protected String getCollection(final Record record) {
+      return System.getProperty("data.collection", "UNDEFINED");
+   }
    public Set<String> getConsortium(final Record record) {
       String catalog = getCatalog(record);
       return findConsortium(record, catalog, findInstitutionID(record, catalog), institutionToConsortiumMap);
@@ -526,7 +529,7 @@ public class GVIIndexer extends SolrIndexer {
 
    protected String findCatalog(Record record, String f001) {
       String catalog = "UNSET";
-      String collection = System.getProperty("data.collection", "UNDEFINED");
+      String collection = getCollection(record);
       // guess catalog
       String field003 = getFirstFieldVal(record, "003");
       String field040a = getFirstFieldVal(record, "040a");
