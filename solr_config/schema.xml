@@ -27,7 +27,8 @@
     <!-- Primärer Datencontainer -->
     <field name="fullrecord"              type="UnIndexed" required="true"   multiValued="false" />
     <field name="index_date"              type="Date" stored="true" default="NOW" multiValued="false" />
-
+    <field name="marc_error"              type="string" stored="true" />
+    
     <!-- Verbünde mit Bestand. -->
     <field name="consortium"              type="FacetPlus" required="true" />
 
@@ -133,9 +134,9 @@
     <!-- Regionale Identifikationsnummer der erstkatalogisierenden Institution -->
     <field name="eki_id"                  type="GenericID" />
     
-    <!-- Deduplikationsidentifikationsnummer -->
-    <field name="cluster_id"                  type="ClusterId" />
-
+    <!-- Deduplikationsidentifikationsnummer (was 'dup_id') -->
+    <field name="cluster_id"              type="string" stored="true" docValues="true" />
+    
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
     <field name="subject_all"             type="text_stemm"/>
@@ -235,28 +236,26 @@
     <field name="id_related"                     type="string" />
         
     <!-- Experimentelle (!) Matchkeys -->
-    <field name="test_matchkey_1" type="string" stored="true" multiValued="false" />
-    <field name="test_matchkey_2" type="string" stored="true" multiValued="false" />
-    <field name="test_matchkey_3" type="string" stored="true" multiValued="false" />
+    <field name="test_matchkey_1" type="string" stored="true" docValues="true" />
+    <field name="test_matchkey_2" type="string" stored="true" docValues="true" />
+    <field name="test_matchkey_3" type="string" stored="true" docValues="true" />
 
     <!-- 
     ###########################################
     Automatisches mitfüllen von Hilfsfeldern 
     ###########################################-->
-    
     <copyField source="allfields"         dest="allfields_unstemmed" />
     
     <!-- macht Probleme, wenn der Term > 32k Byte ist
     <copyField source="allfields"         dest="allfields_suggest" />
     -->
-    <copyField source="id"                dest="cluster_id" />
     
     <copyField source="author"            dest="author_facet" />
     <copyField source="author"            dest="author_unstemmed" />
     <copyField source="author"            dest="author_norm" />
     
     <copyField source="title"             dest="title_unstemmed" />
-    <copyField source="title"             dest="title_phrase" />
+    <copyField source="title_slim"        dest="title_phrase" />
 
     <copyField source="subject_topic"     dest="subject_topic_facet" />
     <copyField source="subject_genre"     dest="subject_genre_facet" />
@@ -316,7 +315,6 @@
                stored="true" 
                required="false" 
                multiValued="true"/>
-    
     
     <fieldType name="string" class="solr.StrField" 
                sortMissingLast="true" 
@@ -503,22 +501,6 @@
             <filter class="solr.TrimFilterFactory" />
             <filter class="solr.LowerCaseFilterFactory"/>
             <filter class="solr.LengthFilterFactory" min="1" max="100" />
-        </analyzer>
-    </fieldType>
-
-   <fieldType name="ClusterId" class="solr.TextField" 
-               sortMissingLast="true" 
-               omitNorms="true" 
-               indexed="true" 
-               stored="true" 
-               required="false" 
-               multiValued="false">
-        <analyzer type="index">
-            <tokenizer class="de.hebis.solr.analysis.gvi.ClusterSynonymTokenizerFactory" 
-                       clusterinfofile="/data/input/gvi/Dubletten/CL/clusters.xml" />
-        </analyzer>
-        <analyzer type="query">
-            <tokenizer class="solr.KeywordTokenizerFactory" />
         </analyzer>
     </fieldType>
 
