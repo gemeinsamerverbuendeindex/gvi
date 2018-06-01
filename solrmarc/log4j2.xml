@@ -24,7 +24,7 @@
             <AppenderRef ref="ERR" />
         </Logger>
 
-        <Logger name="org.gvi" level="debug" additivity="false">
+        <Logger name="org.gvi" level="info" additivity="false">
             <AppenderRef ref="STD" />
             <AppenderRef ref="ERR" />
         </Logger>
