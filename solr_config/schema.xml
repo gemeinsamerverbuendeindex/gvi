@@ -135,7 +135,7 @@
     <field name="eki_id"                  type="GenericID" />
     
     <!-- Deduplikationsidentifikationsnummer (was 'dup_id') -->
-    <field name="cluster_id"              type="string" stored="true" docValues="true" />
+    <field name="cluster_id"              type="string" stored="true"  multiValued="false" docValues="true" />
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
@@ -236,9 +236,9 @@
     <field name="id_related"                     type="string" />
         
     <!-- Experimentelle (!) Matchkeys -->
-    <field name="test_matchkey_1" type="string" stored="true" docValues="true" />
-    <field name="test_matchkey_2" type="string" stored="true" docValues="true" />
-    <field name="test_matchkey_3" type="string" stored="true" docValues="true" />
+    <field name="test_matchkey_1" type="string" stored="true" multiValued="false" docValues="true" />
+    <field name="test_matchkey_2" type="string" stored="true" multiValued="false" docValues="true" />
+    <field name="test_matchkey_3" type="string" stored="true" multiValued="false" docValues="true" />
 
     <!-- 
     ###########################################
