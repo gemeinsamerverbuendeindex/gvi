@@ -163,6 +163,10 @@ public class GVIIndexer extends SolrIndexer {
       } else if (contentTypes.contains("Mixed Materials")) {
          material = "mixed";
       }
+      // EBook
+      else if (contentTypes.contains("Computer Resource") && materialForm.equals("m")) {
+         material = "ebook";
+      }
       // Undetermined
       else {
          material = "other";
