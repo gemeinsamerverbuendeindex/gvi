@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="index-full-dnb" name="Targets to index DNB data">
+<project basedir="." default="index-full-dnb" name="GVI DNB Jenkins">
+    
+    <property file="gvi-ant-dnb.properties"/>
+    
+    <import file="gvi-ant.xml"/>
 
-   <import file="gvi-solrmarc-ant.xml" />
-
-   <!-- Die Variablen definieren. -->
-   <target name="init">
-      <property name="data.collection" value="DNB" />
-      <property name="base.dir" location="/data/input/gvi/dnb/current" />
-      <property name="full.dir" location="${base.dir}/full" />
-      <property name="full.log.dir" location="${full.dir}/log" />
-   </target>
-
-    <target name="index-full-dnb" depends="init, init-index-date-for-delete">
-      <solrmarc-index-dir src="${full.dir}"   suffix=".mrc" logdir="${full.log.dir}"/>
+    <target name="index-full-dnb" depends="init-index-date-for-delete">
+      <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
       <antcall target="delete-by-collection-and-index-date"/>
     </target>
-	
+    
 </project>

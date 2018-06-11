@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="index-updates" name="GVI SWB Jenkins">
+    
+    <import file="gvi-ant.xml"/>
+
+    <target name="solr-backup">
+        <solr-backup 
+            collection="${solr.core}"
+            location="${backup.location}"
+            maxAgeDays="${backup.maxAgeDays}"/>
+    </target>
+    
+    <target name="solr-optimize">
+        <solr-optimize maxSegments="5"/>
+    </target>
+
+    <target name="solr-purge">
+        <solr-purge />
+    </target>
+    
+</project>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="init" name="Targets to index SWB data">
+
+	<property file="gvi-ant-swb.local.properties" />
+
+	<import file="gvi-solrmarc-ant.xml" />
+
+	<!-- Die Variablen definieren. -->
+	<target name="init">
+		<property name="data.collection" value="SWB" />
+		<tstamp>
+			<format property="date.dir" pattern="yyyy-MM-dd" />
+		</tstamp>
+		<property name="base.dir" location="/data/input/gvi/swb/current" />
+		<property name="full.dir" location="${base.dir}/full" />
+		<property name="full.work.dir" location="${full.dir}/work" />
+		<property name="full.log.dir" location="${full.dir}/log" />
+		<property name="update.base.dir" location="${base.dir}/update" />
+		<property name="update.dir" location="${update.base.dir}${date.dir}" />
+		<property name="update.work.dir" location="${update.base.dir}/work" />
+		<property name="update.log.dir" location="${update.base.dir}/log" />
+	</target>
+
+	<!-- Get Raw Data from FTP server and patch 'del' files -->
+	<target name="download-updates-swb" depends="init">
+		<echo>Checking updates for ${date.download}</echo>
+		<ftp action="get" server="${ftp.server}" userid="${ftp.userid}" password="${ftp.password}" remotedir="${ftp.remotedir}" verbose="true" newer="true" preservelastmodified="true">
+			<fileset dir="${update.dir}">
+				<include name="SA-MARC-verbund-${date.download}*.tar.gz" />
+				<include name="TA-MARC-verbund-${date.download}*.tar.gz" />
+				<include name="WA-MARC-verbund-${date.download}*.tar.gz" />
+				<include name="od_del_bsz-tit_${date.download}*" />
+			</fileset>
+		</ftp>
+		<available property="updates.found" file="${update.dir}" />
+		<!-- Patch 'DEL' files -->
+		<for param="filename">
+			<path>
+				<fileset dir="@{src}" includes="od_del*.txt" />
+			</path>
+			<replace file="@{filename}" token="PPN:" value="(DE-576)" />
+		</for>
+	</target>
+
+	<!-- Process current data set -->
+	<target name="index-new-updates-swb" depends="download-updates-swb" if="updates.found">
+		<delete dir="${update.work.dir}" quiet="false" failonerror="true" />
+		<mkdir dir="${update.work.dir}" />
+		<unpack_and_copy src="${update.dir}" dest="${update.work.dir}" />
+		<solrmarc-index-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="current_update" />
+		<solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="current_delete" />
+	</target>
+
+	<!-- Collect data sets and process them all together -->
+	<target name="index-all-updates-swb" depends="init">
+		<delete dir="${update.work.dir}" quiet="false" failonerror="true" />
+		<mkdir dir="${update.work.dir}" />
+		<for param="dir">
+			<path>
+				<dirset dir="${update.base.dir}" includes="*" />
+			</path>
+			<sequential>
+				<echo>Datadir @{dir}</echo>
+				<unpack_and_copy src="@{dir}" dest="${update.work.dir}" />
+			</sequential>
+		</for>
+		<solrmarc-index-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="all_updates"/>
+		<solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}" basename="all_deletes" />
+	</target>
+
+	<!-- Komplettabzug und Updates indexieren -->
+	<target name="index-all-swb" depends="init,init-index-date-for-delete">
+		<antcall target="index-onlyFull-swb" />
+		<antcall target="index-all-updates-swb" />
+	</target>
+
+	<!-- Nur den Komplettabzug indexieren -->
+	<target name="index-onlyFull-swb" depends="init,init-index-date-for-delete">
+		<sequential>
+			<delete dir="${full.work.dir}" quiet="false" failonerror="true" />
+			<mkdir dir="${full.work.dir}" />
+			<unpack_and_copy src="${full.dir}" dest="${full.work.dir}" />
+			<solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" basename="full"/>
+		</sequential>
+		<antcall target="delete-by-collection-and-index-date" />
+	</target>
+
+	<macrodef name="unpack_and_copy">
+		<attribute name="src" />
+		<attribute name="dest" />
+		<sequential>
+			<mkdir dir="@{dest}" />
+			<for param="filename">
+				<path>
+					<fileset dir="@{src}" includes="*.tar.gz" />
+				</path>
+				<sequential>
+					<var name="basename" unset="true" />
+					<basename property="basename" file="@{filename}" suffix=".tar.gz" />
+					<untar src="@{filename}" dest="@{dest}" compression="gzip">
+						<patternset>
+							<include name="verbund-tit.mrc" />
+						</patternset>
+					</untar>
+					<move file="@{dest}/verbund-tit.mrc" tofile="@{dest}/${basename}.mrc" />
+				</sequential>
+			</for>
+			<copy todir="@{dest}">
+				<fileset dir="@{src}"  includes="od_del*.txt" />
+			</copy>
+		</sequential>
+	</macrodef>
+	
+</project>
