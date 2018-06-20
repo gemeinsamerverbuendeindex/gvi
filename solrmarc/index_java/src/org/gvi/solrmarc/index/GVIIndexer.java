@@ -588,23 +588,35 @@ public class GVIIndexer extends SolrIndexer {
       return kobvInstitutions;
    }
 
+   /**
+    * Ermittelt die ISIL der in der Bibliotheken mit Bestand.<br>
+    * 
+    * @param record 
+    * @param catalogId
+    * @return
+    */
    protected Set<String> findInstitutionID(Record record, String catalogId) {
       Set<String> institution = new LinkedHashSet<>();
       switch (catalogId) {
+         case "DE-101": // DNB
          case "DE-576": // SWB
-            institution.addAll(getFieldList(record, "924b"));
-            break;
+         case "DE-600": // ZDB
          case "DE-601": // GBV+KOBV
+         case "DE-603": // HeBIS
             institution.addAll(getFieldList(record, "924b"));
             break;
-         case "DE-604": // BVB+KOBV
-            institution.addAll(getFieldList(record, "049a"));
+         case "DE-602": // KOBV mit Fallback bei fehlender 924
+            institution.addAll(getFieldList(record, "924b"));
+            if (institution.isEmpty()) institution.addAll(getKobvInstitutions(record));
             break;
-         case "DE-602": // KOBV
-            institution.addAll(getKobvInstitutions(record));
+         case "DE-604": // BVB+KOBV mit Fallback bei fehlender 924
+            institution.addAll(getFieldList(record, "924b"));
+            if (institution.isEmpty()) institution.addAll(getFieldList(record, "049a"));
             break;
-         default:
-            institution.add("UNDEFINED");
+         case "DE-605": // HBZ
+            // TODO Regel überprüfen.
+            institution.addAll(getFieldList(record, "924b"));
+            break;
       }
       return institution;
    }
