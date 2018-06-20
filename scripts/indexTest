@@ -17,6 +17,9 @@ JavaParams="-Dorg.marc4j.MarcPermissiveStreamReader.upperCaseSubfields=true $Jav
 # Profiling Informationen am Ende ausgeben.
 #JavaParams="-Dsolrmarc.method.report=true $JavaParams"
 
+# Dateien für GND und Cluster Mapping nicht laden.  
+JavaParams="-DGviIndexer.skipBigFiles=bla $JavaParams"
+
 SolrMarc="-jar solrmarc_core.jar IndexDriver"
 
 Config="-c gvi_index.properties"
