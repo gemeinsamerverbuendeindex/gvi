@@ -104,6 +104,7 @@ public class GVIIndexer extends SolrIndexer {
     */
    public String matchkeyISBN(Record record) {
       DataField isbnField = (DataField) record.getVariableField("020");
+      if (isbnField == null) return "";
       List<Subfield> isbns = isbnField.getSubfields('a');
       if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
       if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
