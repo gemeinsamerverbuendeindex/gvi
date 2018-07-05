@@ -39,10 +39,6 @@ import org.solrmarc.tools.Utils;
  */
 public class GVIIndexer extends SolrIndexer {
 
-   private static final String                      institutionToConsortiumFile    = "translation_maps/kobv.properties";
-   private static final Properties                  institutionToConsortiumMap     = new Properties();
-   private static final String                      kobvInstitutionReplacementFile = "translation_maps/kobv_replacement.properties";
-   private static final Properties                  kobvInstitutionReplacementMap  = new Properties();
    private static final String                      kobvClusterInfoFile            = "kobv_clusters.properties";
    private static final Properties                  kobvClusterInfoMap             = new Properties();
    private static final String                      gndSynonymFile                 = "gnd_synonyms.properties";
@@ -66,9 +62,6 @@ public class GVIIndexer extends SolrIndexer {
       if (isInitialized) return;
       isInitialized = true;
       if (System.getProperty("GviIndexer.skipBigFiles") != null) return;
-
-      institutionToConsortiumMap.load(new FileInputStream(institutionToConsortiumFile));
-      kobvInstitutionReplacementMap.load(new FileInputStream(kobvInstitutionReplacementFile));
 
       if (LOG.isInfoEnabled()) {
          listMem();
@@ -505,7 +498,7 @@ public class GVIIndexer extends SolrIndexer {
    }
    public Set<String> getConsortium(final Record record) {
       String catalog = getCatalog(record);
-      return findConsortium(record, catalog, findInstitutionID(record, catalog), institutionToConsortiumMap);
+      return findConsortium(record, catalog, findInstitutionID(record, catalog));
    }
 
    public Set<String> getInstitutionID(final Record record) {
@@ -554,40 +547,6 @@ public class GVIIndexer extends SolrIndexer {
       return catalog;
    }
 
-   protected Set<String> getKobvInstitutions(Record record) {
-      Set<String> kobvInstitutions = new LinkedHashSet<>();
-      Set<String> values049a = getFieldList(record, "049a");
-      if (values049a == null) {
-         return kobvInstitutions;
-      }
-      for (String value049a : values049a) {
-         // In some cases (KobvIndex), the Sigel (ISIL) is followed by the internal uid.
-         // The delimiter is then ';', which cannot be a part of the Sigel
-         int semicolonIndex = value049a.indexOf(';');
-         if (semicolonIndex > 0) {
-            String isil = value049a.substring(0, semicolonIndex);
-            // Additionally, Brandendurg VOEB delivers all isils of the partner libraries (comma separated)
-            String[] isils = isil.split(",");
-            for (String oneisil : isils) {
-               if (!oneisil.isEmpty()) {
-                  if (kobvInstitutionReplacementMap.containsKey(oneisil)) {
-                     kobvInstitutions.add(kobvInstitutionReplacementMap.getProperty(oneisil));
-                  } else {
-                     kobvInstitutions.add(oneisil);
-                  }
-               }
-            }
-         } else {
-            if (kobvInstitutionReplacementMap.containsKey(value049a)) {
-               kobvInstitutions.add(kobvInstitutionReplacementMap.getProperty(value049a));
-            } else {
-               kobvInstitutions.add(value049a);
-            }
-         }
-      }
-      return kobvInstitutions;
-   }
-
    /**
     * Ermittelt die ISIL der in der Bibliotheken mit Bestand.<br>
     * 
@@ -596,32 +555,10 @@ public class GVIIndexer extends SolrIndexer {
     * @return
     */
    protected Set<String> findInstitutionID(Record record, String catalogId) {
-      Set<String> institution = new LinkedHashSet<>();
-      switch (catalogId) {
-         case "DE-101": // DNB
-         case "DE-576": // SWB
-         case "DE-600": // ZDB
-         case "DE-601": // GBV+KOBV
-         case "DE-603": // HeBIS
-            institution.addAll(getFieldList(record, "924b"));
-            break;
-         case "DE-602": // KOBV mit Fallback bei fehlender 924
-            institution.addAll(getFieldList(record, "924b"));
-            if (institution.isEmpty()) institution.addAll(getKobvInstitutions(record));
-            break;
-         case "DE-604": // BVB+KOBV mit Fallback bei fehlender 924
-            institution.addAll(getFieldList(record, "924b"));
-            if (institution.isEmpty()) institution.addAll(getFieldList(record, "049a"));
-            break;
-         case "DE-605": // HBZ
-            // TODO Regel überprüfen.
-            institution.addAll(getFieldList(record, "924b"));
-            break;
-      }
-      return institution;
+      return getFieldList(record, "924b");
    }
 
-   protected Set<String> findConsortium(Record record, String catalog, Set<String> institutionSet, Properties institutionToConsortiumMap) {
+   protected Set<String> findConsortium(Record record, String catalog, Set<String> institutionSet) {
       Set<String> consortiumSet = new HashSet<>();
       String collection = System.getProperty("data.collection", "UNDEFINED");
       switch (catalog) {
@@ -632,11 +569,9 @@ public class GVIIndexer extends SolrIndexer {
                consortiumSet.add(catalog);
             }
             break;
-         case "DE-601": // GBV+KOBV+ZDB
-            consortiumSet.addAll(findConsortiumByInstitution(catalog, institutionSet, institutionToConsortiumMap));
-            break;
          case "DE-576": // SWB
          case "DE-600": // ZDB
+         case "DE-601": // GBV+KOBV+ZDB
          case "DE-602": // KOBV
          case "DE-603": // HEBIS
          case "DE-604": // BVB
@@ -646,21 +581,6 @@ public class GVIIndexer extends SolrIndexer {
          default:
             consortiumSet.add("UNDEFINED");
             break;
-      }
-      return consortiumSet;
-   }
-
-   protected Set<String> findConsortiumByInstitution(String defaultCatalog, Set<String> institutionSet, Properties institutionToConsortiumMap) {
-      Set<String> consortiumSet = new HashSet<>();
-      int numOtherConsortium = 0;
-      for (String i : institutionSet) {
-         if (institutionToConsortiumMap.containsKey(i)) {
-            consortiumSet.add(institutionToConsortiumMap.getProperty(i));
-            numOtherConsortium++;
-         }
-      }
-      if (institutionSet.isEmpty() || institutionSet.size() > numOtherConsortium) {
-         consortiumSet.add(defaultCatalog);
       }
       return consortiumSet;
    }
