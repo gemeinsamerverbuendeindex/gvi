@@ -90,10 +90,8 @@
     <!-- Verlag ohne Stemming und Phonetik -->
     <field name="publisher"               type="text" />
     
-    <!-- Verlagsort ohne Stemming und Phonetik -->
-    <!-- Vorberitung GVI-110
+    <!-- GVI-110: Verlagsort ohne Stemming und Phonetik -->
     <field name="publisheri_place"        type="text" />
-     -->
      
     <!-- Erscheinungsdatum für die Sucheinschränkung. 
     Bei Zeitschriften, Serien und Reihen die Erscheinungsdaten der Bände/Hefte -->
