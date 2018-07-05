@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="index-full-zdb" name="GVI ZDB Jenkins">
-    
-    <property file="gvi-ant-zdb.properties"/>
-    
-    <import file="gvi-ant.xml"/>
+<project basedir="." default="index-full-zdb" name="Targets to index ZDB data">
 
-    <target name="index-full-zdb" depends="init-index-date-for-delete">
-      <solrmarc-index-dir src="${data.full.dir}"   suffix=".xml" logdir="${data.full.log.dir}"/>
+   <import file="gvi-solrmarc-ant.xml" />
+
+   <!-- Die Variablen definieren. -->
+   <target name="init">
+      <property name="data.collection" value="ZDB" />
+      <property name="base.dir" location="/data/input/gvi/zdb/current" />
+      <property name="full.dir" location="${base.dir}/full" />
+      <property name="full.log.dir" location="${full.dir}/log" />
+   </target>
+
+    <target name="index-full-zdb" depends="init, init-index-date-for-delete">
+      <solrmarc-index-dir src="${full.dir}"   suffix=".xml" logdir="${full.log.dir}"/>
       <antcall target="delete-by-collection-and-index-date"/>
     </target>
     
