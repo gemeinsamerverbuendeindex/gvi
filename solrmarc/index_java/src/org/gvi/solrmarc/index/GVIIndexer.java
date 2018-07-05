@@ -93,14 +93,22 @@ public class GVIIndexer extends SolrIndexer {
       return ret / 1024 / 1024;
    }
 
+   /**
+    * Get first found ISBN from marc:020<br>
+    * * prefer real isbns ($a)<br>
+    * * check next unformatted isbns ($9)<br>
+    * * at last and least check wrong isbns ($z)
+    *  
+    * @param record
+    * @return the normalized ISBN or an empty String
+    */
    public String matchkeyISBN(Record record) {
-      String isbn = getFirstFieldVal(record, "020a");
-      if (isbn != null) {
-         isbn = ISBNNormalizer.normalize(isbn);
-      } else {
-         isbn = "";
-      }
-      return isbn;
+      DataField isbnField = (DataField) record.getVariableField("020");
+      List<Subfield> isbns = isbnField.getSubfields('a');
+      if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
+      if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
+      if ((isbns == null) || isbns.isEmpty()) return "";
+      return ISBNNormalizer.normalize(isbns.get(0).getData());
    }
 
    public String matchkeyMaterial(Record record) {
