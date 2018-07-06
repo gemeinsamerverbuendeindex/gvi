@@ -91,7 +91,7 @@
     <field name="publisher"               type="text" />
     
     <!-- GVI-110: Verlagsort ohne Stemming und Phonetik -->
-    <field name="publisheri_place"        type="text" />
+    <field name="publisher_place"         type="text" />
      
     <!-- Erscheinungsdatum für die Sucheinschränkung. 
     Bei Zeitschriften, Serien und Reihen die Erscheinungsdaten der Bände/Hefte -->
