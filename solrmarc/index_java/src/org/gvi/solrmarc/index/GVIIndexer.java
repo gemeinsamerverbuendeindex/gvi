@@ -102,14 +102,18 @@ public class GVIIndexer extends SolrIndexer {
     * @param record
     * @return the normalized ISBN or an empty String
     */
-   public String matchkeyISBN(Record record) {
-      DataField isbnField = (DataField) record.getVariableField("020");
-      List<Subfield> isbns = isbnField.getSubfields('a');
-      if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
-      if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
-      if ((isbns == null) || isbns.isEmpty()) return "";
-      return ISBNNormalizer.normalize(isbns.get(0).getData());
-   }
+    public String matchkeyISBN(Record record) {
+        String isbn = "";
+        DataField isbnField = (DataField) record.getVariableField("020");
+        if (isbnField != null) {
+            List<Subfield> isbns = isbnField.getSubfields('a');
+            if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
+            if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
+            if ((isbns == null) || isbns.isEmpty()) return isbn;
+            isbn = ISBNNormalizer.normalize(isbns.get(0).getData());
+        }
+        return isbn;
+    }
 
    public String matchkeyMaterial(Record record) {
       String material = "";
