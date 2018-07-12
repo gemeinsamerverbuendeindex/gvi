@@ -110,7 +110,11 @@ public class GVIIndexer extends SolrIndexer {
             if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
             if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
             if ((isbns == null) || isbns.isEmpty()) return isbn;
-            isbn = ISBNNormalizer.normalize(isbns.get(0).getData());
+            try {
+                isbn = ISBNNormalizer.normalize(isbns.get(0).getData());
+            } catch (IllegalArgumentException e) {
+                LOG.error("MatchkeyException at record " + getRecordID(record)+": "+e.getMessage());
+            }
         }
         return isbn;
     }
@@ -255,13 +259,20 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public String matchkeyMaterialISBNYear(Record record) {
-      String material = matchkeyMaterial(record);
-      String isbn = matchkeyISBN(record);
-      String pubdate = matchkeyPubdate(record);
-      if (!isbn.isEmpty()) {
-         return String.format("%s:%s:%s", material, isbn, pubdate);
+       String matchkey = null;
+       try {
+            String material = matchkeyMaterial(record);
+            String isbn = matchkeyISBN(record);
+            String pubdate = matchkeyPubdate(record);
+            if (!isbn.isEmpty()) {
+               matchkey =  String.format("%s:%s:%s", material, isbn, pubdate);
+            } else {
+                matchkey = matchkeyMaterialAuthorTitleYearPublisher(record);
+            }
+       } catch (Throwable e) {
+         LOG.error("MatchkeyException at record " + getRecordID(record), e);
       }
-      return matchkeyMaterialAuthorTitleYearPublisher(record);
+      return matchkey;
    }
 
    public String matchkeyMaterialAuthorTitle(Record record) {
