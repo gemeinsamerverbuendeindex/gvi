@@ -270,7 +270,7 @@ public class GVIIndexer extends SolrIndexer {
                 matchkey = matchkeyMaterialAuthorTitleYearPublisher(record);
             }
        } catch (Throwable e) {
-         LOG.error("MatchkeyException at record " + getRecordID(record), e);
+         LOG.error("MatchkeyException at record " + getRecordID(record) + ": "+ e.getMessage());
       }
       return matchkey;
    }
