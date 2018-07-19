@@ -6,6 +6,7 @@ package org.gvi.solrmarc.index;
  * and open the template in the editor.
  */
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
@@ -61,13 +62,14 @@ public class GVIIndexer extends SolrIndexer {
    private synchronized void init() throws Exception {
       if (isInitialized) return;
       isInitialized = true;
-      if (System.getProperty("GviIndexer.skipBigFiles") != null) return;
+      if (!System.getProperty("GviIndexer.skipBigFiles").equals("false")) return;
 
       if (LOG.isInfoEnabled()) {
          listMem();
          LOG.info("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
       }
-      gndSynonymMap.load(new FileInputStream(gndSynonymFile));
+      String gndDir = System.getProperty("gnd.configdir", ".");
+      gndSynonymMap.load(new FileInputStream(new File(gndDir, gndSynonymFile)));
       if (LOG.isInfoEnabled()) {
          LOG.info("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
          listMem();
