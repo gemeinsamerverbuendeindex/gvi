@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="base"
+         default="index-all"
+         xmlns:if="ant:if"
+         xmlns:unless="ant:unless">
+
+    <description>Generic targets</description>
+    
+    <import file="gvi-ant.xml"/>
+        
+    <target name="init" depends="-init">
+        <echo>
+                  collection = ${collection}
+                  time.stamp = ${time.stamp}
+              full.input.dir = ${full.input.dir}
+               full.work.dir = ${full.work.dir}
+               full.log.dir  = ${full.log.dir}
+             update.base.dir = ${update.base.dir}
+            update.input.dir = ${update.input.dir}
+             update.work.dir = ${update.work.dir}
+             update.log.dir  = ${update.log.dir}
+        </echo>
+    </target>
+    
+    <!-- Index all data including all incremental updates -->
+    <target name="index-all" 
+            description="Index all data including all incremental updates">
+        <antcall target="index-full"/>
+        <antcall target="index-all-updates"/>
+        <antcall target="index-updates"/>
+    </target>
+
+    <!-- Index full dump and delete all previously indexed records -->
+    <target name="index-full"
+            depends="init, init-index-date-for-delete, -index-full"
+            description="Index full dump">
+        <antcall target="delete-by-collection-and-index-date"/>
+    </target>
+    
+    <!-- Index current incremental updates -->
+    <target name="index-updates" 
+            depends="init, -index-updates"
+            description="Index current incremental updates"/>
+
+    <!-- Index all incremental updates -->
+    <target name="index-all-updates" 
+            depends="init, -index-all-updates"
+            description="Index all incremental updates"/>
+    
+</project>

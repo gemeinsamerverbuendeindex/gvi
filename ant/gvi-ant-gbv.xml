@@ -2,9 +2,26 @@
 <project basedir="." default="index-full-gbv" name="GVI GBV Jenkins">
     
     <property file="gvi-ant-gbv.local.properties"/>
-    <property file="gvi-ant-gbv.properties"/>
     
-    <import file="gvi-ant.xml"/>
+    <import file="gvi-ant-base.xml"/>
+    <import file="gvi-solrmarc-ant.xml"/>
+
+    <target name="-init">
+        <property name="collection"       value="GBV"/>
+        <property name="input.dir"        location="${gvi.input.dir}/gbv/current"/>
+        <property name="work.dir"         location="${gvi.work.dir}/gbv"/>
+        <property name="full.input.dir"   location="${input.dir}/full"/>
+        <property name="full.work.dir"    location="${work.dir}/full/work"/>
+        <property name="full.log.dir"     location="${work.dir}/full/log"/>
+        <property name="update.base.dir"  location="${input.dir}/update"/>
+        <property name="update.input.dir" location="${update.base.dir}"/>
+        <property name="update.work.dir"  location="${work.dir}/update"/>
+        <property name="update.log.dir"   location="${work.dir}/update/log/"/>
+        <property name="ftp.server"       value="localhost"/>
+        <property name="ftp.userid"       value="user"/>
+        <property name="ftp.password"     value="password"/>
+        <property name="ftp.remotedir"    value="/"/>
+    </target>
 
     <target name="download-updates-gbv" unless="gbv.skip.ftp">
         <ftp action="get"
@@ -15,67 +32,50 @@
              verbose="true"
              newer="true"
              preservelastmodified="true">
-            <fileset dir="${data.update.dir}">
+            <fileset dir="${update.input.dir}">
                 <include name="gbv-catalog-update-*.mrc.tar.gz"/>
                 <include name="gbv-catalog-delete-*.txt"/>
             </fileset>
         </ftp>
     </target>
     
-    <target name="index-new-updates-gbv" depends="download-updates-gbv">
-        <solrmarc-index-dir-gbv src="${data.update.dir}"
-                                dest="${data.update.work.dir}"
-                                logdir="${data.update.log.dir}"
-                                includeAll="false"/>
+    <target name="-index-updates" depends="download-updates-gbv">
+        <gbv-unpack-index-dir src="${update.input.dir}"
+                              dest="${update.work.dir}"
+                              logdir="${update.log.dir}"
+                              indexUnpacked="true"/>
+        <gbv-unpack-delete-dir src="${update.input.dir}"
+                               dest="${update.work.dir}"
+                               logdir="${update.log.dir}"
+                               indexUnpacked="true"/>
     </target>
 
-    <target name="index-all-updates-gbv" depends="download-updates-gbv">
-        <solrmarc-index-dir-gbv src="${data.update.dir}"
-                                dest="${data.update.work.dir}"
-                                logdir="${data.update.log.dir}"
-                                includeAll="true"/>
+    <target name="-index-all-updates" depends="download-updates-gbv">
+        <gbv-unpack-index-dir src="${update.input.dir}"
+                              dest="${update.work.dir}"
+                              logdir="${update.log.dir}"
+                              indexUnpacked="false"/>
+        <gbv-unpack-delete-dir src="${update.input.dir}"
+                               dest="${update.work.dir}"
+                               logdir="${update.log.dir}"
+                               indexUnpacked="false"/>
+        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}"/>
+        <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}"/>
     </target>
-    
-    <target name="delete-new-updates-gbv" depends="download-updates-gbv">
-        <solrmarc-delete-dir-gbv src="${data.update.dir}"
-                                 dest="${data.update.work.dir}"
-                                 logdir="${data.update.log.dir}"
-                                 includeAll="false"/>
-    </target>
-
-    <target name="delete-all-updates-gbv" depends="download-updates-gbv">
-        <solrmarc-delete-dir-gbv src="${data.update.dir}"
-                                 dest="${data.update.work.dir}"
-                                 logdir="${data.update.log.dir}"
-                                 includeAll="true"/>
-    </target>
-	
-    <target name="index-full-gbv">
+    	
+    <target name="-index-full">
         <delete>
-            <fileset dir="${data.full.log.dir}" includes="*.log" erroronmissingdir="false"/>
+            <fileset dir="${full.log.dir}" includes="*.log" erroronmissingdir="false"/>
         </delete>
-        <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
+        <solrmarc-index-dir src="${full.input.dir}" logdir="${full.log.dir}" suffix=".mrc"/>
     </target>
 
-    <!-- Komplettabzug und Updates indexieren -->
-    <target name="index-all-gbv" depends="init-index-date-for-delete">
-        <antcall target="index-full-gbv"/>
-        <antcall target="index-all-updates-gbv"/>
-        <antcall target="delete-all-updates-gbv"/>
-        <antcall target="delete-by-collection-and-index-date"/>
-    </target>
-
-	<!-- Nur den Komplettabzug indexieren -->
-    <target name="index-onlyFull-gbv" depends="init-index-date-for-delete">
-        <antcall target="index-full-gbv"/>
-        <antcall target="delete-by-collection-and-index-date"/>
-    </target>
-
-    <macrodef name="solrmarc-index-dir-gbv">
+    <!-- Macros for GBV -->
+    <macrodef name="gbv-unpack-index-dir">
         <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="logdir"/>
-        <attribute name="includeAll" default="false"/>
+        <attribute name="indexUnpacked" default="false"/>
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
@@ -104,27 +104,24 @@
                                     <include name="${basename}*"/>
                                 </fileset>
                             </move>
-                            <solrmarc-index-dir src="@{dest}/${date}" suffix=".mrc" logdir="@{logdir}"/>   
-                        </then>
-                        <else>
                             <if>
-                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
                                     <solrmarc-index-dir src="@{dest}/${date}" suffix=".mrc" logdir="@{logdir}"/> 
                                 </then>
                             </if>
-                        </else>
+                        </then>
                     </if>
                 </sequential>
             </for>
         </sequential>
     </macrodef>
     
-    <macrodef name="solrmarc-delete-dir-gbv">
+    <macrodef name="gbv-unpack-delete-dir">
         <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="logdir"/>
-        <attribute name="includeAll" default="false"/>
+        <attribute name="indexUnpacked" default="false"/>
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
@@ -150,16 +147,13 @@
                                     <prefixlines prefix="(DE-601)"/>
                                 </filterchain>
                             </copy>
-                            <solrmarc-delete-file file="@{dest}/${date}/${basename}.txt" logdir="@{logdir}"/>
-                        </then>
-                        <else>
                             <if>
-                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
-                                    <solrmarc-delete-dir src="@{dest}/${date}" logdir="@{logdir}"/>
+                                    <solrmarc-delete-file file="@{dest}/${date}/${basename}.txt" logdir="@{logdir}"/>
                                 </then>
                             </if>
-                        </else>
+                        </then>
                     </if>
                 </sequential>
             </for>

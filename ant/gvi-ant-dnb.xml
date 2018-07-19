@@ -1,13 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="index-full-dnb" name="GVI DNB Jenkins">
+<project name="Targets to index DNB data">
     
-    <property file="gvi-ant-dnb.properties"/>
-    
-    <import file="gvi-ant.xml"/>
+    <property file="gvi-ant-dnb.local.properties"/>
+    <import file="gvi-ant-base.xml"/>
+    <import file="gvi-solrmarc-ant.xml"/>
 
-    <target name="index-full-dnb" depends="init-index-date-for-delete">
-      <solrmarc-index-dir src="${data.full.dir}"   suffix=".mrc" logdir="${data.full.log.dir}"/>
-      <antcall target="delete-by-collection-and-index-date"/>
+    <target name="-init">
+        <property name="collection"     value="DNB" />
+        <property name="input.dir"      location="${gvi.input.dir}/dnb/current" />
+        <property name="work.dir"       location="${gvi.work.dir}/dnb" />
+        <property name="full.input.dir" location="${input.dir}/full" />
+        <property name="full.work.dir"  location="${work.dir}/full/work"/>
+        <property name="full.log.dir"   location="${work.dir}/full/log"/>
+    </target>
+    
+    <import file="gvi-ant-base.xml"/>
+
+    <target name="-index-full">
+        <solrmarc-index-dir src="${full.input.dir}" logdir="${full.log.dir}" suffix=".mrc"/>
+    </target>
+    
+    <target name="-index-updates">
+        <fail>Target not implemented !</fail>
+    </target>
+
+    <target name="-index-all-updates">
+        <fail>Target not implemented !</fail>
     </target>
     
 </project>

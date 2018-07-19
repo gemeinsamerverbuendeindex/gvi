@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="init" name="GVI SWB Jenkins">
+<project name="Targets to index SWB data" 
+         default="default" 
+         xmlns:if="ant:if" 
+         xmlns:unless="ant:unless">
+    
+    <description>Targets to index SWB data</description>
     
     <property file="gvi-ant-swb.local.properties"/>
-    <property file="gvi-ant-swb.properties"/>
-    
-    <import file="gvi-ant.xml"/>
-    
-    <target name="init">
+        
+    <import file="gvi-ant-base.xml"/>
+    <import file="gvi-solrmarc-ant.xml"/>
+        
+    <target name="-init">
         <tstamp>
-            <format property="date.dir" pattern="yyyy-MM-dd"/>
+            <format property="time.stamp" pattern="yyyy-MM-dd"/>
         </tstamp>
         <tstamp>
             <format property="date.download" pattern="YYMMdd" offset="-1" unit="day"/>
         </tstamp>
-        <property name="data.update.dir"      location="${data.update.base.dir}/${date.dir}"/>
-        <property name="data.update.work.dir" location="${data.update.dir}/work"/>
-        <property name="data.update.log.dir"  location="${data.update.dir}/log"/>
+        <property name="collection"       value="SWB"/>
+        <property name="input.dir"        location="${gvi.input.dir}/swb/current"/>
+        <property name="work.dir"         location="${gvi.work.dir}/swb"/>
+        <property name="full.input.dir"   location="${input.dir}/full"/>
+        <property name="full.work.dir"    location="${work.dir}/full/"/>
+        <property name="full.log.dir"     location="${work.dir}/full/log"/>
+        <property name="update.base.dir"  location="${input.dir}/update"/>
+        <property name="update.input.dir" location="${update.base.dir}/${time.stamp}"/>
+        <property name="update.work.dir"  location="${work.dir}/update"/>
+        <property name="update.log.dir"   location="${work.dir}/update/log/"/>
+        <property name="ftp.server"       value="localhost"/>
+        <property name="ftp.userid"       value="user"/>
+        <property name="ftp.password"     value="password"/>
+        <property name="ftp.remotedir"    value="/"/>
     </target>
     
-    <target name="download-updates-swb" depends="init">
-        <echo>Checking updates for ${date.download}</echo>
+    <target name="download-updates-swb" depends="-init">
+        <echo>Checking updates for ${date.download} in ${update.input.dir}</echo>
         <ftp action="get"
              server="${ftp.server}"
              userid="${ftp.userid}"
@@ -28,85 +44,123 @@
              verbose="true"
              newer="true"
              preservelastmodified="true">
-            <fileset dir="${data.update.dir}">
+            <fileset dir="${update.input.dir}">
                 <include name="SA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="TA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="WA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="od_del_bsz-tit_${date.download}*"/>
+                <include name="LOEPPN_v-${date.download}"/>
             </fileset>
         </ftp>
-        <available property="updates.found" file="${data.update.dir}"/>
+        <ftp action="get"
+             server="${ftp.server}"
+             userid="${ftp.userid}"
+             password="${ftp.password}"
+             remotedir="${ftp.remotedir}/../sekkor"
+             verbose="true"
+             newer="true"
+             preservelastmodified="true">
+            <fileset dir="${update.input.dir}">
+                <include name="LOEPPN-${date.download}"/>
+            </fileset>
+        </ftp>
+        <available property="updates.found" file="${update.input.dir}"/>
     </target>
 
-    <target name="index-new-updates-swb" depends="download-updates-swb" if="updates.found">
-        <solrmarc-index-dir-swb src="${data.update.dir}" 
-                                dest="${data.update.work.dir}" 
-                                logdir="${data.update.log.dir}" 
-                                includeAll="false"/>
-        <solrmarc-delete-dir-swb src="${data.update.dir}" 
-                                 dest="${data.update.work.dir}" 
-                                 logdir="${data.update.log.dir}" 
-                                 includeAll="false"/>
+    <!-- Neue Updates auspacken und gleichzeitig indexieren -->
+    <target name="-index-updates" depends="download-updates-swb" if="updates.found">
+        <swb-unpack-index-dir
+            src="${update.input.dir}" 
+            dest="${update.work.dir}" 
+            logdir="${update.log.dir}" 
+            indexUnpacked="true"/>
+        <swb-unpack-delete-dir
+            src="${update.input.dir}" 
+            dest="${update.work.dir}" 
+            logdir="${update.log.dir}" 
+            indexUnpacked="true"/>
+        <swb-unpack-loeppn-dir
+            src="${update.input.dir}" 
+            dest="${update.work.dir}"
+            logdir="${update.log.dir}" 
+            indexUnpacked="true"/>
     </target>
 
-    <target name="index-all-updates-swb" depends="init">
+    <!-- Alle Updates auspacken und indexieren -->
+    <target name="-index-all-updates">
         <for param="dir">
             <path>
-                <dirset dir="${data.update.base.dir}" includes="*"/>
+                <dirset dir="${update.base.dir}" includes="*"/>
             </path>
             <sequential>
                 <echo>Datadir @{dir}</echo>
                 <delete>
-                    <fileset dir="@{dir}/log" includes="*.log" erroronmissingdir="false"/>
+                    <fileset dir="${update.log.dir}" includes="*.log" erroronmissingdir="false"/>
                 </delete>
-                <solrmarc-index-dir-swb  src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>
-                <solrmarc-delete-dir-swb src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>                
+                <swb-unpack-index-dir
+                    src="@{dir}" 
+                    dest="${update.work.dir}" 
+                    logdir="${update.log.dir}" 
+                    indexUnpacked="false"/>
+                <swb-unpack-delete-dir
+                    src="@{dir}" 
+                    dest="${update.work.dir}"
+                    logdir="${update.log.dir}" 
+                    indexUnpacked="false"/>                
+                <swb-unpack-loeppn-dir
+                    src="@{dir}" 
+                    dest="${update.work.dir}"
+                    logdir="${update.log.dir}" 
+                    indexUnpacked="false"/>                
             </sequential>
         </for>
+        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}"/>
+        <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}"/>
     </target>
-    
-    <!-- Komplettabzug und Updates indexieren -->
-    <target name="index-all-swb" depends="init,init-index-date-for-delete">
-        <delete>
-            <fileset dir="${data.full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
-        </delete>
-        <solrmarc-index-dir-swb src="${data.full.dir}" 
-                                dest="${data.full.work.dir}" 
-                                logdir="${data.full.log.dir}" 
-                                includeAll="true"/> 
-        <antcall target="index-all-updates-swb"/>
-        <antcall target="delete-by-collection-and-index-date"/>
-    </target>
-    
+        
     <!-- Nur den Komplettabzug indexieren -->
-    <target name="index-onlyFull-swb" depends="init,init-index-date-for-delete">
+    <target name="-index-full">
         <delete>
-            <fileset dir="${data.full.log.dir}" includes="*MARC*.log" erroronmissingdir="false"/>
+            <fileset dir="${full.log.dir}" includes="*.log" erroronmissingdir="false"/>
         </delete>
-        <solrmarc-index-dir-swb src="${data.full.dir}" 
-                                dest="${data.full.work.dir}" 
-                                logdir="${data.full.log.dir}" 
-                                includeAll="true"/> 
-        <antcall target="delete-by-collection-and-index-date"/>
+        <swb-unpack-index-dir
+            src="${full.input.dir}" 
+            dest="${full.work.dir}" 
+            logdir="${full.log.dir}" 
+            indexUnpacked="false"/>
+        <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}"/> 
     </target>
 
-    <macrodef name="solrmarc-index-dir-swb">
+    <!-- Implementation macros -->
+    <macrodef name="swb-unpack-index-dir">
         <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="logdir"/>
-        <attribute name="includeAll" default="false"/>
+        <attribute name="indexUnpacked" default="false"/>
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
             <for param="filename">
                 <path>
-                    <fileset dir="@{src}" includes="*.tar.gz"/>
+                    <fileset dir="@{src}">
+                        <include name="*.tar.gz"/>
+                    </fileset>
                 </path>
                 <sequential>
                     <var name="basename" unset="true"/>
                     <basename property="basename" file="@{filename}" suffix=".tar.gz"/>
+
+                    <var name="file.prefix" unset="true"/>
+                    <var name="file.date"   unset="true"/>
+                    <var name="file.basename"   unset="true"/>
+
+                    <propertyregex property="file.prefix" input="${basename}" regexp="(.*)-([0-9_]*)" select="\1" />
+                    <propertyregex property="file.date" input="${basename}" regexp="(.*)-([0-9_]*)" select="\2" />
+                    <property name="file.basename" value="${file.date}-${file.prefix}"/>
+
+                    <var name="file.target" value="@{dest}/${file.basename}.mrc"/>
                     <var name="is_mrc_avaliable" unset="true"/>
-                    <available property="is_mrc_avaliable" file="@{dest}/${basename}.mrc"/>                    
+                    <available property="is_mrc_avaliable" file="${file.target}"/>                    
                     <if>
                         <not>
                             <equals arg1="${is_mrc_avaliable}" arg2="true"/>
@@ -117,28 +171,25 @@
                                     <include name="verbund-tit.mrc"/>
                                 </patternset>
                             </untar>
-                            <move file="@{dest}/verbund-tit.mrc" tofile="@{dest}/${basename}.mrc"/>
-                            <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/>   
-                        </then>
-                        <else>
+                            <move file="@{dest}/verbund-tit.mrc" tofile="${file.target}"/>
                             <if>
-                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
-                                    <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/> 
+                                    <solrmarc-index-file file="${file.target}" logdir="@{logdir}"/> 
                                 </then>
                             </if>
-                        </else>
+                        </then>
                     </if>
                 </sequential>
             </for>
         </sequential>
     </macrodef>
     
-    <macrodef name="solrmarc-delete-dir-swb">
+    <macrodef name="swb-unpack-delete-dir">
         <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="logdir"/>
-        <attribute name="includeAll" default="false"/>
+        <attribute name="indexUnpacked" default="false"/>
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
@@ -149,8 +200,13 @@
                 <sequential>
                     <var name="basename" unset="true"/>
                     <basename property="basename" file="@{filename}" suffix=".txt"/>
+                    <var name="file.date" unset="true"/>
+                    <var name="file.name" unset="true"/>
+                    <propertyregex property="file.date" input="${basename}" regexp="od_del_bsz-tit_([0-9_]*)" select="\1" />
+                    <property name="file.name" value="${file.date}-od_del_bsz-tit"/>
+                    <var name="file.target" value="@{dest}/${file.name}.txt"/>
                     <var name="is_del_avaliable" unset="true"/>
-                    <available property="is_del_avaliable" file="@{dest}/${basename}.txt"/>                    
+                    <available property="is_del_avaliable" file="${file.target}"/>                    
                     <if>
                         <not>
                             <equals arg1="${is_del_avaliable}" arg2="true"/>
@@ -158,20 +214,68 @@
                         <then>
                             <copy file="@{filename}" todir="@{dest}"/>
                             <replace file="@{dest}/${basename}.txt" token="PPN:" value="(DE-576)"/>
-                            <solrmarc-delete-file file="@{dest}/${basename}.txt" logdir="@{logdir}"/>
-                        </then>
-                        <else>
+                            <move file="@{dest}/${basename}.txt" tofile="${file.target}"/>
                             <if>
-                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
-                                    <solrmarc-delete-file file="@{dest}/${basename}.txt" logdir="@{logdir}"/>
+                                    <solrmarc-delete-file file="${file.target}" logdir="@{logdir}"/>
                                 </then>
                             </if>
-                        </else>
+                        </then>
                     </if>
                 </sequential>
             </for>
         </sequential>
     </macrodef>
 
+    <macrodef name="swb-unpack-loeppn-dir">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="indexUnpacked" default="false"/>
+        <sequential>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}" includes="LOEPPN*"/>
+                </path>
+                <sequential>
+                    <var name="is_loeppn_avaliable" unset="true"/>
+                    <var name="file.date" unset="true"/>
+                    <var name="file.name" unset="true"/>
+                    <var name="file.prefix" unset="true"/>
+                    <propertyregex property="file.prefix" input="@{filename}" regexp="(LOEPPN(_v)?)-([0-9_]*)" select="\1" />
+                    <propertyregex property="file.date"   input="@{filename}" regexp="(LOEPPN(_v)?)-([0-9_]*)" select="\3" />
+                    <echo></echo>
+                    <property name="file.name" value="${file.date}-${file.prefix}"/>
+                    <var name="file.target" value="@{dest}/${file.name}.txt"/>
+                    <available property="is_loeppn_avaliable" file="${file.target}"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_loeppn_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <copy file="@{filename}" tofile="${file.target}">
+                                <filterchain>
+                                    <filterreader classname="org.apache.tools.ant.filters.LineContainsRegExp">
+                                        <param type="regexp" value="^[0-9]{11}A(.*)"/>                    
+                                    </filterreader>
+                                </filterchain>
+                            </copy>
+                            <replaceregexp file="${file.target}"
+                                   match="^[0-9]{11}A(.*)"
+                                   replace="(DE-576)\1"
+                                   byline="true"/>
+                            <if>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
+                                <then>
+                                    <solrmarc-delete-file file="${file.target}" logdir="@{logdir}"/>
+                                </then>
+                            </if>
+                        </then>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+    
 </project>

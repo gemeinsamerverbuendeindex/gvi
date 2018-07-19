@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="index-full-hbz" name="GVI HBZ Jenkins">
+<project name="Targets to index HBZ data">
     
     <property file="gvi-ant-hbz.local.properties"/>
-    <property file="gvi-ant-hbz.properties"/>
     
-    <import file="gvi-ant.xml"/>
+    <import file="gvi-ant-base.xml"/>
+    <import file="gvi-solrmarc-ant.xml"/>
 
-    <target name="init">
+    <target name="-init">
         <tstamp>
-            <format property="date.dir" pattern="yyyy-MM-dd"/>
+            <format property="time.stamp" pattern="yyyy-MM-dd"/>
         </tstamp>
         <tstamp>
             <format property="date.download" pattern="YYYYMMdd" unit="day"/>
         </tstamp>
-        <property name="data.update.dir"      location="${data.update.base.dir}/${date.dir}"/>
-        <property name="data.update.work.dir" location="${data.update.dir}/work"/>
-        <property name="data.update.log.dir"  location="${data.update.dir}/log"/>
+        <property name="collection"       value="HBZ"/>
+        <property name="input.dir"        location="${gvi.input.dir}/hbz/current"/>
+        <property name="work.dir"         location="${gvi.work.dir}/hbz"/>
+        <property name="full.input.dir"   location="${input.dir}/full"/>
+        <property name="full.work.dir"    location="${work.dir}/full"/>
+        <property name="full.log.dir"     location="${work.dir}/full/log"/>
+        <property name="update.base.dir"  location="${input.dir}/update"/>
+        <property name="update.input.dir" location="${update.base.dir}/${time.stamp}"/>
+        <property name="update.work.dir"  location="${work.dir}/update"/>
+        <property name="update.log.dir"   location="${work.dir}/update/log/"/>
+        <property name="ftp.server"       value="localhost"/>
+        <property name="ftp.userid"       value="user"/>
+        <property name="ftp.password"     value="password"/>
+        <property name="ftp.remotedir"    value="/"/>
     </target>
 
     <target name="download-updates-hbz" depends="init" unless="hbz.skip.ftp">
@@ -28,70 +39,68 @@
              verbose="true"
              newer="true"
              preservelastmodified="true">
-            <fileset dir="${data.update.dir}">
+            <fileset dir="${update.input.dir}">
                 <include name="${date.download}.gvi.i.*.mrc.gz"/>
                 <include name="${date.download}.gvi.d.*.lst.gz"/>
             </fileset>
         </ftp>
-        <available property="updates.found" file="${data.update.dir}"/>
+        <available property="updates.found" file="${update.input.dir}"/>
     </target>
     
-    <target name="index-new-updates-hbz" depends="download-updates-hbz" if="updates.found">
-        <solrmarc-index-dir-hbz src="${data.update.dir}" 
-                                dest="${data.update.work.dir}" 
-                                logdir="${data.update.log.dir}" 
-                                includeAll="false"/>
-        <solrmarc-delete-dir-hbz src="${data.update.dir}" 
-                                 dest="${data.update.work.dir}" 
-                                 logdir="${data.update.log.dir}" 
-                                 includeAll="false"/>
+    <target name="-index-updates" depends="download-updates-hbz" if="updates.found">
+        <hbz-unpack-index-dir src="${update.input.dir}" 
+                              dest="${update.work.dir}" 
+                              logdir="${update.log.dir}" 
+                              indexUnpacked="true"/>
+        <hbz-unpack-delete-dir src="${update.input.dir}" 
+                               dest="${update.work.dir}" 
+                               logdir="${update.log.dir}" 
+                               indexUnpacked="true"/>
     </target>
 
-    <target name="index-all-updates-hbz" depends="init">
+    <target name="-index-all-updates">
         <for param="dir">
             <path>
-                <dirset dir="${data.update.base.dir}" includes="*"/>
+                <dirset dir="${update.base.dir}" includes="*"/>
             </path>
             <sequential>
                 <echo>Datadir @{dir}</echo>
                 <delete>
                     <fileset dir="@{dir}/log" includes="*.log" erroronmissingdir="false"/>
                 </delete>
-                <solrmarc-index-dir-hbz  src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>
-                <solrmarc-delete-dir-hbz src="@{dir}" dest="@{dir}/work" logdir="@{dir}/log" includeAll="true"/>                
+                <hbz-unpack-index-dir
+                    src="@{dir}" 
+                    dest="${update.work.dir}" 
+                    logdir="${update.log.dir}" 
+                    indexUnpacked="false"/>
+                <hbz-unpack-delete-dir
+                    src="@{dir}" 
+                    dest="${update.work.dir}"
+                    logdir="${update.log.dir}" 
+                    indexUnpacked="false"/>                
             </sequential>
         </for>
+        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}"/>
+        <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}"/>
     </target>
     
-    <target name="index-full-hbz" depends="init">
+    <target name="-index-full">
         <delete>
-            <fileset dir="${data.full.log.dir}" includes="*.log" erroronmissingdir="false"/>
+            <fileset dir="${full.log.dir}" includes="*.log" erroronmissingdir="false"/>
         </delete>
-        <solrmarc-index-dir-hbz src="${data.full.dir}" 
-                                dest="${data.full.work.dir}" 
-                                logdir="${data.full.log.dir}" 
-                                includeAll="true"/> 
+        <hbz-unpack-index-dir src="${full.input.dir}" 
+                              dest="${full.work.dir}" 
+                              logdir="${full.log.dir}" 
+                              indexUnpacked="false"/> 
+        <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}"/> 
     </target>
     
-	<!-- Komplettabzug und Updates indexieren -->
-	<target name="index-all-hbz" depends="init,init-index-date-for-delete">
-        <antcall target="index-full-hbz"/>
-        <antcall target="index-all-updates-hbz"/>
-        <antcall target="delete-by-collection-and-index-date"/>
-    </target>
-
-	<!-- Nur den Komplettabzug indexieren -->
-	<target name="index-onlyFull-hbz" depends="init,init-index-date-for-delete">
-        <antcall target="index-full-hbz"/>
-        <antcall target="index-all-updates-hbz"/>
-        <antcall target="delete-by-collection-and-index-date"/>
-    </target>
-
-    <macrodef name="solrmarc-index-dir-hbz">
+    <!-- Macros for HBZ -->
+    <macrodef name="hbz-unpack-index-dir">
         <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="logdir"/>
-        <attribute name="includeAll" default="false"/>
+        <attribute name="indexUnpacked" default="false"/>
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
@@ -114,27 +123,24 @@
                         </not>
                         <then>
                             <gunzip src="@{filename}" dest="@{dest}/${basename}.mrc"/>
-                            <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/>   
-                        </then>
-                        <else>
                             <if>
-                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
                                     <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/> 
                                 </then>
                             </if>
-                        </else>
+                        </then>
                     </if>
                 </sequential>
             </for>
         </sequential>
     </macrodef>
     
-    <macrodef name="solrmarc-delete-dir-hbz">
+    <macrodef name="hbz-unpack-delete-dir">
         <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="logdir"/>
-        <attribute name="includeAll" default="false"/>
+        <attribute name="indexUnpacked" default="false"/>
         <sequential>
             <mkdir dir="@{dest}"/>
             <mkdir dir="@{logdir}"/>
@@ -155,15 +161,13 @@
                         <then>
                             <gunzip src="@{filename}" dest="@{dest}/${basename}.lst"/>
                             <solr-delete-file-hbz file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
-                        </then>
-                        <else>
                             <if>
-                                <equals arg1="@{includeAll}" arg2="true"/>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
                                     <solr-delete-file-hbz file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
                                 </then>
                             </if>
-                        </else>
+                        </then>
                     </if>
                 </sequential>
             </for>

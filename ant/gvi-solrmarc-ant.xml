@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="SolrMarc interface"
+         basedir="."
+         xmlns:if="ant:if"
+         xmlns:unless="ant:unless">
+    
+    <import file="gvi-ant.xml" />
+    <import file="gvi-solr-ant.xml" />
+    
+    <property file="gvi-solrmarc-ant.local.properties"/>
+
+    <property name="solrmarc.log4j.file"    value="log4j2.xml"/>
+    <property name="solrmarc.methodReport"  value="true"/>
+    <property name="solrmarc.trackProgress" value="true"/>
+    <property name="solrmarc.chunksize"     value="2000"/>
+    <property name="solrmarc.maxmemory"     value="35G"/>
+    <property name="solrmarc.threadCount"   value="15"/>
+    <property name="solrmarc.dryrun"        value="false"/>
+    <property name="solrmarc.skipBigFiles"  value="false"/>
+    <property name="solrmarc.gnd.dir"       location="${gvi.work.dir}/gnd"/>    
+    <property name="solrmarc.base.dir"      location="${basedir}/../solrmarc"/>
+    <property name="solrmarc.log4j"         location="${solrmarc.base.dir}/${solrmarc.log4j.file}"/>
+    <property name="solrmarc.core.jar"      location="${solrmarc.base.dir}/solrmarc_core.jar"/>
+    <property name="solrmarc.dir"           location="${solrmarc.base.dir}"/>
+    <property name="solrmarc.solrj.dir"     location="${solrmarc.base.dir}/lib-solrj"/>
+    <property name="solrmarc.indexconf"     location="${solrmarc.base.dir}/gvi_index.properties"/>
+    <property name="solrmarc.reader"        location="${solrmarc.base.dir}/marcreader.properties"/>
+
+    <!-- Store the current starttime for later comming clean up -->
+    <target name="init-index-date-for-delete">
+        <tstamp>
+            <format property="index-date-for-delete" 
+                    pattern="yyyy-MM-dd'T'HH:mm:'000Z'" 
+                    timezone="GMT"/>
+        </tstamp>
+        <echo>init-index-date-for-delete (UTC): ${index-date-for-delete}</echo>
+    </target>
+    
+    <!-- Delete all stale Documents from collection. (not updadated since ${index-date-for-delete} -->
+    <target name="delete-by-collection-and-index-date">
+        <solr-delete-by-collection-and-indexdate 
+            solr.collection="${solr.core}"
+            data.collection="${collection}"
+            date="${index-date-for-delete}"
+            response-property="msg" 
+            unless:true="${solrmarc.dryrun}"/>
+    </target>
+    
+    <!-- Print index fields as would sent to solr -->    
+    <target name="print-file" description="Print index fields as would sent to solr">
+        <solrmarc-print-file file="${full.work.dir}/${file}" logdir="${full.log.dir}"/> 
+    </target>
+
+    <!-- Import the documents from a single File. -->
+    <target name="index-file" description="Index a single file from work dir">
+        <solrmarc-index-file file="${full.work.dir}/${file}" logdir="${full.log.dir}"/> 
+    </target>
+    
+    <!-- Read a list of ids from file and remove the documents from the index. -->    
+    <target name="delete-file" description="Do deletions from index">
+        <solrmarc-delete-file file="${full.work.dir}/${file}" logdir="${full.log.dir}"/> 
+    </target>
+    
+    <!-- Index all files from work dir -->
+    <target name="index-file-all" description="Index all files from work dir">
+        <path id="filePath">
+            <fileset dir="${full.work.dir}" includes="*.mrc"/>
+        </path>
+        <pathconvert pathsep=" " refid="filePath" property="fileList"/>
+        <echo>FileList: ${fileList}</echo>
+        <solrmarc-index-file file="${fileList}" logdir="${full.log.dir}"/> 
+    </target>
+    
+    <!-- Generic run macro for SolrMarc. 
+         Takes an action parameter, which determines whether to index, print, or delete records. 
+    -->
+    <macrodef name="solrmarc-run" description="Run SolrMarc">
+        <attribute name="file"/>
+        <attribute name="logdir"/>
+        <attribute name="logbasename"  default="solrmarc"/>
+        <attribute name="action"       default=""/><!-- can be -print, -del, or empty -->
+        <attribute name="solrURL"      default="${solr.baseurl}/${solr.core}"/>
+        <attribute name="skipBigFiles" default="${solrmarc.skipBigFiles}"/>
+        <sequential>
+            <stopwatch name="solrmarc-run-timer"/>
+            <var name="action"   value="@{action} @{file}"/>
+            <var name="logError" value="@{logdir}/@{logbasename}@{action}_err.log"/>
+            <var name="logOut"   value="@{logdir}/@{logbasename}@{action}_out.log"/>
+            <echo> 
+                          jar = ${solrmarc.core.jar} 
+                          dir = ${solrmarc.base.dir}
+                    maxmemory = ${solrmarc.maxmemory}                 
+                  threadCount = ${solrmarc.threadCount}
+                 methodReport = ${solrmarc.methodReport}
+                trackProgress = ${solrmarc.trackProgress}
+                    chunksize = ${solrmarc.chunksize}
+                 skipBigFiles = @{skipBigFiles}
+                  log4jConfig = ${solrmarc.log4j}
+                     logError = ${logError}
+                       logOut = ${logOut}
+                   collection = ${collection}
+                      solrURL = @{solrURL}
+                    indexconf = ${solrmarc.indexconf}
+                       action = @{action}
+                        files = @{file}
+            </echo>
+            <if>
+                <equals arg1="${solrmarc.dryrun}" arg2="true"/>
+                <then>
+                    <echo>DRYRUN -- no action taken</echo>
+                </then>
+                <else>
+                    <java
+                        fork="true" 
+                        failonerror="true"
+                        logError="true"
+                        maxmemory="${solrmarc.maxmemory}"
+                        jar="${solrmarc.core.jar}"
+                        dir="${solrmarc.base.dir}"
+                        error="${logError}"
+                        output="${logOut}">
+                        <sysproperty key="data.collection"              value="${collection}"/>
+                        <sysproperty key="log4j.configurationFile"      value="${solrmarc.log4j}"/>
+                        <sysproperty key="solrmarc.method.report"       value="${solrmarc.methodReport}" />
+                        <sysproperty key="solrmarc.indexer.threadcount" value="${solrmarc.threadCount}" />
+                        <sysproperty key="solrmarc.track.solr.progress" value="${solrmarc.trackProgress}" />
+                        <sysproperty key="solrmarc.indexer.chunksize"   value="${solrmarc.chunksize}" />
+                        <sysproperty key="gnd.configdir"                value="${solrmarc.gnd.dir}"/>
+                        <sysproperty key="GviIndexer.skipBigFiles"      value="@{skipBigFiles}" />
+                        <sysproperty key="org.marc4j.MarcPermissiveStreamReader.upperCaseSubfields" value="true"/>
+                        <arg value="IndexDriver"/>
+                        <arg line="-dir ${solrmarc.dir}"/>
+                        <arg line="-config ${solrmarc.indexconf}"/>
+                        <arg line="-reader_opts ${solrmarc.reader}"/>
+                        <arg line="-solrj ${solrmarc.solrj.dir}"/>
+                        <arg line="-solrURL @{solrURL}"/>
+                        <arg line="${action}"/>
+                    </java>            
+                </else>
+            </if>
+            <stopwatch name="solrmarc-run-timer" action="total"/>            
+        </sequential>
+    </macrodef>
+    
+    <!-- Print index fields as would sent to solr -->
+    <macrodef name="solrmarc-print-file" description="Print file">
+        <attribute name="file"/>
+        <attribute name="logdir"/>
+        <attribute name="suffix" default=".mrc"/>
+        <sequential>
+            <solrmarc-run action="-print" solrURL="stdout"
+                          file="@{file}" logdir="@{logdir}"/>
+        </sequential>
+    </macrodef>
+
+    <!-- Takes a list of files and calls solrmarc to process them all. -->
+    <macrodef name="solrmarc-index-file" description="Index file or directory">
+        <attribute name="file"/>
+        <attribute name="logdir"/>
+        <attribute name="suffix" default=".mrc"/>
+        <sequential>
+            <solrmarc-run file="@{file}"  logdir="@{logdir}"/>
+        </sequential>
+    </macrodef>
+
+    <!-- Takes a file and calls solrmarc to remove the listed ids. -->
+    <macrodef name="solrmarc-delete-file" description="Run SolrMarc to remove documents" >
+        <attribute name="file"/>
+        <attribute name="logdir"/>
+        <attribute name="suffix" default=".txt"/>
+        <sequential>
+            <var name="fileSizeGreaterNull" unset="true"/>
+            <condition property="fileSizeGreaterNull">
+                <length file="@{file}" when="greater" length="0" />                
+            </condition>
+            <if>
+                <equals arg1="${fileSizeGreaterNull}" arg2="true"/>
+                <then>                    
+                    <echo>Deleting from index @{file}</echo>
+                    <solrmarc-run action="-del" 
+                                  file="@{file} ${basedir}/../scripts/testdata/noData.mrc" 
+                                  logdir="@{logdir}"
+                                  skipBigFiles="true"/>
+                </then>  
+            </if>
+        </sequential>
+    </macrodef>
+    
+    <!-- Takes a directory and calls 'solrmarc-index-file' with a list of the containing files -->
+    <macrodef name="solrmarc-index-dir">
+        <attribute name="src"/>
+        <attribute name="logdir"/>
+        <attribute name="suffix" default=".mrc"/>
+        <sequential>
+            <echo>Indexing in datadir @{src}</echo>
+            <mkdir dir="@{logdir}"/>
+            <path id="indexFilePath">
+                <fileset dir="@{src}">
+                    <include name="**/*@{suffix}"/>
+                </fileset>
+            </path>
+            <pathconvert pathsep=" " refid="indexFilePath" property="indexFileList"/>
+            <condition property="indexFileListNotEmpty">
+                <length string="${indexFileList}" trim="true" when="greater" length="0"/>
+            </condition>
+            <if>
+                <equals arg1="${indexFileListNotEmpty}" arg2="true"/>
+                <then>                    
+                    <solrmarc-index-file file="${indexFileList}" logdir="@{logdir}"/>
+                </then>
+                <else>
+                    <echo>No files found!</echo>
+                </else>  
+            </if>
+        </sequential>
+    </macrodef>
+    
+    <!-- Takes a directory and calls 'solrmarc-delete-file' for each of the containing files -->
+    <macrodef name="solrmarc-delete-dir">
+        <attribute name="src"/>
+        <attribute name="logdir"/>
+        <attribute name="suffix" default=".txt"/>
+        <sequential>
+            <mkdir dir="@{logdir}"/>
+            <echo>Deleting in datadir @{src}</echo>
+            <path id="deleteFilePath">
+                <fileset dir="@{src}" includes="**/*@{suffix}"/>                
+            </path>
+            <pathconvert refid="deleteFilePath" property="deleteFileList"/>
+            <condition property="deleteFileListNotEmpty">
+                <length string="${deleteFileList}" trim="true" when="greater" length="0"/>
+            </condition>
+            <if>
+                <equals arg1="${deleteFileListNotEmpty}" arg2="true"/>
+                <then>
+                    <for param="file">
+                        <path refid="deleteFilePath"/>
+                        <sequential>
+                            <solrmarc-delete-file file="@{file}" logdir="@{logdir}"/>
+                        </sequential>
+                    </for>                    
+                </then>
+                <else>
+                    <echo>No files found!</echo>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+    
+</project>
