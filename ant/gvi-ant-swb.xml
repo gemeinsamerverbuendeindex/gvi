@@ -173,8 +173,8 @@
                                     <include name="verbund_l-tit.mrc"/>
                                 </patternset>
                             </untar>
-                            <move file="@{dest}/verbund-tit.mrc" tofile="${file.target}" failonerror="false"/>
-                            <move file="@{dest}/verbund_l-tit.mrc" tofile="${file.target}" failonerror="false"/>
+                            <move file="@{dest}/verbund-tit.mrc" tofile="${file.target}" failonerror="false" verbose="true"/>
+                            <move file="@{dest}/verbund_l-tit.mrc" tofile="${file.target}" failonerror="false" verbose="true"/>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
