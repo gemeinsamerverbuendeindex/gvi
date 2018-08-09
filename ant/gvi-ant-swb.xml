@@ -47,6 +47,7 @@
             <fileset dir="${update.input.dir}">
                 <include name="SA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="TA-MARC-verbund-${date.download}*.tar.gz"/>
+                <include name="TA-MARC-verbund_l-${date.download}*.tar.gz"/>
                 <include name="WA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="od_del_bsz-tit_${date.download}*"/>
                 <include name="LOEPPN_v-${date.download}"/>
