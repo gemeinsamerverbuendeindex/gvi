@@ -170,9 +170,11 @@
                             <untar src="@{filename}" dest="@{dest}" compression="gzip">
                                 <patternset>
                                     <include name="verbund-tit.mrc"/>
+                                    <include name="verbund_l-tit.mrc"/>
                                 </patternset>
                             </untar>
                             <move file="@{dest}/verbund-tit.mrc" tofile="${file.target}"/>
+                            <move file="@{dest}/verbund_l-tit.mrc" tofile="${file.target}"/>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
