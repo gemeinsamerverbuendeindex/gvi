@@ -62,7 +62,10 @@ public class GVIIndexer extends SolrIndexer {
    private synchronized void init() throws Exception {
       if (isInitialized) return;
       isInitialized = true;
-      if (!System.getProperty("GviIndexer.skipBigFiles").equals("false")) return;
+      if (System.getProperty("GviIndexer.skipBigFiles").equals("true")) {
+         LOG.warn("Skiping the loading of big property files. (GND synonyms and cluster mappings) is only applicable for tests");
+         return;
+      }
 
       if (LOG.isInfoEnabled()) {
          listMem();
