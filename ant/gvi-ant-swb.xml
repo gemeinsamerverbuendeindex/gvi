@@ -89,15 +89,16 @@
 
     <!-- Alle Updates auspacken und indexieren -->
     <target name="-index-all-updates">
+        <delete>
+            <fileset dir="${update.log.dir}"  includes="*" erroronmissingdir="false"/>
+            <fileset dir="${update.work.dir}" includes="*" erroronmissingdir="false"/>
+        </delete>
         <for param="dir">
             <path>
                 <dirset dir="${update.base.dir}" includes="*"/>
             </path>
             <sequential>
                 <echo>Datadir @{dir}</echo>
-                <delete>
-                    <fileset dir="${update.log.dir}" includes="*.log" erroronmissingdir="false"/>
-                </delete>
                 <swb-unpack-index-dir
                     src="@{dir}" 
                     dest="${update.work.dir}" 
@@ -122,7 +123,8 @@
     <!-- Nur den Komplettabzug indexieren -->
     <target name="-index-full">
         <delete>
-            <fileset dir="${full.log.dir}" includes="*.log" erroronmissingdir="false"/>
+            <fileset dir="${full.log.dir}"  includes="*.log" erroronmissingdir="false"/>
+            <fileset dir="${full.work.dir}" includes="*"     erroronmissingdir="false"/>
         </delete>
         <swb-unpack-index-dir
             src="${full.input.dir}" 

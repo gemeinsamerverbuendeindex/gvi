@@ -16,6 +16,9 @@
     </target>
     
     <target name="-index-full">
+        <delete>
+            <fileset dir="${full.log.dir}"  includes="*.log" erroronmissingdir="false"/>
+        </delete>
         <solrmarc-index-dir src="${full.input.dir}" logdir="${full.log.dir}" suffix=".xml"/>
     </target>
     
