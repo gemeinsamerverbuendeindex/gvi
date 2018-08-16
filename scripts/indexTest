@@ -31,7 +31,7 @@ Target="-u stdout"
 #Target="-u http://localhost:3082/solr/GVITEST"
 
 Input="../scripts/testdata/oneTitle_hebis.xml"
-Input="/data/input/gvi/swb/current/update/2018-03-31/work/TA-MARC-verbund-180330.mrc"
+#Input="/data/input/gvi/swb/current/update/2018-03-31/work/TA-MARC-verbund-180330.mrc"
 
 CMD="java $JavaOpts $JavaParams $SolrMarc $Config $Dirs $Target $Input"
 echo "Running: $CMD"
