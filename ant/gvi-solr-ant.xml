@@ -130,7 +130,7 @@
             <fail if="notRunning" message="Backup not running. Status: ${solr-response-status}, Message: ${solr-response-message}"/>
             <echo message="Status : ${solr-response-status}"/>
             <echo message="Message: ${solr-response-message}"/>
-            <waitfor maxwait="60" 
+            <waitfor maxwait="120" 
                      maxwaitunit="minute"
                      checkevery="1"
                      checkeveryunit="minute"
@@ -141,7 +141,7 @@
             <solr-requeststatus requestid="${backup-requestid}" 
                                 status-property="solr-response-status"
                                 message-property="solr-response-message"/>
-            <fail if="timeout" message="Backup timeout after 60 min: Status: ${solr-response-status}, Message: ${solr-response-message}"/>
+            <fail if="timeout" message="Backup timeout after 120 min: Status: ${solr-response-status}, Message: ${solr-response-message}"/>
             <property name="completed" value="completed"/>
             <condition property="notCompleted">
                 <not>
