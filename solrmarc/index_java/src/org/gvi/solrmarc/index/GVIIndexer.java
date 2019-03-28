@@ -606,6 +606,15 @@ public class GVIIndexer extends SolrIndexer {
          case "DE-605": // HBZ
             consortiumSet.add(catalog);
             break;
+         case "DE-627": // K10Plus
+            Set<String> regions = getFieldList(record, "924c");
+            if (regions.contains("GBV"))
+                consortiumSet.add("DE-601");
+            if (regions.contains("BSZ"))
+                consortiumSet.add("DE-576");
+            if (consortiumSet.isEmpty())
+                consortiumSet.add("DE-627");
+            break;
          default:
             consortiumSet.add("UNDEFINED");
             break;

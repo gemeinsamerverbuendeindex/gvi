@@ -18,7 +18,7 @@
         <tstamp>
             <format property="date.download" pattern="YYMMdd" offset="-1" unit="day"/>
         </tstamp>
-        <property name="collection"       value="SWB"/>
+        <property name="collection"       value="K10PLUS"/>
         <property name="input.dir"        location="${gvi.input.dir}/swb/current"/>
         <property name="work.dir"         location="${gvi.work.dir}/swb"/>
         <property name="full.input.dir"   location="${input.dir}/full"/>
