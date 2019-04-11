@@ -135,6 +135,10 @@ public class GVIIndexer extends SolrIndexer {
       if (contentTypes.contains("Thesis/Dissertation")) {
          material = "thesis";
       }
+      // Article
+      else if (contentTypes.contains("Article")) {
+         material = "article";
+      }
       // EJournal
       else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
          material = "ejournal";
@@ -150,10 +154,6 @@ public class GVIIndexer extends SolrIndexer {
       // Book
       else if (contentTypes.contains("Book")) {
          material = "book";
-      }
-      // Article
-      else if (contentTypes.contains("Article")) {
-         material = "article";
       }
       // Musical Score
       else if (contentTypes.contains("Musical Score")) {
