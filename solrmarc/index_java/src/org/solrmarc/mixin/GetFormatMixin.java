@@ -1082,6 +1082,7 @@ public class GetFormatMixin extends SolrIndexerMixin
                 contentTypes.add(leaderType.toString());
             }
         }
+        contentTypes.add(leaderType.toString());
         return contentTypes;
     }
     
