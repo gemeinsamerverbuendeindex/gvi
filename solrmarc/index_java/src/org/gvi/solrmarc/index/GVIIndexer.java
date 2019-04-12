@@ -138,6 +138,8 @@ public class GVIIndexer extends SolrIndexer {
       // Article
       else if (contentTypes.contains("Article")) {
          material = "article";
+         if (contentTypes.contains("Journal/Magazine"))
+             contentTypes.remove("Journal/Magazine");
       }
       // EJournal
       else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
