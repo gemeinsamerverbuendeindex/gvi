@@ -1083,6 +1083,11 @@ public class GetFormatMixin extends SolrIndexerMixin
             }
         }
         contentTypes.add(leaderType.toString());
+        if (contentTypes.contains(ContentType.SerialComponentPart.toString()) && 
+            contentTypes.contains(ContentType.Serial.toString()))
+        {
+            contentTypes.remove(ContentType.Serial.toString());
+        }
         return contentTypes;
     }
     
