@@ -258,7 +258,6 @@
     <copyField source="author"            dest="author_norm" />
     
     <copyField source="title"             dest="title_unstemmed" />
-    <copyField source="title_slim"        dest="title_phrase" />
 
     <copyField source="subject_topic"     dest="subject_topic_facet" />
     <copyField source="subject_genre"     dest="subject_genre_facet" />
