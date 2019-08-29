@@ -368,8 +368,6 @@
                required="false"  
                multiValued="true" >
         <analyzer>
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1"/>
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt"/>
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
             <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory"/>
@@ -405,8 +403,6 @@
                required="false"  
                multiValued="true">
         <analyzer>
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="-(\d)-" replacement="$1" />
-            <charFilter class="solr.PatternReplaceFilterFactory" pattern="(\d)-([\dxX])" replacement="$1$2" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-specials.txt" />
             <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-umlauts.txt" />
             <tokenizer class="org.apache.lucene.analysis.icu.segmentation.ICUTokenizerFactory" />
