@@ -527,14 +527,26 @@ public class GVIIndexer extends SolrIndexer {
       return System.getProperty("data.collection", "UNDEFINED");
    }
    public Set<String> getConsortium(final Record record) {
-      String catalog = getCatalog(record);
-      return findConsortium(record, catalog, findInstitutionID(record, catalog));
+      return findConsortium(record, getCatalog(record));
    }
 
    public Set<String> getInstitutionID(final Record record) {
-      return findInstitutionID(record, getCatalog(record));
+      Set<String> raw = getFieldList(record, "924b");
+      Set<String> ret = new HashSet<String>(); 
+      if (raw == null) return new HashSet<String>();
+      for (String isil : raw) {
+         ret.add(normalizeIsil(isil));
+      }
+      return ret;
    }
-
+   
+   private String normalizeIsil(String full) {
+      if (!full.matches("\\w{2,3}-.*"))  return full; // no ISIL
+      int firstDashPos = full.indexOf('-');
+      int secondDashPos = full.indexOf('-', firstDashPos +1);
+      return (secondDashPos < 0) ? full : full.substring(0, secondDashPos);
+   }
+   
    public String getRecordID(final Record record) {
       return "(" + getCatalog(record) + ")" + getLocalId(record);
    }
@@ -577,18 +589,7 @@ public class GVIIndexer extends SolrIndexer {
       return catalog;
    }
 
-   /**
-    * Ermittelt die ISIL der in der Bibliotheken mit Bestand.<br>
-    * 
-    * @param record 
-    * @param catalogId
-    * @return
-    */
-   protected Set<String> findInstitutionID(Record record, String catalogId) {
-      return getFieldList(record, "924b");
-   }
-
-   protected Set<String> findConsortium(Record record, String catalog, Set<String> institutionSet) {
+   protected Set<String> findConsortium(Record record, String catalog) {
       Set<String> consortiumSet = new HashSet<>();
       String collection = System.getProperty("data.collection", "UNDEFINED");
       switch (catalog) {
