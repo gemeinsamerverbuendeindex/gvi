@@ -12,10 +12,12 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -25,10 +27,12 @@ import org.gvi.solrmarc.normalizer.ISBNNormalizer;
 import org.gvi.solrmarc.normalizer.impl.PunctuationSingleNormalizer;
 import org.marc4j.marc.ControlField;
 import org.marc4j.marc.DataField;
+import org.marc4j.marc.MarcFactory;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
 import org.marc4j.marc.VariableField;
 import org.solrmarc.index.SolrIndexer;
+import org.solrmarc.index.indexer.ValueIndexerFactory;
 import org.solrmarc.mixin.GetFormatMixin;
 import org.solrmarc.tools.Utils;
 
@@ -40,14 +44,16 @@ import org.solrmarc.tools.Utils;
  */
 public class GVIIndexer extends SolrIndexer {
 
-   private static final String                      kobvClusterInfoFile            = "kobv_clusters.properties";
-   private static final Properties                  kobvClusterInfoMap             = new Properties();
-   private static final String                      gndSynonymFile                 = "gnd_synonyms.properties";
-   private static final String                      gndLineSeperator               = "!_#_!";
-   private static final Properties                  gndSynonymMap                  = new Properties();
-   private static final PunctuationSingleNormalizer punctuationSingleNormalizer    = new PunctuationSingleNormalizer();
-   private static boolean                           isInitialized                  = false;
-   private static final Logger                      LOG                            = LogManager.getLogger(GVIIndexer.class);
+   private static final String                      kobvClusterInfoFile         = "kobv_clusters.properties";
+   private static final Properties                  kobvClusterInfoMap          = new Properties();
+   private static final String                      gndSynonymFile              = "gnd_synonyms.properties";
+   private static final String                      gndLineSeperator            = "!_#_!";
+   private static final Properties                  gndSynonymMap               = new Properties();
+   private static final PunctuationSingleNormalizer punctuationSingleNormalizer = new PunctuationSingleNormalizer();
+   private static boolean                           isInitialized               = false;
+   private static final Logger                      LOG                         = LogManager.getLogger(GVIIndexer.class);
+   private Record                                   cachedRecord                = null;
+   private Map<String, Set<String>>                 cached880Fields             = new HashMap<>();
 
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
       super(indexingPropsFile, propertyDirs);
@@ -57,6 +63,17 @@ public class GVIIndexer extends SolrIndexer {
    public GVIIndexer() throws Exception {
       super(null, null);
       init();
+   }
+
+   /**
+    * Internal constructor for inline tests via {@link #main(String[])}
+    * 
+    * @param dummy Any integer number. The value is meaningless, but it's needed to fit the signature of the constructor.
+    * @throws Exception
+    */
+   private GVIIndexer(int dummy) throws Exception {
+      isInitialized = true;
+      ValueIndexerFactory.initialize(null); // this singelton has to be called once
    }
 
    private synchronized void init() throws Exception {
@@ -103,26 +120,27 @@ public class GVIIndexer extends SolrIndexer {
     * * prefer real isbns ($a)<br>
     * * check next unformatted isbns ($9)<br>
     * * at last and least check wrong isbns ($z)
-    *  
+    * 
     * @param record
     * @return the normalized ISBN or an empty String
     */
-    public String matchkeyISBN(Record record) {
-        String isbn = "";
-        DataField isbnField = (DataField) record.getVariableField("020");
-        if (isbnField != null) {
-            List<Subfield> isbns = isbnField.getSubfields('a');
-            if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
-            if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
-            if ((isbns == null) || isbns.isEmpty()) return isbn;
-            try {
-                isbn = ISBNNormalizer.normalize(isbns.get(0).getData());
-            } catch (IllegalArgumentException e) {
-                LOG.error("MatchkeyException at record " + getRecordID(record)+": "+e.getMessage());
-            }
-        }
-        return isbn;
-    }
+   public String matchkeyISBN(Record record) {
+      String isbn = "";
+      DataField isbnField = (DataField) record.getVariableField("020");
+      if (isbnField != null) {
+         List<Subfield> isbns = isbnField.getSubfields('a');
+         if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
+         if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
+         if ((isbns == null) || isbns.isEmpty()) return isbn;
+         try {
+            isbn = ISBNNormalizer.normalize(isbns.get(0).getData());
+         }
+         catch (IllegalArgumentException e) {
+            LOG.error("MatchkeyException at record " + getRecordID(record) + ": " + e.getMessage());
+         }
+      }
+      return isbn;
+   }
 
    public String matchkeyMaterial(Record record) {
       String material = "";
@@ -174,7 +192,8 @@ public class GVIIndexer extends SolrIndexer {
       // Mixed Materials
       else if (contentTypes.contains("Mixed Materials") && materialForm.equals("m")) {
          material = "book";
-      } else if (contentTypes.contains("Mixed Materials")) {
+      }
+      else if (contentTypes.contains("Mixed Materials")) {
          material = "mixed";
       }
       // EBook
@@ -264,18 +283,20 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public String matchkeyMaterialISBNYear(Record record) {
-       String matchkey = null;
-       try {
-            String material = matchkeyMaterial(record);
-            String isbn = matchkeyISBN(record);
-            String pubdate = matchkeyPubdate(record);
-            if (!isbn.isEmpty()) {
-               matchkey =  String.format("%s:%s:%s", material, isbn, pubdate);
-            } else {
-                matchkey = matchkeyMaterialAuthorTitleYearPublisher(record);
-            }
-       } catch (Throwable e) {
-         LOG.error("MatchkeyException at record " + getRecordID(record) + ": "+ e.getMessage());
+      String matchkey = null;
+      try {
+         String material = matchkeyMaterial(record);
+         String isbn = matchkeyISBN(record);
+         String pubdate = matchkeyPubdate(record);
+         if (!isbn.isEmpty()) {
+            matchkey = String.format("%s:%s:%s", material, isbn, pubdate);
+         }
+         else {
+            matchkey = matchkeyMaterialAuthorTitleYearPublisher(record);
+         }
+      }
+      catch (Throwable e) {
+         LOG.error("MatchkeyException at record " + getRecordID(record) + ": " + e.getMessage());
       }
       return matchkey;
    }
@@ -299,7 +320,8 @@ public class GVIIndexer extends SolrIndexer {
             if (!volume.isEmpty()) {
                matchkey = String.format("%s:%s", matchkey, volume);
             }
-         } else if (material.equals("article")) {
+         }
+         else if (material.equals("article")) {
             hostTitle = extractWords(getFirstFieldVal(record, "773t"), 3);
             relatedPart = extractWords(getFirstFieldVal(record, "773g"), 3);
             if (!hostTitle.isEmpty()) {
@@ -309,7 +331,8 @@ public class GVIIndexer extends SolrIndexer {
                matchkey = String.format("%s:%s", matchkey, relatedPart);
             }
          }
-      } catch (Throwable e) {
+      }
+      catch (Throwable e) {
          LOG.error("MatchkeyException at record " + getRecordID(record), e);
       }
 
@@ -322,7 +345,8 @@ public class GVIIndexer extends SolrIndexer {
       try {
          pubdate = matchkeyPubdate(record);
          matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitle(record), pubdate);
-      } catch (Throwable e) {
+      }
+      catch (Throwable e) {
          LOG.error("MatchkeyException at record " + getRecordID(record), e);
       }
       return matchkey;
@@ -428,6 +452,77 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
+    * Extent the category tags with their version in original writing
+    * 
+    * @param record The current marc record
+    * @param tagString List of (sub)fields to examine (see {@link #getFieldList(Record, String)}
+    * @return The result of {@link #getFieldList(Record, String)} extended by original writing.
+    */
+   public Set<String> getAllCharSets(Record record, String tagString) {
+      Set<String> resultList = getFieldList(record, tagString);
+      synchronized (cached880Fields) { // don't get screwed by parallelism
+         if (record != cachedRecord) { // Fetch the marc:880 fields only once
+            cached880Fields = get880Fields(record); // Fetch
+            cachedRecord = record; // set reference
+         }
+         for (String catId : tagString.split(":")) {
+            catId = stripSubFields(catId);
+            Set<String> originalWriting = cached880Fields.get(catId);
+            if (originalWriting != null) {
+               resultList.addAll(originalWriting);
+            }
+         }
+      }
+      return resultList;
+   }
+
+   /**
+    * The id of the main categories/fields in marc have only three digits. Longer ids refer also to subfield(s).<br>
+    * This method norms the length of an id to tree.
+    * 
+    * @param catId
+    * @return
+    */
+   private String stripSubFields(String catId) {
+      int length = catId.length();
+      if (length > 3) return catId.substring(0, 3);
+      if (length < 3) return stripSubFields("0" + catId);
+      return catId;
+   }
+
+   /**
+    * Get all all original writing data from this record.
+    * The method sorts all marc:880$a fields as value into the result {@link Map}.<br>
+    * The key of the map are the first three chars of marc:880$6, which is the id of the related marc field.<br>
+    * Since the marc:880 fields are repeatable for one reference the value has to be a {@link Set}
+    * 
+    * @param record The current marc record
+    * @return A map<reference, related originale writings> or NULL if no marc:880 is found.
+    */
+   private Map<java.lang.String, Set<java.lang.String>> get880Fields(Record record) {
+      Map<String, Set<String>> ret = new HashMap<>();
+      List<VariableField> originalFields = record.getVariableFields("880");
+      if ((originalFields == null) || originalFields.isEmpty()) return null;
+      for (VariableField v_field : originalFields) {
+         DataField field = (DataField) v_field;
+         Subfield data = field.getSubfield('a');
+         if (data == null) continue; // skip corrupted data
+         Subfield ref = field.getSubfield('6');
+         if (ref == null) continue; // skip corrupted data
+         String key = ref.getData();
+         if (key.length() < 3) continue; // skip corrupted data
+         key = key.substring(0, 3);
+         Set<String> dataSet = ret.get(key);
+         if (dataSet == null) { // first entry
+            dataSet = new HashSet<>();
+            ret.put(key, dataSet);
+         }
+         dataSet.add(data.getData());
+      }
+      return ret;
+   }
+
+   /**
     * Return the date in 260c/264c as a string
     *
     * @param record - the marc record object
@@ -439,7 +534,8 @@ public class GVIIndexer extends SolrIndexer {
       String date = null;
       if (date260c != null && date260c.length() > 0) {
          date = date260c;
-      } else if (date264c != null && date264c.length() > 0) {
+      }
+      else if (date264c != null && date264c.length() > 0) {
          date = date264c;
       }
       if (date == null || date.length() == 0) {
@@ -474,17 +570,23 @@ public class GVIIndexer extends SolrIndexer {
       char dateType = field008.charAt(6);
       if (dateType == 'r' && field008_d2.equals(pubDate26xc)) {
          retVal = field008_d2;
-      } else if (field008_d1.equals(pubDate26xc)) {
+      }
+      else if (field008_d1.equals(pubDate26xc)) {
          retVal = field008_d1;
-      } else if (field008_d2.equals(pubDate26xc)) {
+      }
+      else if (field008_d2.equals(pubDate26xc)) {
          retVal = field008_d2;
-      } else if (pubDate26xcJustDigits != null && pubDate26xcJustDigits.length() == 4 && pubDate26xc != null && pubDate26xc.matches("(20|19|18|17|16|15)[0-9][0-9]")) {
+      }
+      else if (pubDate26xcJustDigits != null && pubDate26xcJustDigits.length() == 4 && pubDate26xc != null && pubDate26xc.matches("(20|19|18|17|16|15)[0-9][0-9]")) {
          retVal = pubDate26xc;
-      } else if (field008_d1.matches("(20|1[98765432])[0-9][0-9]")) {
+      }
+      else if (field008_d1.matches("(20|1[98765432])[0-9][0-9]")) {
          retVal = field008_d1;
-      } else if (field008_d2.matches("(20|1[98765432])[0-9][0-9]")) {
+      }
+      else if (field008_d2.matches("(20|1[98765432])[0-9][0-9]")) {
          retVal = field008_d2;
-      } else {
+      }
+      else {
          retVal = pubDate26xc;
       }
       return (retVal);
@@ -520,10 +622,11 @@ public class GVIIndexer extends SolrIndexer {
    public String getCatalog(final Record record) {
       return findCatalog(record, getLocalId(record));
    }
-   
+
    public String getCollection(final Record record) {
       return System.getProperty("data.collection", "UNDEFINED");
    }
+
    public Set<String> getConsortium(final Record record) {
       String catalog = getCatalog(record);
       return findConsortium(record, catalog, findInstitutionID(record, catalog));
@@ -560,16 +663,20 @@ public class GVIIndexer extends SolrIndexer {
       String field040a = getFirstFieldVal(record, "040a");
       if (collection.equals("ZDB")) {
          catalog = "DE-600";
-      } else if (field003 != null) {
+      }
+      else if (field003 != null) {
          if (field003.length() > 6) {
             field003 = field003.substring(0, 6);
          }
          catalog = field003;
-      } else if (field040a != null) {
+      }
+      else if (field040a != null) {
          catalog = field040a;
-      } else if (f001 != null && f001.startsWith("BV")) {
+      }
+      else if (f001 != null && f001.startsWith("BV")) {
          catalog = "DE-604";
-      } else {
+      }
+      else {
          catalog = "UNDEFINED";
       }
       return catalog;
@@ -578,7 +685,7 @@ public class GVIIndexer extends SolrIndexer {
    /**
     * Ermittelt die ISIL der in der Bibliotheken mit Bestand.<br>
     * 
-    * @param record 
+    * @param record
     * @param catalogId
     * @return
     */
@@ -593,7 +700,8 @@ public class GVIIndexer extends SolrIndexer {
          case "DE-101": // DNB
             if (collection.equals("ZDB")) {
                consortiumSet.add("DE-600");
-            } else {
+            }
+            else {
                consortiumSet.add(catalog);
             }
             break;
@@ -899,7 +1007,8 @@ public class GVIIndexer extends SolrIndexer {
                      }
                   }
                }
-            } else if (field.getSubfield('A') != null) {
+            }
+            else if (field.getSubfield('A') != null) {
                // Alter SWD Sachbegriff. Muss gemappt werden!
                String swdCategoryString = field.getSubfield('A').getData();
                if (swdCategoryString != null && !swdCategoryString.isEmpty()) {
@@ -936,11 +1045,11 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    enum IllFlag {
-                 Undefined(0),
-                 None(1),
-                 Ecopy(2),
-                 Copy(3),
-                 Loan(4);
+      Undefined(0),
+      None(1),
+      Ecopy(2),
+      Copy(3),
+      Loan(4);
 
       private final int value;
 
@@ -964,15 +1073,15 @@ public class GVIIndexer extends SolrIndexer {
     * 
     */
    public enum MARCSubjectCategory {
-                                    PERSONAL_NAME,
-                                    CORPORATE_NAME,
-                                    MEETING_NAME,
-                                    UNIFORM_TITLE,
-                                    CHRONOLOGICAL_TERM,
-                                    TOPICAL_TERM,
-                                    GEOGRAPHIC_NAME,
-                                    GENRE_FORM,
-                                    UNCONTROLLED_TERM;
+      PERSONAL_NAME,
+      CORPORATE_NAME,
+      MEETING_NAME,
+      UNIFORM_TITLE,
+      CHRONOLOGICAL_TERM,
+      TOPICAL_TERM,
+      GEOGRAPHIC_NAME,
+      GENRE_FORM,
+      UNCONTROLLED_TERM;
 
       public static final MARCSubjectCategory mapToMARCSubjectCategory(final int indicator2From653) {
          final MARCSubjectCategory marcSubjectCategory;
@@ -1007,13 +1116,13 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public enum GNDSubjectCategory {
-                                   PERSON_NONINDIVIDUAL('n'),
-                                   PERSON_INDIVIDUAL('p'),
-                                   KOERPERSCHAFT('b'),
-                                   KONGRESS('f'),
-                                   GEOGRAFIKUM('g'),
-                                   SACHBEGRIFF('s'),
-                                   WERK('u');
+      PERSON_NONINDIVIDUAL('n'),
+      PERSON_INDIVIDUAL('p'),
+      KOERPERSCHAFT('b'),
+      KONGRESS('f'),
+      GEOGRAFIKUM('g'),
+      SACHBEGRIFF('s'),
+      WERK('u');
       private final char value;
 
       private GNDSubjectCategory(char c) {
@@ -1056,12 +1165,12 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public enum SWDSubjectCategory {
-                                   SACHBEGRIFF('a'),
-                                   GEOGRAFIKUM('b'),
-                                   PERSON('c'),
-                                   KOERPERSCHAFT('d'),
-                                   FORMSCHLAGWORT('f'),
-                                   ZEITSCHLAGWORT('z');
+      SACHBEGRIFF('a'),
+      GEOGRAFIKUM('b'),
+      PERSON('c'),
+      KOERPERSCHAFT('d'),
+      FORMSCHLAGWORT('f'),
+      ZEITSCHLAGWORT('z');
 
       private final char value;
 
@@ -1099,6 +1208,63 @@ public class GVIIndexer extends SolrIndexer {
       public final char valueOf() {
          return value;
       }
+   }
+
+   // #######################################################################################
+   // ########## Poor man's test environment
+   // #######################################################################################
+   /**
+    * Do simple tests while development. (w/o the full environment)
+    * 
+    * @param unused No command line parameters are evaluated.
+    * @throws Exception
+    */
+   public static void main(String[] unused) throws Exception {
+      GVIIndexer me = new GVIIndexer(1);
+      Record testRecord = me.buildTestRecord();
+      Set<String> ret = me.getAllCharSets(testRecord, "100a:245a:710abcd");
+      for (String retret : ret) {
+         System.out.println("TEST: " + retret + "#");
+      }
+   }
+
+   /**
+    * Neuen Marcrecord erzeugen sowie Label und ID voreinstellen.
+    *
+    * @return the record
+    */
+   private Record buildTestRecord() {
+      MarcFactory marcfactory = MarcFactory.newInstance();
+      Record mymarc = marcfactory.newRecord();
+      // LEADER
+      mymarc = marcfactory.newRecord("00000cam a2200000 a 4500");
+      // CONTROL
+      mymarc.addVariableField(marcfactory.newControlField("001", "test"));
+      mymarc.addVariableField(marcfactory.newControlField("003", "DE-603"));
+      mymarc.addVariableField(marcfactory.newControlField("001", "20161027161501.0"));
+      mymarc.addVariableField(marcfactory.newControlField("008", "160930s2016 xx u00 u ger c"));
+      // DATA
+      mymarc.addVariableField(newField(marcfactory, "100", null, "QayQayQay")); 
+      mymarc.addVariableField(newField(marcfactory, "100", null, "HuHuHuHu")); 
+      mymarc.addVariableField(newField(marcfactory, "245", null, "BlaBlaBla")); 
+      mymarc.addVariableField(newField(marcfactory, "880", "245_dlkjdl", "FooFooFoo")); 
+      mymarc.addVariableField(newField(marcfactory, "880", "710_dlkjdl", "BarBarBar")); 
+      mymarc.addVariableField(newField(marcfactory, "880", "710_dlkjdl", "BuhBuhBuh")); 
+      return mymarc;
+   }
+
+   private DataField newField(MarcFactory factory, String fieldId, String reference, String data) {
+      DataField field = factory.newDataField(fieldId, ' ', ' ');
+      if (reference != null) field.addSubfield(newSubfield(factory, '6', reference));
+      if (data != null) field.addSubfield(newSubfield(factory, 'a', data));
+      return field;
+   }  
+
+   private Subfield newSubfield(MarcFactory factory, char code, String data) {
+      Subfield subfield = factory.newSubfield();
+      subfield.setCode(code);
+      subfield.setData(data);
+      return subfield;
    }
 
 }
