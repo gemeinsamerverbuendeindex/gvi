@@ -465,8 +465,7 @@ public class GVIIndexer extends SolrIndexer {
             cached880Fields = get880Fields(record); // Fetch
             cachedRecord = record; // set reference
          }
-         for (String catId : tagString.split(":")) {
-            catId = stripSubFields(catId);
+         for (String catId : expandTagString(tagString)) {
             Set<String> originalWriting = cached880Fields.get(catId);
             if (originalWriting != null) {
                resultList.addAll(originalWriting);
@@ -477,17 +476,28 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * The id of the main categories/fields in marc have only three digits. Longer ids refer also to subfield(s).<br>
-    * This method norms the length of an id to tree.
+    * The 'tagString' of SolrMarc is a List of elements separated by a colon. 
+    * Each of the elements is the number of a marc field followed by one or more subfield codes.<br>
+    * This method inflates the list by normalizing tags with more codes to multiple tags with only on code.<br> 
+    * Example: "111a:222bc" --> "111a:222b:222c"    
     * 
-    * @param catId
-    * @return
+    * @param tagString The unchanged tag string from the call in 'index.properties'
+    * @return A inflated, but semantically identical set of normalized tags 
     */
-   private String stripSubFields(String catId) {
-      int length = catId.length();
-      if (length > 3) return catId.substring(0, 3);
-      if (length < 3) return stripSubFields("0" + catId);
-      return catId;
+   private Set<String> expandTagString(String tagString) {
+      Set<String> tagSet = new HashSet<>();
+      for (String rawTag : tagString.split(":")) {
+         int length = rawTag.length();
+         if (length == 4) tagSet.add(rawTag); // simple case
+         else if (length > 4) {
+            String fieldId = rawTag.substring(0, 3); 
+            for (int pos = 3; pos < length; pos++) {
+               tagSet.add(fieldId + rawTag.charAt(pos));
+            }
+         }
+         else if (length == 3) tagSet.add(rawTag + 'a'); // add most common subfield code
+      }
+      return tagSet;
    }
 
    /**
@@ -500,26 +510,32 @@ public class GVIIndexer extends SolrIndexer {
     * @return A map<reference, related originale writings> or NULL if no marc:880 is found.
     */
    private Map<java.lang.String, Set<java.lang.String>> get880Fields(Record record) {
-      Map<String, Set<String>> ret = new HashMap<>();
+      Map<String, Set<String>> originalWriting = new HashMap<>();
       List<VariableField> originalFields = record.getVariableFields("880");
       if ((originalFields == null) || originalFields.isEmpty()) return null;
       for (VariableField v_field : originalFields) {
          DataField field = (DataField) v_field;
-         Subfield data = field.getSubfield('a');
-         if (data == null) continue; // skip corrupted data
          Subfield ref = field.getSubfield('6');
          if (ref == null) continue; // skip corrupted data
-         String key = ref.getData();
-         if (key.length() < 3) continue; // skip corrupted data
-         key = key.substring(0, 3);
-         Set<String> dataSet = ret.get(key);
-         if (dataSet == null) { // first entry
-            dataSet = new HashSet<>();
-            ret.put(key, dataSet);
+         String fieldId = ref.getData();
+         if (fieldId.length() < 3) continue; // skip corrupted data
+         fieldId = fieldId.substring(0, 3);
+
+         for (Subfield subfield : field.getSubfields()) {
+            char subFieldCode = subfield.getCode();
+            if (subFieldCode == '6') continue;
+            String subFieldData = subfield.getData();
+            if (subFieldData == null) continue; // skip corrupted data
+            String key = fieldId + subFieldCode;
+            Set<String> dataSet = originalWriting.get(key);
+            if (dataSet == null) { // for the first entry put a new Set
+               dataSet = new HashSet<>();
+               originalWriting.put(key, dataSet);
+            }
+            dataSet.add(subFieldData); // add data
          }
-         dataSet.add(data.getData());
       }
-      return ret;
+      return originalWriting;
    }
 
    /**
