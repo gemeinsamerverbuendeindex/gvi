@@ -35,7 +35,6 @@ import org.solrmarc.index.SolrIndexer;
 import org.solrmarc.index.indexer.ValueIndexerFactory;
 import org.solrmarc.mixin.GetFormatMixin;
 import org.solrmarc.tools.DataUtil;
-import org.solrmarc.tools.Utils;
 
 /**
  *
@@ -266,8 +265,9 @@ public class GVIIndexer extends SolrIndexer {
       }
       return title;
    }
-
-   public String matchkeyNumParts(Record record) {
+   
+   @Deprecated
+   public String xmatchkeyNumParts(Record record) {
       String volume = "";
       String field = getFirstFieldVal(record, "245n:800n:810n:811n:830n");
       if (field != null) {
