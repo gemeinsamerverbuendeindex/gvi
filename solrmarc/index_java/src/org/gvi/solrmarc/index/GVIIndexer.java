@@ -34,6 +34,7 @@ import org.marc4j.marc.VariableField;
 import org.solrmarc.index.SolrIndexer;
 import org.solrmarc.index.indexer.ValueIndexerFactory;
 import org.solrmarc.mixin.GetFormatMixin;
+import org.solrmarc.tools.DataUtil;
 import org.solrmarc.tools.Utils;
 
 /**
@@ -559,7 +560,7 @@ public class GVIIndexer extends SolrIndexer {
       if (date == null || date.length() == 0) {
          return (null);
       }
-      return Utils.cleanDate(date);
+      return DataUtil.cleanDate(date);
    }
 
    /**
@@ -617,13 +618,13 @@ public class GVIIndexer extends SolrIndexer {
          String yearExprs[] = yearExpr.replaceAll("[^0-9,^\\-,^\\,]", "").split(",");
          for (String y : yearExprs) {
             String range[] = y.split("\\-", -1);
-            String year = Utils.cleanDate(range[0]);
+            String year = DataUtil.cleanDate(range[0]);
             if (year != null) {
                productYears.add(year);
             }
 
             if (range.length > 1) {
-               year = Utils.cleanDate(range[1]);
+               year = DataUtil.cleanDate(range[1]);
                if (year != null) {
                   productYears.add(year);
                }
