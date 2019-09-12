@@ -155,12 +155,6 @@
     <!-- Z.B. rvk, ddc, lcc, udc, bkl, bcl, ssgn, ... -->
     <dynamicField  name="classification_*"        type="string_lc" />
     
-    <!-- @Deprecated : Altes Feld der Regensburger Verbund Klassifikation vollständig und erste drei Zeichen -->
-    <field name="rvk"                     type="string_lc" />
-    
-    <!-- @Deprecated : Altes Feld der Dewey Decimal Classifiction vollständig und erste drei Zeichen-->
-    <field name="ddc"                     type="string_lc" />
-
     <!-- Zusammenfassungen: 500a:501a:502a:504a:505a -->
     <field name="summary"                 type="text"/>
     <!-- 
