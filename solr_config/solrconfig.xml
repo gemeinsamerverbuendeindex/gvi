@@ -170,16 +170,27 @@
             <str name="tie">0.1</str>
             <str name="qf">allfields_unstemmed^4 allfields </str>
             <str name="spellcheck">false</str>
-            <!--
-            <str name="spellcheck">true</str>
-            <str name="spellcheck.collate">true</str>
-            <str name="spellcheck.extendedResults">true</str>
-            <str name="spellcheck.collateExtendedResults">true</str>
-            <str name="spellcheck.maxResultsForSuggest">1000</str>
-            <str name="spellcheck.maxCollations">2</str>
-            <str name="spellcheck.maxCollationTries">1000</str>
-            <str name="spellcheck.alternativeTermCount">5</str>
+        </lst>
+        <arr name="components">
+            <str>query</str>
+            <str>facet</str>
+            <str>mlt</str>
+            <str>stats</str>
+            <str>debug</str>
+            <!-- Erst mal keine Extras
+            <str>elevator</str>
+            <str>spellcheck</str>
             -->
+        </arr>
+    </requestHandler>
+    
+    <!-- Und jetzt nochmal den'eDisMax' unter eigenem Namen -->
+    <requestHandler name="edismax" class="solr.SearchHandler">
+        <lst name="defaults">
+            <str name="defType">edismax</str>
+            <str name="tie">0.1</str>
+            <str name="qf">allfields_unstemmed^4 allfields </str>
+            <str name="spellcheck">false</str>
         </lst>
         <arr name="components">
             <str>query</str>
