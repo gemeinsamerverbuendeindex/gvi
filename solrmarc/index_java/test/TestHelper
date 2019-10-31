@@ -1,0 +1,54 @@
+#! /bin/bash
+
+# Snipplet that holds common code and definitions of most tests.
+#
+# This file should be included at the beginning of the testscript to preset the values of:
+## $Input One or more Paths to a file containing testdata (default: .../solrmarc/index_java/test/data/oneTitle_hebis.xml)
+## $Rules Path to Indexing Rules (index.properties) (default .../solrmarc/gvi_index.properties)
+## $SolrCore URL of designated SOLR index. If undefined a dryrun will print to stdout.
+## $Profiling Flag to turn on solrmarc's profiling option. (default: false) 
+## $SkipBig Flag to controll the long running loading of optional big property files (GND, Cluster) (default: true)
+## $LoggingConfig  Path to the config file for Log4j. (Default: .../solrmarc/test/log4j2.xml)
+## $MEM Size of the heap to reseve while indexing. Should be quite big. (default: 20g)
+#
+# This file contains also the function 'runTest' to build all parameters to a call of 'solrmarc'
+
+function runTest {
+	# Detect test target
+	if [ -z ${SolrCore} ]; then
+		TARGET="stdout"
+    else
+    	TARGET="$SolrCore"
+    fi
+    # Build command
+	CMD="java -Xmx$MEM -Xms$MEM"
+	CMD="$CMD -Dorg.marc4j.MarcPermissiveStreamReader.upperCaseSubfields=true"
+	CMD="$CMD -Dsolrmarc.method.report=$Profiling"
+	CMD="$CMD -Dlog4j.configurationFile=$LoggingConfig"
+	CMD="$CMD -DGviIndexer.skipBigFiles=$SkipBig"
+	CMD="$CMD -jar solrmarc_core.jar IndexDriver"
+	CMD="$CMD -c $Rules"
+	CMD="$CMD -u $TARGET"
+	CMD="$CMD $Input"
+	echo
+	echo "########################################"
+	date
+	echo "Running: $CMD"
+	$CMD
+	echo
+}
+
+#
+# Preset of variables
+#
+Input="index_java/test/data/oneTitle_hebis.xml"
+#Input="/data/input/gvi/swb/current/update/2018-03-31/work/TA-MARC-verbund-180330.mrc"
+Rules="gvi_index.properties"
+Profiling="false"
+SkipBig="true"
+MEM=20g
+LoggingConfig="index_java/test/log4j2.test.xml"
+
+# EOF
+
+
