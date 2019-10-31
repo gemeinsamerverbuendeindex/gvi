@@ -44,14 +44,14 @@ import org.solrmarc.tools.DataUtil;
  */
 public class GVIIndexer extends SolrIndexer {
 
-   private static final String                      kobvClusterInfoFile            = "kobv_clusters.properties";
-   private static final Properties                  kobvClusterInfoMap             = new Properties();
-   private static final String                      gndSynonymFile                 = "gnd_synonyms.properties";
-   private static final String                      gndLineSeperator               = "!_#_!";
-   private static final Properties                  gndSynonymMap                  = new Properties();
-   private static final PunctuationSingleNormalizer punctuationSingleNormalizer    = new PunctuationSingleNormalizer();
-   private static boolean                           isInitialized                  = false;
-   private static final Logger                      LOG                            = LogManager.getLogger(GVIIndexer.class);
+   private static final String                      kobvClusterInfoFile         = "kobv_clusters.properties";
+   private static final Properties                  kobvClusterInfoMap          = new Properties();
+   private static final String                      gndSynonymFile              = "gnd_synonyms.properties";
+   private static final String                      gndLineSeperator            = "!_#_!";
+   private static final Properties                  gndSynonymMap               = new Properties();
+   private static final PunctuationSingleNormalizer punctuationSingleNormalizer = new PunctuationSingleNormalizer();
+   private static boolean                           isInitialized               = false;
+   private static final Logger                      LOG                         = LogManager.getLogger(GVIIndexer.class);
    private Record                                   cachedRecord                = null;
    private Map<String, Set<String>>                 cached880Fields             = new HashMap<>();
 
@@ -120,27 +120,27 @@ public class GVIIndexer extends SolrIndexer {
     * * prefer real isbns ($a)<br>
     * * check next unformatted isbns ($9)<br>
     * * at last and least check wrong isbns ($z)
-    *  
+    * 
     * @param record
     * @return the normalized ISBN or an empty String
     */
-    public String matchkeyISBN(Record record) {
-        String isbn = "";
-        DataField isbnField = (DataField) record.getVariableField("020");
-        if (isbnField != null) {
-            List<Subfield> isbns = isbnField.getSubfields('a');
-            if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
-            if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
-            if ((isbns == null) || isbns.isEmpty()) return isbn;
-            try {
-                isbn = ISBNNormalizer.normalize(isbns.get(0).getData());
+   public String matchkeyISBN(Record record) {
+      String isbn = "";
+      DataField isbnField = (DataField) record.getVariableField("020");
+      if (isbnField != null) {
+         List<Subfield> isbns = isbnField.getSubfields('a');
+         if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
+         if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
+         if ((isbns == null) || isbns.isEmpty()) return isbn;
+         try {
+            isbn = ISBNNormalizer.normalize(isbns.get(0).getData());
          }
          catch (IllegalArgumentException e) {
-                LOG.error("MatchkeyException at record " + getRecordID(record)+": "+e.getMessage());
-            }
-        }
-        return isbn;
-    }
+            LOG.error("MatchkeyException at record " + getRecordID(record) + ": " + e.getMessage());
+         }
+      }
+      return isbn;
+   }
 
    public String matchkeyMaterial(Record record) {
       String material = "";
@@ -157,7 +157,7 @@ public class GVIIndexer extends SolrIndexer {
       else if (contentTypes.contains("Article")) {
          material = "article";
          if (contentTypes.contains("Journal/Magazine"))
-             contentTypes.remove("Journal/Magazine");
+            contentTypes.remove("Journal/Magazine");
       }
       // EJournal
       else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
@@ -265,7 +265,7 @@ public class GVIIndexer extends SolrIndexer {
       }
       return title;
    }
-   
+
    @Deprecated
    public String xmatchkeyNumParts(Record record) {
       String volume = "";
@@ -286,20 +286,20 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public String matchkeyMaterialISBNYear(Record record) {
-       String matchkey = null;
-       try {
-            String material = matchkeyMaterial(record);
-            String isbn = matchkeyISBN(record);
-            String pubdate = matchkeyPubdate(record);
-            if (!isbn.isEmpty()) {
-               matchkey =  String.format("%s:%s:%s", material, isbn, pubdate);
+      String matchkey = null;
+      try {
+         String material = matchkeyMaterial(record);
+         String isbn = matchkeyISBN(record);
+         String pubdate = matchkeyPubdate(record);
+         if (!isbn.isEmpty()) {
+            matchkey = String.format("%s:%s:%s", material, isbn, pubdate);
          }
          else {
-                matchkey = matchkeyMaterialAuthorTitleYearPublisher(record);
-            }
+            matchkey = matchkeyMaterialAuthorTitleYearPublisher(record);
+         }
       }
       catch (Throwable e) {
-         LOG.error("MatchkeyException at record " + getRecordID(record) + ": "+ e.getMessage());
+         LOG.error("MatchkeyException at record " + getRecordID(record) + ": " + e.getMessage());
       }
       return matchkey;
    }
@@ -479,13 +479,13 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * The 'tagString' of SolrMarc is a List of elements separated by a colon. 
+    * The 'tagString' of SolrMarc is a List of elements separated by a colon.
     * Each of the elements is the number of a marc field followed by one or more subfield codes.<br>
-    * This method inflates the list by normalizing tags with more codes to multiple tags with only on code.<br> 
-    * Example: "111a:222bc" --> "111a:222b:222c"    
+    * This method inflates the list by normalizing tags with more codes to multiple tags with only on code.<br>
+    * Example: "111a:222bc" --> "111a:222b:222c"
     * 
     * @param tagString The unchanged tag string from the call in 'index.properties'
-    * @return A inflated, but semantically identical set of normalized tags 
+    * @return A inflated, but semantically identical set of normalized tags
     */
    private Set<String> expandTagString(String tagString) {
       Set<String> tagSet = new HashSet<>();
@@ -493,7 +493,7 @@ public class GVIIndexer extends SolrIndexer {
          int length = rawTag.length();
          if (length == 4) tagSet.add(rawTag); // simple case
          else if (length > 4) {
-            String fieldId = rawTag.substring(0, 3); 
+            String fieldId = rawTag.substring(0, 3);
             for (int pos = 3; pos < length; pos++) {
                tagSet.add(fieldId + rawTag.charAt(pos));
             }
@@ -515,7 +515,7 @@ public class GVIIndexer extends SolrIndexer {
    private Map<java.lang.String, Set<java.lang.String>> get880Fields(Record record) {
       Map<String, Set<String>> originalWriting = new HashMap<>();
       List<VariableField> originalFields = record.getVariableFields("880");
-      if ((originalFields == null) || originalFields.isEmpty()) return null;
+      if ((originalFields == null) || originalFields.isEmpty()) return originalWriting;
       for (VariableField v_field : originalFields) {
          DataField field = (DataField) v_field;
          Subfield ref = field.getSubfield('6');
@@ -641,31 +641,32 @@ public class GVIIndexer extends SolrIndexer {
    public String getCatalog(final Record record) {
       return findCatalog(record, getLocalId(record));
    }
-   
+
    public String getCollection(final Record record) {
       return System.getProperty("data.collection", "UNDEFINED");
    }
+
    public Set<String> getConsortium(final Record record) {
       return findConsortium(record, getCatalog(record));
    }
 
    public Set<String> getInstitutionID(final Record record) {
       Set<String> raw = getFieldList(record, "924b");
-      Set<String> ret = new HashSet<String>(); 
+      Set<String> ret = new HashSet<String>();
       if (raw == null) return new HashSet<String>();
       for (String isil : raw) {
          ret.add(normalizeIsil(isil));
       }
       return ret;
    }
-   
+
    private String normalizeIsil(String full) {
-      if (!full.matches("\\w{2,3}-.*"))  return full; // no ISIL
+      if (!full.matches("\\w{2,3}-.*")) return full; // no ISIL
       int firstDashPos = full.indexOf('-');
-      int secondDashPos = full.indexOf('-', firstDashPos +1);
+      int secondDashPos = full.indexOf('-', firstDashPos + 1);
       return (secondDashPos < 0) ? full : full.substring(0, secondDashPos);
    }
-   
+
    public String getRecordID(final Record record) {
       return "(" + getCatalog(record) + ")" + getLocalId(record);
    }
@@ -736,11 +737,11 @@ public class GVIIndexer extends SolrIndexer {
          case "DE-627": // K10Plus
             Set<String> regions = getFieldList(record, "924c");
             if (regions.contains("GBV"))
-                consortiumSet.add("DE-601");
+               consortiumSet.add("DE-601");
             if (regions.contains("BSZ"))
-                consortiumSet.add("DE-576");
+               consortiumSet.add("DE-576");
             if (consortiumSet.isEmpty())
-                consortiumSet.add("DE-627");
+               consortiumSet.add("DE-627");
             break;
          default:
             consortiumSet.add("UNDEFINED");
@@ -1073,11 +1074,11 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    enum IllFlag {
-                 Undefined(0),
-                 None(1),
-                 Ecopy(2),
-                 Copy(3),
-                 Loan(4);
+      Undefined(0),
+      None(1),
+      Ecopy(2),
+      Copy(3),
+      Loan(4);
 
       private final int value;
 
@@ -1101,15 +1102,15 @@ public class GVIIndexer extends SolrIndexer {
     * 
     */
    public enum MARCSubjectCategory {
-                                    PERSONAL_NAME,
-                                    CORPORATE_NAME,
-                                    MEETING_NAME,
-                                    UNIFORM_TITLE,
-                                    CHRONOLOGICAL_TERM,
-                                    TOPICAL_TERM,
-                                    GEOGRAPHIC_NAME,
-                                    GENRE_FORM,
-                                    UNCONTROLLED_TERM;
+      PERSONAL_NAME,
+      CORPORATE_NAME,
+      MEETING_NAME,
+      UNIFORM_TITLE,
+      CHRONOLOGICAL_TERM,
+      TOPICAL_TERM,
+      GEOGRAPHIC_NAME,
+      GENRE_FORM,
+      UNCONTROLLED_TERM;
 
       public static final MARCSubjectCategory mapToMARCSubjectCategory(final int indicator2From653) {
          final MARCSubjectCategory marcSubjectCategory;
@@ -1144,13 +1145,13 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public enum GNDSubjectCategory {
-                                   PERSON_NONINDIVIDUAL('n'),
-                                   PERSON_INDIVIDUAL('p'),
-                                   KOERPERSCHAFT('b'),
-                                   KONGRESS('f'),
-                                   GEOGRAFIKUM('g'),
-                                   SACHBEGRIFF('s'),
-                                   WERK('u');
+      PERSON_NONINDIVIDUAL('n'),
+      PERSON_INDIVIDUAL('p'),
+      KOERPERSCHAFT('b'),
+      KONGRESS('f'),
+      GEOGRAFIKUM('g'),
+      SACHBEGRIFF('s'),
+      WERK('u');
       private final char value;
 
       private GNDSubjectCategory(char c) {
@@ -1193,12 +1194,12 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public enum SWDSubjectCategory {
-                                   SACHBEGRIFF('a'),
-                                   GEOGRAFIKUM('b'),
-                                   PERSON('c'),
-                                   KOERPERSCHAFT('d'),
-                                   FORMSCHLAGWORT('f'),
-                                   ZEITSCHLAGWORT('z');
+      SACHBEGRIFF('a'),
+      GEOGRAFIKUM('b'),
+      PERSON('c'),
+      KOERPERSCHAFT('d'),
+      FORMSCHLAGWORT('f'),
+      ZEITSCHLAGWORT('z');
 
       private final char value;
 
@@ -1272,12 +1273,12 @@ public class GVIIndexer extends SolrIndexer {
       mymarc.addVariableField(marcfactory.newControlField("001", "20161027161501.0"));
       mymarc.addVariableField(marcfactory.newControlField("008", "160930s2016 xx u00 u ger c"));
       // DATA
-      mymarc.addVariableField(newField(marcfactory, "100", null, "QayQayQay")); 
-      mymarc.addVariableField(newField(marcfactory, "100", null, "HuHuHuHu")); 
-      mymarc.addVariableField(newField(marcfactory, "245", null, "BlaBlaBla")); 
-      mymarc.addVariableField(newField(marcfactory, "880", "245_dlkjdl", "FooFooFoo")); 
-      mymarc.addVariableField(newField(marcfactory, "880", "710_dlkjdl", "BarBarBar")); 
-      mymarc.addVariableField(newField(marcfactory, "880", "710_dlkjdl", "BuhBuhBuh")); 
+      mymarc.addVariableField(newField(marcfactory, "100", null, "QayQayQay"));
+      mymarc.addVariableField(newField(marcfactory, "100", null, "HuHuHuHu"));
+      mymarc.addVariableField(newField(marcfactory, "245", null, "BlaBlaBla"));
+      mymarc.addVariableField(newField(marcfactory, "880", "245_dlkjdl", "FooFooFoo"));
+      mymarc.addVariableField(newField(marcfactory, "880", "710_dlkjdl", "BarBarBar"));
+      mymarc.addVariableField(newField(marcfactory, "880", "710_dlkjdl", "BuhBuhBuh"));
       return mymarc;
    }
 
@@ -1286,7 +1287,7 @@ public class GVIIndexer extends SolrIndexer {
       if (reference != null) field.addSubfield(newSubfield(factory, '6', reference));
       if (data != null) field.addSubfield(newSubfield(factory, 'a', data));
       return field;
-   }  
+   }
 
    private Subfield newSubfield(MarcFactory factory, char code, String data) {
       Subfield subfield = factory.newSubfield();
