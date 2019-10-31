@@ -127,21 +127,21 @@ public class GVIIndexer extends SolrIndexer {
    public String matchkeyISBN(Record record) {
       DataField isbnField = (DataField) record.getVariableField("020");
       if (isbnField != null) {
-      // 1st try: $a
+         // 1st try: $a
          String isbn = getFirstSubfield(isbnField, 'a');
-      // 2nd try: $9
+         // 2nd try: $9
          if (isbn == null) isbn = getFirstSubfield(isbnField, '9');
-      // if found return normalized value   
+         // if found return normalized value
          if (isbn != null) try {
-               return ISBNNormalizer.normalize(isbn);
-            }
-            catch (IllegalArgumentException e) {
-               LOG.info("Invalid ISBN " + getRecordID(record) + ": " + e.getMessage());
-               return simpleIsbnNormalisation(isbn);
-            }
+            return ISBNNormalizer.normalize(isbn);
+         }
+         catch (IllegalArgumentException e) {
+            LOG.info("Invalid ISBN " + getRecordID(record) + ": " + e.getMessage());
+            return simpleIsbnNormalisation(isbn);
+         }
          // still here? 3nd try: $z
-      isbn = getFirstSubfield(isbnField, 'z');
-      if (isbn != null) return simpleIsbnNormalisation(isbn);
+         isbn = getFirstSubfield(isbnField, 'z');
+         if (isbn != null) return simpleIsbnNormalisation(isbn);
       }
       // 4th not found, send empty String as flag
       return "";
@@ -149,28 +149,29 @@ public class GVIIndexer extends SolrIndexer {
 
    /**
     * Short helper to get the value of the first matching subfield
+    * 
     * @param isbnField The {@link DataField} to inspect
     * @param subFieldCode The code of the wanted subfield
     * @return The value of the first matching subfield or NULL is not found
     */
- 
    private String getFirstSubfield(DataField isbnField, char subFieldCode) {
       List<Subfield> subFieldList = isbnField.getSubfields(subFieldCode);
       if (subFieldList == null) return null;
       if (subFieldList.isEmpty()) return null;
       return subFieldList.get(0).getData();
    }
-   
+
    /**
     * Fault tolerant Normalizer for invalid ISBNs<br>
     * Removes all white spaces and all punctuation characters.
     * Matches all characters to lower case.
+    * 
     * @param rawISBN
-    * @return The normalized string or an empty string if the given Value was null or empty.
+    * @return The normalized string or an empty string if the given value was null or empty.
     */
    private String simpleIsbnNormalisation(String rawISBN) {
       if ((rawISBN == null) || rawISBN.isEmpty()) return "";
-      return rawISBN.replaceAll("[\\p{Punct}\\s]+", "").toLowerCase();
+      return punctuationSingleNormalizer.normalize(rawISBN.replaceAll("\\w", ""));
    }
 
    public String matchkeyMaterial(Record record) {
@@ -241,19 +242,69 @@ public class GVIIndexer extends SolrIndexer {
       return material;
    }
 
+   /**
+    * Extract the last name of the first found author/contributor 
+    * @param record
+    * @return Normalized for of the last name
+    */
    public String matchkeyAuthor(Record record) {
-      String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a:245c");
-      String lastName = "";
-      if (firstAuthor != null) {
-         String[] nameParts = firstAuthor.split("[, ]+");
-         if (nameParts.length > 0) { // yes in some titles the given author is "," (sik)
-            lastName = punctuationSingleNormalizer.normalize(nameParts[0].toLowerCase());
-            lastName = lastName.replaceAll(" ", "");
-         }
-      }
+      String lastName = getInvertetLastName(record);
+      if (lastName == null) lastName = findLastNameIn245(record);
+      if (lastName == null) return "";
+      lastName = punctuationSingleNormalizer.normalize(lastName);
+      lastName = lastName.replaceAll(" ", "");
       return lastName;
    }
-
+   
+   /**
+    * Extract the last name from normalized fields.
+    * @param record
+    * @return
+    */
+   public String getInvertetLastName(Record record) {
+      String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a");
+      if ((firstAuthor == null)|| firstAuthor.isEmpty()) return null; 
+      String lastName = null;
+         // first normalization
+         firstAuthor = firstAuthor.trim().toLowerCase();
+        if (firstAuthor.contains(", ")) { // inverted notation: "last name, first name"
+            String[] nameParts = firstAuthor.split(",");
+            if (nameParts.length > 0) { // in some titles, the given author is really ",".
+               lastName = nameParts[0];
+            }
+         }
+         else { // non inverted notation: "first name last name"
+            int pos = firstAuthor.indexOf(' ');
+            lastName = (pos <0) ? firstAuthor : firstAuthor.substring(pos);
+         }
+      return lastName;
+   }
+   
+   /**
+    * Extract the last name from unstructured field 245c.
+    * @param record
+    * @return
+    */
+   public String findLastNameIn245(Record record) {
+      String firstAuthor = getFirstFieldVal(record, "245c");
+      if ((firstAuthor == null)|| firstAuthor.isEmpty()) return null;
+      firstAuthor = firstAuthor.replaceAll("\\[.*?\\]", "");
+      firstAuthor = firstAuthor.replaceAll("<.*?>", "");
+      firstAuthor = firstAuthor.replaceAll("\\{.*?\\}", "");
+      firstAuthor = firstAuthor.replaceAll("\\(.*?\\)", "");
+      firstAuthor = punctuationSingleNormalizer.normalize(firstAuthor);
+      firstAuthor = firstAuthor.replace("im auftr d ", "");
+      firstAuthor = firstAuthor.replace("hrsg ", "");
+      firstAuthor = firstAuthor.replace("pupl ", "");
+      firstAuthor = firstAuthor.replace("ed ", "");
+      firstAuthor = firstAuthor.replace("von ", "");
+      firstAuthor = firstAuthor.replace("by ", "");
+      firstAuthor = firstAuthor.replace("and ", "");
+      firstAuthor = firstAuthor.replace("\\s\\d+\\s", "");
+      String lastName = firstAuthor.replaceAll("\\s+", "");
+      return lastName;
+   }
+   
    public String matchkeyPublisher(Record record) {
       String publisherKey = "";
       String publisher = getFirstFieldVal(record, "260b:264b:502c");
