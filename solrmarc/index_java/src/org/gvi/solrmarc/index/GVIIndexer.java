@@ -125,21 +125,52 @@ public class GVIIndexer extends SolrIndexer {
     * @return the normalized ISBN or an empty String
     */
    public String matchkeyISBN(Record record) {
-      String isbn = "";
       DataField isbnField = (DataField) record.getVariableField("020");
       if (isbnField != null) {
-         List<Subfield> isbns = isbnField.getSubfields('a');
-         if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('z');
-         if ((isbns == null) || isbns.isEmpty()) isbns = isbnField.getSubfields('9');
-         if ((isbns == null) || isbns.isEmpty()) return isbn;
-         try {
-            isbn = ISBNNormalizer.normalize(isbns.get(0).getData());
-         }
-         catch (IllegalArgumentException e) {
-            LOG.error("MatchkeyException at record " + getRecordID(record) + ": " + e.getMessage());
-         }
+      // 1st try: $a
+         String isbn = getFirstSubfield(isbnField, 'a');
+      // 2nd try: $9
+         if (isbn == null) isbn = getFirstSubfield(isbnField, '9');
+      // if found return normalized value   
+         if (isbn != null) try {
+               return ISBNNormalizer.normalize(isbn);
+            }
+            catch (IllegalArgumentException e) {
+               LOG.info("Invalid ISBN " + getRecordID(record) + ": " + e.getMessage());
+               return simpleIsbnNormalisation(isbn);
+            }
+         // still here? 3nd try: $z
+      isbn = getFirstSubfield(isbnField, 'z');
+      if (isbn != null) return simpleIsbnNormalisation(isbn);
       }
-      return isbn;
+      // 4th not found, send empty String as flag
+      return "";
+   }
+
+   /**
+    * Short helper to get the value of the first matching subfield
+    * @param isbnField The {@link DataField} to inspect
+    * @param subFieldCode The code of the wanted subfield
+    * @return The value of the first matching subfield or NULL is not found
+    */
+ 
+   private String getFirstSubfield(DataField isbnField, char subFieldCode) {
+      List<Subfield> subFieldList = isbnField.getSubfields(subFieldCode);
+      if (subFieldList == null) return null;
+      if (subFieldList.isEmpty()) return null;
+      return subFieldList.get(0).getData();
+   }
+   
+   /**
+    * Fault tolerant Normalizer for invalid ISBNs<br>
+    * Removes all white spaces and all punctuation characters.
+    * Matches all characters to lower case.
+    * @param rawISBN
+    * @return The normalized string or an empty string if the given Value was null or empty.
+    */
+   private String simpleIsbnNormalisation(String rawISBN) {
+      if ((rawISBN == null) || rawISBN.isEmpty()) return "";
+      return rawISBN.replaceAll("[\\p{Punct}\\s]+", "").toLowerCase();
    }
 
    public String matchkeyMaterial(Record record) {
@@ -299,7 +330,7 @@ public class GVIIndexer extends SolrIndexer {
          }
       }
       catch (Throwable e) {
-         LOG.error("MatchkeyException at record " + getRecordID(record) + ": " + e.getMessage());
+         LOG.error("MatchkeyException at record " + getRecordID(record), e);
       }
       return matchkey;
    }
