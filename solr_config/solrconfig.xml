@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
-    <luceneMatchVersion>6.2.0</luceneMatchVersion>
+    <luceneMatchVersion>7.7.2</luceneMatchVersion>
     <!-- Find plugins and big synonyms in SOLR_HOME/../lib -->
     <lib dir="${solr.solr.home:}/../../lib" />    
     <dataDir>${solr.data.dir:}</dataDir>
