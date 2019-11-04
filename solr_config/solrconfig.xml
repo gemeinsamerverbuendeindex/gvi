@@ -125,7 +125,7 @@
     </query>
 
     <requestDispatcher handleSelect="true">
-        <requestParsers enableRemoteStreaming="false" />
+        <requestParsers enableRemoteStreaming="false" enableStreamBody="true"/>
         <httpCaching never304="false" lastModifiedFrom="dirLastMod" etagSeed="Solr">
             <cacheControl>max-age=300, public</cacheControl>
         </httpCaching>
