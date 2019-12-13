@@ -19,7 +19,7 @@
     </target>
     
     <target name="solr-optimize">
-        <solr-optimize maxSegments="5"/>
+        <solr-optimize maxSegments="10"/>
     </target>
 
     <target name="solr-purge">
