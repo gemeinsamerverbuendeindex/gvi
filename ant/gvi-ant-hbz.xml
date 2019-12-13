@@ -29,7 +29,7 @@
         <property name="ftp.remotedir"    value="/"/>
     </target>
 
-    <target name="download-updates-hbz" depends="init" unless="hbz.skip.ftp">
+    <target name="download-updates-hbz" depends="init" unless="download.skip">
         <echo>Checking updates for ${date.download}</echo>
         <ftp action="get"
              server="${ftp.server}"
