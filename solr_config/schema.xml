@@ -89,6 +89,7 @@
     <!-- Angaben zur Erscheinung -->
     <!-- Verlag ohne Stemming und Phonetik -->
     <field name="publisher"               type="text" />
+    <field name="publisher_facet"         type="Facet" />
     
     <!-- GVI-110: Verlagsort ohne Stemming und Phonetik -->
     <field name="publisher_place"         type="text" />
@@ -252,6 +253,8 @@
     <copyField source="author"            dest="author_norm" />
     
     <copyField source="title"             dest="title_unstemmed" />
+
+    <copyField source="publisher"         dest="publisher_facet" />
 
     <copyField source="subject_topic"     dest="subject_topic_facet" />
     <copyField source="subject_genre"     dest="subject_genre_facet" />
