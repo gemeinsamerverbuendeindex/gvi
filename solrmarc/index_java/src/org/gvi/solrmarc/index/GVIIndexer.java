@@ -136,7 +136,7 @@ public class GVIIndexer extends SolrIndexer {
             return ISBNNormalizer.normalize(isbn);
          }
          catch (IllegalArgumentException e) {
-            LOG.info("Invalid ISBN " + getRecordID(record) + ": " + e.getMessage());
+            LOG.warn("Invalid ISBN " + getRecordID(record) + ": " + e.getMessage());
             return simpleIsbnNormalisation(isbn);
          }
          // still here? 3nd try: $z
@@ -381,7 +381,7 @@ public class GVIIndexer extends SolrIndexer {
          }
       }
       catch (Throwable e) {
-         LOG.error("MatchkeyException at record " + getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + getRecordID(record), e);
       }
       return matchkey;
    }
@@ -418,7 +418,7 @@ public class GVIIndexer extends SolrIndexer {
          }
       }
       catch (Throwable e) {
-         LOG.error("MatchkeyException at record " + getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + getRecordID(record), e);
       }
 
       return matchkey;
@@ -432,7 +432,7 @@ public class GVIIndexer extends SolrIndexer {
          matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitle(record), pubdate);
       }
       catch (Throwable e) {
-         LOG.error("MatchkeyException at record " + getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + getRecordID(record), e);
       }
       return matchkey;
    }

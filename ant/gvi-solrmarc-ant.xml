@@ -178,7 +178,7 @@
                 <then>                    
                     <echo>Deleting from index @{file}</echo>
                     <solrmarc-run action="-del" 
-                                  file="@{file} ${basedir}/../solrmarc/index_java/test/data/noData.mrc" 
+                                  file="@{file} ${basedir}/../scripts/data/noData.mrc" 
                                   logdir="@{logdir}"
                                   skipBigFiles="true"/>
                 </then>  

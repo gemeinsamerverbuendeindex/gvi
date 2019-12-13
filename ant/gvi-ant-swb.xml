@@ -34,7 +34,7 @@
         <property name="ftp.remotedir"    value="/"/>
     </target>
     
-    <target name="download-updates-swb" depends="-init">
+    <target name="download-updates-swb" depends="-init" unless="download.skip">
         <echo>Checking updates for ${date.download} in ${update.input.dir}</echo>
         <ftp action="get"
              server="${ftp.server}"
