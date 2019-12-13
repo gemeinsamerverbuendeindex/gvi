@@ -7,7 +7,9 @@
             <source-roots>
                 <root id="src.src.dir"/>
             </source-roots>
-            <test-roots/>
+            <test-roots>
+                <root id="test.test.dir"/>
+            </test-roots>
         </data>
         <libraries xmlns="http://www.netbeans.org/ns/ant-project-libraries/1">
             <definitions>solrmarc/lib_local/nblibraries.properties</definitions>
