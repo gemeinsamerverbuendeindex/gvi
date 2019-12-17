@@ -39,15 +39,15 @@
     
     <target name="-index-updates" depends="copy-updates-b3kat">
         <solrmarc-index-dir  src="${update.input.dir}" logdir="${update.log.dir}" suffix=".xml"/>
-        <solrmarc-delete-dir src="${update.input.dir}" logdir="${update.log.dir}"/>
+        <solrmarc-delete-dir src="${update.input.dir}" logdir="${update.log.dir}" suffix=".txt"/>
     </target>
     
     <target name="-index-all-updates">
         <delete>
             <fileset dir="${update.log.dir}" includes="*.log" erroronmissingdir="false"/>
         </delete>
-        <solrmarc-index-dir  src="${update.base.dir}" logdir="${update.log.dir}"/>
-        <solrmarc-delete-dir src="${update.base.dir}" logdir="${update.log.dir}"/>
+        <solrmarc-index-dir  src="${update.base.dir}" logdir="${update.log.dir}" suffix=".xml"/>
+        <solrmarc-delete-dir src="${update.base.dir}" logdir="${update.log.dir}" suffix=".txt"/>
     </target>
     
     <target name="-index-full">
