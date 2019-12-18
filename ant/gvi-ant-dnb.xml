@@ -6,12 +6,19 @@
     <import file="gvi-solrmarc-ant.xml"/>
 
     <target name="-init">
+        <tstamp>
+            <format property="time.stamp" pattern="yyyyMMdd"/>
+        </tstamp>
         <property name="collection"     value="DNB" />
         <property name="input.dir"      location="${gvi.input.dir}/dnb/current" />
         <property name="work.dir"       location="${gvi.work.dir}/dnb" />
         <property name="full.input.dir" location="${input.dir}/full" />
         <property name="full.work.dir"  location="${work.dir}/full/work"/>
         <property name="full.log.dir"   location="${work.dir}/full/log"/>
+        <property name="update.base.dir"  location="${input.dir}/update"/>
+        <property name="update.input.dir" location="${update.base.dir}"/>
+        <property name="update.work.dir"  location="${work.dir}/update"/>
+        <property name="update.log.dir"   location="${work.dir}/update/log/"/>
     </target>
     
     <import file="gvi-ant-base.xml"/>
@@ -25,7 +32,55 @@
     </target>
 
     <target name="-index-all-updates">
-        <fail>Target not implemented !</fail>
+        <delete>
+            <fileset dir="${update.log.dir}"  includes="*" erroronmissingdir="false"/>
+            <fileset dir="${update.work.dir}" includes="*" erroronmissingdir="false"/>
+        </delete>
+        <dnb-unpack-index-dir src="${update.input.dir}" 
+                          dest="${update.work.dir}" 
+                          logdir="${update.log.dir}" 
+                          indexUnpacked="false"/>
+        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}"/>        
     </target>
+    
+    <!-- Macros for DNB -->
+    <macrodef name="dnb-unpack-index-dir">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="indexUnpacked" default="false"/>
+        <sequential>
+            <mkdir dir="@{dest}"/>
+            <mkdir dir="@{logdir}"/>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}">
+                        <include name="dnb_dnb_update_*.mrc.gz"/>
+                    </fileset>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".mrc.gz"/>
+                    <echo>Basename=${basename}</echo>
+                    <var name="is_mrc_avaliable" unset="true"/>
+                    <available property="is_mrc_avaliable" file="@{dest}/${basename}.mrc"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_mrc_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <gunzip src="@{filename}" dest="@{dest}/${basename}.mrc"/>
+                            <if>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
+                                <then>
+                                    <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/> 
+                                </then>
+                            </if>
+                        </then>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
     
 </project>
