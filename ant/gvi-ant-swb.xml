@@ -218,7 +218,7 @@
                         </not>
                         <then>
                             <copy file="@{filename}" todir="@{dest}"/>
-                            <replace file="@{dest}/${basename}.txt" token="PPN:" value="(DE-576)"/>
+                            <replace file="@{dest}/${basename}.txt" token="PPN:" value="(DE-627)"/>
                             <move file="@{dest}/${basename}.txt" tofile="${file.target}"/>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
@@ -268,7 +268,7 @@
                             </copy>
                             <replaceregexp file="${file.target}"
                                    match="^[0-9]{11}A(.*)"
-                                   replace="(DE-576)\1"
+                                   replace="(DE-627)\1"
                                    byline="true"/>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
