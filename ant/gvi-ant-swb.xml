@@ -50,7 +50,7 @@
                 <include name="TA-MARC-verbund_l-${date.download}*.tar.gz"/>
                 <include name="WA-MARC-verbund-${date.download}*.tar.gz"/>
                 <include name="od_del_bsz-tit_${date.download}*"/>
-                <include name="LOEPPN_v-${date.download}"/>
+                <include name="LOEKXP_v-${date.download}"/>
             </fileset>
         </ftp>
         <ftp action="get"
@@ -62,7 +62,7 @@
              newer="true"
              preservelastmodified="true">
             <fileset dir="${update.input.dir}">
-                <include name="LOEPPN-${date.download}"/>
+                <include name="LOEKXP-${date.download}"/>
             </fileset>
         </ftp>
         <available property="updates.found" file="${update.input.dir}"/>
@@ -241,15 +241,15 @@
         <sequential>
             <for param="filename">
                 <path>
-                    <fileset dir="@{src}" includes="LOEPPN*"/>
+                    <fileset dir="@{src}" includes="LOEKXP*"/>
                 </path>
                 <sequential>
                     <var name="is_loeppn_avaliable" unset="true"/>
                     <var name="file.date" unset="true"/>
                     <var name="file.name" unset="true"/>
                     <var name="file.prefix" unset="true"/>
-                    <propertyregex property="file.prefix" input="@{filename}" regexp="(LOEPPN(_v)?)-([0-9_]*)" select="\1" />
-                    <propertyregex property="file.date"   input="@{filename}" regexp="(LOEPPN(_v)?)-([0-9_]*)" select="\3" />
+                    <propertyregex property="file.prefix" input="@{filename}" regexp="(LOEKXP(_v)?)-([0-9_]*)" select="\1" />
+                    <propertyregex property="file.date"   input="@{filename}" regexp="(LOEKXP(_v)?)-([0-9_]*)" select="\3" />
                     <echo></echo>
                     <property name="file.name" value="${file.date}-${file.prefix}"/>
                     <var name="file.target" value="@{dest}/${file.name}.txt"/>
