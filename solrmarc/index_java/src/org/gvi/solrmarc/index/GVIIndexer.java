@@ -732,23 +732,6 @@ public class GVIIndexer extends SolrIndexer {
       return findConsortium(record, getCatalog(record));
    }
 
-   public Set<String> getInstitutionID(final Record record) {
-      Set<String> raw = getFieldList(record, "924b");
-      Set<String> ret = new HashSet<String>();
-      if (raw == null) return new HashSet<String>();
-      for (String isil : raw) {
-         ret.add(normalizeIsil(isil));
-      }
-      return ret;
-   }
-
-   private String normalizeIsil(String full) {
-      if (!full.matches("\\w{2,3}-.*")) return full; // no ISIL
-      int firstDashPos = full.indexOf('-');
-      int secondDashPos = full.indexOf('-', firstDashPos + 1);
-      return (secondDashPos < 0) ? full : full.substring(0, secondDashPos);
-   }
-
    public String getRecordID(final Record record) {
       return "(" + getCatalog(record) + ")" + getLocalId(record);
    }
