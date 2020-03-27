@@ -32,8 +32,11 @@
                 <include name="*.txt"/>
             </fileset>
         </move>
-        <move file="${input.dir}/ready_to_index"
+        <copy file="${input.dir}/ready_to_index"
               tofile="${input.dir}/ready_to_index.done"
+              preservelastmodified="true"
+              overwrite="true"
+              force="true"
               failonerror="false"/>
     </target>
     
