@@ -748,6 +748,7 @@ public class GVIIndexer extends SolrIndexer {
    public String getMarcTypByConsortium(final Record record) {
       String catalog = getCatalog(record);
       if ((catalog == null) || (catalog.length() < 4)) return "GviMarcUnknown";
+      if ((catalog.equals("AT-OBV"))) return "GviMarcATOBV";
       return "GviMarcDE" + catalog.substring(3);
    }
 
@@ -759,6 +760,9 @@ public class GVIIndexer extends SolrIndexer {
       String field040a = getFirstFieldVal(record, "040a");
       if (collection.equals("ZDB")) {
          catalog = "DE-600";
+      }
+      else if (collection.equals("OBV")) {
+         catalog = "AT-OBV";
       }
       else if (field003 != null) {
          if (field003.length() > 6) {
@@ -782,6 +786,9 @@ public class GVIIndexer extends SolrIndexer {
       Set<String> consortiumSet = new HashSet<>();
       String collection = System.getProperty("data.collection", "UNDEFINED");
       switch (catalog) {
+         case "AT-OBV":
+              consortiumSet.add("AT-OBV");
+              break;
          case "DE-101": // DNB
             if (collection.equals("ZDB")) {
                consortiumSet.add("DE-600");
