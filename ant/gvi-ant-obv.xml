@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Targets to index OBV data">
+    
+    <property file="gvi-ant-obv.local.properties"/>
+    <import file="gvi-ant-base.xml"/>
+    <import file="gvi-solrmarc-ant.xml"/>
+
+    <target name="-init">
+        <tstamp>
+            <format property="time.stamp" pattern="yyyyMMdd"/>
+        </tstamp>
+        <property name="collection"     value="OBV" />
+        <property name="input.dir"      location="${gvi.input.dir}/obv/current" />
+        <property name="work.dir"       location="${gvi.work.dir}/obv" />
+        <property name="full.input.dir" location="${input.dir}/full" />
+        <property name="full.work.dir"  location="${work.dir}/full/work"/>
+        <property name="full.log.dir"   location="${work.dir}/full/log"/>
+        <property name="update.base.dir"  location="${input.dir}/update"/>
+        <property name="update.input.dir" location="${update.base.dir}"/>
+        <property name="update.work.dir"  location="${work.dir}/update"/>
+        <property name="update.log.dir"   location="${work.dir}/update/log/"/>
+    </target>
+    
+    <import file="gvi-ant-base.xml"/>
+
+    <target name="-index-full">
+        <path id="filePath">
+            <fileset dir="${full.input.dir}" includes="*.mrc"/>
+        </path>
+        <pathconvert pathsep=" " refid="filePath" property="fileList"/>
+        <echo>FileList: ${fileList}</echo>
+        <for param="file">
+           <path refid="filePath"/>
+           <sequential>
+               <solrmarc-index-file file="@{file}" logdir="${full.log.dir}"/>
+           </sequential>
+        </for>                    
+    </target>
+    
+    <target name="-index-updates">
+        <fail>Target not implemented !</fail>
+    </target>
+
+    <target name="-index-all-updates">
+        <fail>Target not implemented !</fail>
+    </target>
+        
+</project>
