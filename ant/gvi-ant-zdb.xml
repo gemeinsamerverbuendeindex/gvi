@@ -30,7 +30,14 @@
     </target>
     
     <target name="-index-updates">
-        <fail>Target not implemented !</fail>
+        <zdb-unpack-index-dir src="${update.input.dir}" 
+                          dest="${update.work.dir}" 
+                          logdir="${update.log.dir}" 
+                          indexUnpacked="true"/>
+        <zdb-unpack-delete-dir src="${update.input.dir}" 
+                          dest="${update.work.dir}" 
+                          logdir="${update.log.dir}" 
+                          indexUnpacked="true"/>
     </target>
 
     <target name="-index-all-updates">
@@ -57,7 +64,7 @@
             <for param="filename">
                 <path>
                     <fileset dir="@{src}">
-                        <include name="zdb_zdb_update_*.mrc.gz"/>
+                        <include name="zdb_zdb_update*.mrc.gz"/>
                     </fileset>
                 </path>
                 <sequential>
@@ -76,6 +83,50 @@
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
                                     <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/> 
+                                </then>
+                            </if>
+                        </then>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="zdb-unpack-delete-dir">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="indexUnpacked" default="false"/>
+        <sequential>
+            <mkdir dir="@{dest}"/>
+            <mkdir dir="@{logdir}"/>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}" includes="zdb_deletes_*.idns.gz"/>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".gz"/>
+                    <var name="file.name" unset="true"/>
+                    <property name="file.name" value="${basename}.txt"/>
+                    <var name="file.target" value="@{dest}/${file.name}"/>
+                    <var name="is_del_avaliable" unset="true"/>
+                    <available property="is_del_avaliable" file="${file.target}"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_del_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <gunzip src="@{filename}" dest="@{dest}/${basename}"/>
+                            <move file="@{dest}/${basename}" tofile="${file.target}">
+                                <filterchain>
+                                    <prefixlines prefix="(DE-600)"/>
+                                </filterchain>
+                            </move>
+                            <if>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
+                                <then>
+                                    <solrmarc-delete-file file="${file.target}" logdir="@{logdir}"/>
                                 </then>
                             </if>
                         </then>

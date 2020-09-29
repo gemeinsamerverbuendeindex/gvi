@@ -28,7 +28,10 @@
     </target>
     
     <target name="-index-updates">
-        <fail>Target not implemented !</fail>
+        <dnb-unpack-index-dir src="${update.input.dir}" 
+                          dest="${update.work.dir}" 
+                          logdir="${update.log.dir}" 
+                          indexUnpacked="true"/>
     </target>
 
     <target name="-index-all-updates">
@@ -55,7 +58,7 @@
             <for param="filename">
                 <path>
                     <fileset dir="@{src}">
-                        <include name="dnb_dnb_update_*.mrc.gz"/>
+                        <include name="dnb_dnb_update*.mrc.gz"/>
                     </fileset>
                 </path>
                 <sequential>

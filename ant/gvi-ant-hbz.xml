@@ -31,6 +31,7 @@
 
     <target name="download-updates-hbz" depends="init" unless="download.skip">
         <echo>Checking updates for ${date.download}</echo>
+        <mkdir dir="${update.input.dir}"/>
         <ftp action="get"
              server="${ftp.server}"
              userid="${ftp.userid}"
@@ -44,7 +45,8 @@
                 <include name="${date.download}.gvi.d.*.lst.gz"/>
             </fileset>
         </ftp>
-        <available property="updates.found" file="${update.input.dir}"/>
+        <fileset dir="${update.input.dir}" id="update.fileset"/>
+        <pathconvert refid="update.fileset" property="updates.found" setonempty="false"/>
     </target>
     
     <target name="-index-updates" depends="download-updates-hbz" if="updates.found">

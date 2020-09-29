@@ -732,23 +732,6 @@ public class GVIIndexer extends SolrIndexer {
       return findConsortium(record, getCatalog(record));
    }
 
-   public Set<String> getInstitutionID(final Record record) {
-      Set<String> raw = getFieldList(record, "924b");
-      Set<String> ret = new HashSet<String>();
-      if (raw == null) return new HashSet<String>();
-      for (String isil : raw) {
-         ret.add(normalizeIsil(isil));
-      }
-      return ret;
-   }
-
-   private String normalizeIsil(String full) {
-      if (!full.matches("\\w{2,3}-.*")) return full; // no ISIL
-      int firstDashPos = full.indexOf('-');
-      int secondDashPos = full.indexOf('-', firstDashPos + 1);
-      return (secondDashPos < 0) ? full : full.substring(0, secondDashPos);
-   }
-
    public String getRecordID(final Record record) {
       return "(" + getCatalog(record) + ")" + getLocalId(record);
    }
@@ -765,6 +748,7 @@ public class GVIIndexer extends SolrIndexer {
    public String getMarcTypByConsortium(final Record record) {
       String catalog = getCatalog(record);
       if ((catalog == null) || (catalog.length() < 4)) return "GviMarcUnknown";
+      if ((catalog.equals("AT-OBV"))) return "GviMarcATOBV";
       return "GviMarcDE" + catalog.substring(3);
    }
 
@@ -776,6 +760,9 @@ public class GVIIndexer extends SolrIndexer {
       String field040a = getFirstFieldVal(record, "040a");
       if (collection.equals("ZDB")) {
          catalog = "DE-600";
+      }
+      else if (collection.equals("OBV")) {
+         catalog = "AT-OBV";
       }
       else if (field003 != null) {
          if (field003.length() > 6) {
@@ -799,6 +786,9 @@ public class GVIIndexer extends SolrIndexer {
       Set<String> consortiumSet = new HashSet<>();
       String collection = System.getProperty("data.collection", "UNDEFINED");
       switch (catalog) {
+         case "AT-OBV":
+              consortiumSet.add("AT-OBV");
+              break;
          case "DE-101": // DNB
             if (collection.equals("ZDB")) {
                consortiumSet.add("DE-600");

@@ -36,6 +36,7 @@
     
     <target name="download-updates-swb" depends="-init" unless="download.skip">
         <echo>Checking updates for ${date.download} in ${update.input.dir}</echo>
+        <mkdir dir="${update.input.dir}"/>
         <ftp action="get"
              server="${ftp.server}"
              userid="${ftp.userid}"
@@ -65,7 +66,8 @@
                 <include name="LOEKXP-${date.download}"/>
             </fileset>
         </ftp>
-        <available property="updates.found" file="${update.input.dir}"/>
+        <fileset dir="${update.input.dir}" id="update.fileset"/>
+        <pathconvert refid="update.fileset" property="updates.found" setonempty="false"/>
     </target>
 
     <!-- Neue Updates auspacken und gleichzeitig indexieren -->
