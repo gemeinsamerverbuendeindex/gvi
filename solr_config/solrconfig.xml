@@ -51,44 +51,144 @@
         <useColdSearcher>false</useColdSearcher>
         <listener event="firstSearcher" class="solr.QuerySenderListener">
             <arr name="queries">
-                <lst> 
+                <lst>
                     <str name="q">*:*</str>
-<!--
                     <str name="start">0</str>
-                    <str name="rows">10</str>
+                    <str name="rows">0</str>
+                    <str name="defType">edismax</str>
+                    <str name="mm">0</str>
+                    <str name="q.op">AND</str>
+                    <str name="qf">
+                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                    </str>
                     <str name="facet">true</str>
+                    <str name="facet.mincount">10</str>
+                    <str name="facet.threads">4</str>
                     <str name="facet.field">author_facet</str>
-                    <str name="facet.field">subject_all_facet</str>
                     <str name="facet.field">subject_genre_facet</str>
                     <str name="facet.field">subject_topic_facet</str>
-                    <str name="facet.field">subject_persname_facet</str>
-                    <str name="facet.field">subject_corpname_facet</str>
-                    <str name="facet.field">subject_meetname_facet</str>
-                    <str name="facet.field">subject_chrono_facet</str>
-                    <str name="facet.field">subject_geogname_facet</str>
-                    <str name="facet.field">subject_worktitle_facet</str>
                     <str name="facet.field">material_access</str>
-                    <str name="facet.field">material_pubform</str>
                     <str name="facet.field">material_content_type</str>
                     <str name="facet.field">material_media_type</str>
-                    <str name="facet.field">publish_date</str>
+                    <str name="facet.field">material_pubform</str>
                     <str name="facet.field">language</str>
+                    <str name="facet.field">publish_date</str>
                     <str name="facet.field">consortium</str>
                     <str name="facet.field">institution_id</str>
-                    <str name="facet.field">ill_flag</str>
-                    <str name="facet.field">ill_region</str>
-                    <str name="facet.field">ddc</str>
-                    <str name="facet.mincount">1</str>
-                    <str name="facet.method">fc</str>
-                    <str name="facet.threads">1000</str>
--->
+                </lst>
+                <lst>
+                    <str name="q">java</str>
+                    <str name="start">0</str>
+                    <str name="rows">0</str>
+                    <str name="defType">edismax</str>
+                    <str name="mm">0</str>
+                    <str name="q.op">AND</str>
+                    <str name="qf">
+                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                    </str>
+                    <str name="facet">true</str>
+                    <str name="facet.mincount">10</str>
+                    <str name="facet.threads">4</str>
+                    <str name="facet.field">author_facet</str>
+                    <str name="facet.field">subject_genre_facet</str>
+                    <str name="facet.field">subject_topic_facet</str>
+                    <str name="facet.field">material_access</str>
+                    <str name="facet.field">material_content_type</str>
+                    <str name="facet.field">material_media_type</str>
+                    <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">language</str>
+                    <str name="facet.field">publish_date</str>
+                    <str name="facet.field">consortium</str>
+                    <str name="facet.field">institution_id</str>
+                    <str name="group">true</str>
+                    <str name="group.limit">10</str>
+                    <str name="group.field">test_matchkey_3</str>
+                </lst>
+                <lst>
+                    <str name="q">php</str>
+                    <str name="start">0</str>
+                    <str name="rows">0</str>
+                    <str name="defType">edismax</str>
+                    <str name="mm">0</str>
+                    <str name="q.op">AND</str>
+                    <str name="qf">
+                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                    </str>
+                    <str name="facet">true</str>
+                    <str name="facet.mincount">10</str>
+                    <str name="facet.threads">4</str>
+                    <str name="facet.field">author_facet</str>
+                    <str name="facet.field">subject_genre_facet</str>
+                    <str name="facet.field">subject_topic_facet</str>
+                    <str name="facet.field">material_access</str>
+                    <str name="facet.field">material_content_type</str>
+                    <str name="facet.field">material_media_type</str>
+                    <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">language</str>
+                    <str name="facet.field">publish_date</str>
+                    <str name="facet.field">consortium</str>
+                    <str name="facet.field">institution_id</str>
+                    <str name="group">true</str>
+                    <str name="group.limit">10</str>
+                    <str name="group.field">test_matchkey_3</str>
                 </lst>
             </arr>
         </listener>
         <listener event="newSearcher" class="solr.QuerySenderListener">
             <arr name="queries">
-                <lst> 
+                <lst>
                     <str name="q">*:*</str>
+                    <str name="start">0</str>
+                    <str name="rows">0</str>
+                    <str name="defType">edismax</str>
+                    <str name="mm">0</str>
+                    <str name="q.op">AND</str>
+                    <str name="qf">
+                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                    </str>
+                    <str name="facet">true</str>
+                    <str name="facet.mincount">10</str>
+                    <str name="facet.threads">4</str>
+                    <str name="facet.field">author_facet</str>
+                    <str name="facet.field">subject_genre_facet</str>
+                    <str name="facet.field">subject_topic_facet</str>
+                    <str name="facet.field">material_access</str>
+                    <str name="facet.field">material_content_type</str>
+                    <str name="facet.field">material_media_type</str>
+                    <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">language</str>
+                    <str name="facet.field">publish_date</str>
+                    <str name="facet.field">consortium</str>
+                    <str name="facet.field">institution_id</str>
+                </lst>
+                <lst> 
+                    <str name="q">java</str>
+                    <str name="start">0</str>
+                    <str name="rows">0</str>
+                    <str name="defType">edismax</str>
+                    <str name="mm">0</str>
+                    <str name="q.op">AND</str>
+                    <str name="qf">
+                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                    </str>
+                    <str name="facet">true</str>
+                    <str name="facet.mincount">10</str>
+                    <str name="facet.threads">4</str>
+                    <str name="facet.field">author_facet</str>
+                    <str name="facet.field">subject_genre_facet</str>
+                    <str name="facet.field">subject_topic_facet</str>
+                    <str name="facet.field">material_access</str>
+                    <str name="facet.field">material_content_type</str>
+                    <str name="facet.field">material_media_type</str>
+                    <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">language</str>
+                    <str name="facet.field">publish_date</str>
+                    <str name="facet.field">consortium</str>
+                    <str name="facet.field">institution_id</str>
+                    <str name="group">true</str>
+                    <str name="group.limit">10</str>
+                    <str name="group.field">test_matchkey_3</str>
+                </lst>
 <!--
                     <str name="start">0</str>
                     <str name="rows">10</str>
@@ -118,7 +218,6 @@
                     <str name="facet.method">fc</str>
                     <str name="facet.threads">1000</str>
 -->
-                </lst>
             </arr>
         </listener>
     </query>
