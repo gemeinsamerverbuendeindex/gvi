@@ -79,26 +79,33 @@ public class GVIIndexer extends SolrIndexer {
    private synchronized void init() throws Exception {
       if (isInitialized) return;
       isInitialized = true;
-      if (System.getProperty("GviIndexer.skipBigFiles").equals("true")) {
-         LOG.warn("Skip loading of big property files (GND synonyms and cluster mappings). Only applicable for tests");
-         return;
+      
+      if (System.getProperty("GviIndexer.skipSynonyms").equals("true")) {
+        LOG.warn("Skip loading of GND synonyms.");
+      } else {
+        if (LOG.isInfoEnabled()) {
+           LOG.info("Loading of GND synonymes started at: " + LocalDateTime.now().toString());
+           listMem();
+        }
+        String gndDir = System.getProperty("gnd.configdir", ".");
+        gndSynonymMap.load(new FileInputStream(new File(gndDir, gndSynonymFile)));
+        if (LOG.isInfoEnabled()) {
+           LOG.info("Loading of GND synonymes finished at: " + LocalDateTime.now().toString());
+           listMem();
+        }
       }
-
-      if (LOG.isInfoEnabled()) {
-         listMem();
-         LOG.info("Loading of gnd synonymes started at: " + LocalDateTime.now().toString());
-      }
-      String gndDir = System.getProperty("gnd.configdir", ".");
-      gndSynonymMap.load(new FileInputStream(new File(gndDir, gndSynonymFile)));
-      if (LOG.isInfoEnabled()) {
-         LOG.info("Loading of gnd synonymes finished at: " + LocalDateTime.now().toString());
-         listMem();
-         LOG.info("Loading of cluster map started at: " + LocalDateTime.now().toString());
-      }
-      kobvClusterInfoMap.load(new FileInputStream(kobvClusterInfoFile));
-      if (LOG.isInfoEnabled()) {
-         LOG.info("Loading of cluster map finished at: " + LocalDateTime.now().toString());
-         listMem();
+      if (System.getProperty("GviIndexer.skipClusterMap").equals("true")) {
+        LOG.warn("Skip loading of cluster map");
+      } else {
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Loading of cluster map started at: " + LocalDateTime.now().toString());
+            listMem();
+        }
+        kobvClusterInfoMap.load(new FileInputStream(kobvClusterInfoFile));
+        if (LOG.isInfoEnabled()) {
+           LOG.info("Loading of cluster map finished at: " + LocalDateTime.now().toString());
+           listMem();
+        }
       }
    }
 
