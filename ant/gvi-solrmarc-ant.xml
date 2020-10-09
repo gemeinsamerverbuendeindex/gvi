@@ -81,8 +81,8 @@
         <attribute name="logbasename"    default="solrmarc"/>
         <attribute name="action"         default=""/><!-- can be -print, -del, or empty -->
         <attribute name="solrURL"        default="${solr.baseurl}/${solr.core}"/>
-        <attribute name="skipSynonyms"   default="${solrmarc.skipBigFiles}"/>
-        <attribute name="skipClusterMap" default="${solrmarc.skipBigFiles}"/>
+        <attribute name="skipSynonyms"   default="${solrmarc.skipSynonyms}"/>
+        <attribute name="skipClusterMap" default="${solrmarc.skipClusterMap}"/>
         <sequential>
             <stopwatch name="solrmarc-run-timer"/>
             <var name="action"   value="@{action} @{file}"/>
