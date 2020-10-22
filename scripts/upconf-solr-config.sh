@@ -3,8 +3,6 @@
 BINDIR=$(dirname $(readlink -f $0))
 
 ZKCLI=/opt/solr/server/scripts/cloud-scripts/zkcli.sh
-CONFDIR=/opt/gvi/solr_config
-#ZKHOST=localhost:2181
 ZKHOST=maloja.bsz-bw.de:2181,simplon.bsz-bw.de:2181,albula.bsz-bw.de:2181
 
 . ${BINDIR}/$1 
