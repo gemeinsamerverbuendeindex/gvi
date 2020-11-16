@@ -65,6 +65,7 @@
                 <path>
                     <fileset dir="@{src}">
                         <include name="zdb_zdb_update*.mrc.gz"/>
+                        <include name="zdb_updates_*.mrc.gz"/>
                     </fileset>
                 </path>
                 <sequential>

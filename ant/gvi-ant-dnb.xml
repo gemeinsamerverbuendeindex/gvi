@@ -59,6 +59,7 @@
                 <path>
                     <fileset dir="@{src}">
                         <include name="dnb_dnb_update*.mrc.gz"/>
+                        <include name="dnb_updates_*.mrc.gz"/>
                     </fileset>
                 </path>
                 <sequential>
