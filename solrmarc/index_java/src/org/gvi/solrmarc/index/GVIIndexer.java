@@ -740,7 +740,16 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public String getRecordID(final Record record) {
-      return "(" + getCatalog(record) + ")" + getLocalId(record);
+       String catalog = getCatalog(record);
+       String localId = getLocalId(record);
+       if (catalog.equals("AT-OBV")) {
+           localId = getFirstFieldVal(record, "009");
+           if (localId == null)
+               localId = getFirstFieldVal(record, "001");
+           else if (localId.length() == 0)
+               localId = getFirstFieldVal(record, "001");
+       }
+      return "(" + catalog + ")" + localId;
    }
 
    /**
