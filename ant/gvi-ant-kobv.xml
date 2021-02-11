@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Targets to index B3Kat data"
-         basedir="." 
-         default="index-full-b3kat" >
+<project name="Targets to index KOBV data">
     
-    <property file="gvi-ant-b3kat.local.properties"/>
+    <property file="gvi-ant-kobv.local.properties"/>
     
     <import file="gvi-ant-base.xml"/>
     <import file="gvi-solrmarc-ant.xml"/>
@@ -12,9 +10,9 @@
         <tstamp>
             <format property="time.stamp" pattern="yyMMdd"/>
         </tstamp>
-        <property name="collection"       value="B3KAT"/>
-        <property name="input.dir"        location="${gvi.input.dir}/kobv_b3_kat"/>
-        <property name="work.dir"         location="${gvi.work.dir}/kobv_b3_kat"/>
+        <property name="collection"       value="KOBV"/>
+        <property name="input.dir"        location="${gvi.input.dir}/kobv"/>
+        <property name="work.dir"         location="${gvi.work.dir}/kobv"/>
         <property name="full.input.dir"   location="${input.dir}/current/full"/>
         <property name="full.work.dir"    location="${work.dir}/full/work"/>
         <property name="full.log.dir"     location="${work.dir}/full/log"/>
@@ -24,7 +22,7 @@
         <property name="update.log.dir"   location="${work.dir}/update/log/"/>
     </target>
     
-    <target name="copy-updates-b3kat" depends="-init">
+    <target name="copy-updates-kobv" depends="-init">
         <mkdir dir="${update.input.dir}"/>
         <move todir="${update.input.dir}">
             <fileset dir="${input.dir}">
@@ -40,7 +38,7 @@
               failonerror="false"/>
     </target>
     
-    <target name="-index-updates" depends="copy-updates-b3kat">
+    <target name="-index-updates" depends="copy-updates-kobv">
         <solrmarc-index-dir  src="${update.input.dir}" logdir="${update.log.dir}" suffix=".xml"/>
         <solrmarc-delete-dir src="${update.input.dir}" logdir="${update.log.dir}" suffix=".txt"/>
     </target>

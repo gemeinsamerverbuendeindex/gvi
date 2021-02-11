@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Targets to index BVB data">
+    
+    <property file="gvi-ant-bvb.local.properties"/>
+    
+    <import file="gvi-ant-base.xml"/>
+    <import file="gvi-solrmarc-ant.xml"/>
+
+    <target name="-init">
+        <tstamp>
+            <format property="time.stamp" pattern="yyMMdd"/>
+        </tstamp>
+        <property name="collection"       value="BVB"/>
+        <property name="input.dir"        location="${gvi.input.dir}/bvb"/>
+        <property name="work.dir"         location="${gvi.work.dir}/bvb"/>
+        <property name="full.input.dir"   location="${input.dir}/current/full"/>
+        <property name="full.work.dir"    location="${work.dir}/full/work"/>
+        <property name="full.log.dir"     location="${work.dir}/full/log"/>
+        <property name="update.base.dir"  location="${input.dir}/current/update"/>
+        <property name="update.input.dir" location="${update.base.dir}/${time.stamp}"/>
+        <property name="update.work.dir"  location="${work.dir}/update"/>
+        <property name="update.log.dir"   location="${work.dir}/update/log/"/>
+    </target>
+    
+    <target name="copy-updates-bvb" depends="-init">
+        <mkdir dir="${update.input.dir}"/>
+        <move todir="${update.input.dir}">
+            <fileset dir="${input.dir}">
+                <include name="*.xml"/>
+                <include name="*.txt"/>
+            </fileset>
+        </move>
+        <copy file="${input.dir}/ready_to_index"
+              tofile="${input.dir}/ready_to_index.done"
+              preservelastmodified="true"
+              overwrite="true"
+              force="true"
+              failonerror="false"/>
+    </target>
+    
+    <target name="-index-updates" depends="copy-updates-bvb">
+        <solrmarc-index-dir  src="${update.input.dir}" logdir="${update.log.dir}" suffix=".xml"/>
+        <solrmarc-delete-dir src="${update.input.dir}" logdir="${update.log.dir}" suffix=".txt"/>
+    </target>
+    
+    <target name="-index-all-updates">
+        <delete>
+            <fileset dir="${update.log.dir}" includes="*.log" erroronmissingdir="false"/>
+        </delete>
+        <solrmarc-index-dir  src="${update.base.dir}" logdir="${update.log.dir}" suffix=".xml"/>
+        <solrmarc-delete-dir src="${update.base.dir}" logdir="${update.log.dir}" suffix=".txt"/>
+    </target>
+    
+    <target name="-index-full">
+        <delete>
+            <fileset dir="${full.log.dir}" includes="*.log" erroronmissingdir="false"/>
+        </delete>
+        <solrmarc-index-dir  src="${full.input.dir}" logdir="${full.log.dir}" suffix=".xml"/>
+        <solrmarc-delete-dir src="${full.input.dir}" logdir="${full.log.dir}" suffix=".txt"/>                
+    </target>
+	    
+</project>
