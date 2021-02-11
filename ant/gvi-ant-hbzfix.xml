@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Targets to index HBZ data">
+    
+    <property file="gvi-ant-hbzfix.local.properties"/>
+    
+    <import file="gvi-ant-base.xml"/>
+    <import file="gvi-solrmarc-ant.xml"/>
+
+    <target name="-init">
+        <tstamp>
+            <format property="time.stamp" pattern="yyyy-MM-dd"/>
+        </tstamp>
+        <tstamp>
+            <format property="date.download" pattern="YYYYMMdd" unit="day"/>
+        </tstamp>
+        <property name="collection"       value="HBZFIX"/>
+        <property name="input.dir"        location="${gvi.input.dir}/hbzfix/current"/>
+        <property name="work.dir"         location="${gvi.work.dir}/hbzfix"/>
+        <property name="full.input.dir"   location="${input.dir}/full"/>
+        <property name="full.work.dir"    location="${work.dir}/full"/>
+        <property name="full.log.dir"     location="${work.dir}/full/log"/>
+        <property name="update.base.dir"  location="${input.dir}/update"/>
+        <property name="update.input.dir" location="${update.base.dir}/${time.stamp}"/>
+        <property name="update.work.dir"  location="${work.dir}/update"/>
+        <property name="update.log.dir"   location="${work.dir}/update/log/"/>
+        <property name="ftp.server"       value="localhost"/>
+        <property name="ftp.userid"       value="user"/>
+        <property name="ftp.password"     value="password"/>
+        <property name="ftp.remotedir"    value="/"/>
+    </target>
+
+    <target name="download-updates-hbzfix" depends="init" unless="download.skip">
+        <echo>Checking updates for ${date.download}</echo>
+        <mkdir dir="${update.input.dir}"/>
+        <ftp action="get"
+             server="${ftp.server}"
+             userid="${ftp.userid}"
+             password="${ftp.password}"
+             remotedir="${ftp.remotedir}"
+             verbose="true"
+             newer="true"
+             preservelastmodified="true">
+            <fileset dir="${update.input.dir}">
+                <include name="${date.download}.gvi.i.*.mrc.gz"/>
+                <include name="${date.download}.gvi.d.*.lst.gz"/>
+            </fileset>
+        </ftp>
+        <fileset dir="${update.input.dir}" id="update.fileset"/>
+        <pathconvert refid="update.fileset" property="updates.found" setonempty="false"/>
+    </target>
+    
+    <target name="-index-updates" depends="download-updates-hbzfix" if="updates.found">
+        <hbz-unpack-index-dir src="${update.input.dir}" 
+                              dest="${update.work.dir}" 
+                              logdir="${update.log.dir}" 
+                              indexUnpacked="true"/>
+        <hbz-unpack-delete-dir src="${update.input.dir}" 
+                               dest="${update.work.dir}" 
+                               logdir="${update.log.dir}" 
+                               indexUnpacked="true"/>
+    </target>
+
+    <target name="-index-all-updates">
+        <delete>
+            <fileset dir="${update.log.dir}"  includes="*" erroronmissingdir="false"/>
+            <fileset dir="${update.work.dir}" includes="*" erroronmissingdir="false"/>
+        </delete>
+        <for param="dir">
+            <path>
+                <dirset dir="${update.base.dir}" includes="*"/>
+            </path>
+            <sequential>
+                <echo>Datadir @{dir}</echo>
+                <hbzoebi-unpack-index-dir
+                    src="@{dir}" 
+                    dest="${update.work.dir}" 
+                    logdir="${update.log.dir}" 
+                    indexUnpacked="false"/>
+                <hbzoebi-unpack-delete-dir
+                    src="@{dir}" 
+                    dest="${update.work.dir}"
+                    logdir="${update.log.dir}" 
+                    indexUnpacked="false"/>                
+            </sequential>
+        </for>
+        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}" suffix=".marcxml"/>
+        <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}"/>
+    </target>
+    
+    <target name="-index-full">
+        <delete>
+            <fileset dir="${full.log.dir}"  includes="*" erroronmissingdir="false"/>
+            <fileset dir="${full.work.dir}" includes="*" erroronmissingdir="false"/>
+        </delete>
+        <hbzoebi-unpack-index-dir src="${full.input.dir}" 
+                              dest="${full.work.dir}" 
+                              logdir="${full.log.dir}" 
+                              indexUnpacked="false"/> 
+        <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" suffix=".xml"/> 
+    </target>
+    
+    <!-- Macros for HBZ -->
+    <macrodef name="hbzfix-unpack-index-dir">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="indexUnpacked" default="false"/>
+        <sequential>
+            <mkdir dir="@{dest}"/>
+            <mkdir dir="@{logdir}"/>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}">
+                        <include name="*.marcxml"/>
+                    </fileset>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".marcxml"/>
+                    <echo>Basename=${basename}</echo>
+                    <var name="is_mrc_avaliable" unset="true"/>
+                    <available property="is_mrc_avaliable" file="@{dest}/${basename}.mrc"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_mrc_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <gunzip src="@{filename}" dest="@{dest}/${basename}.mrc"/>
+                            <if>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
+                                <then>
+                                    <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/> 
+                                </then>
+                            </if>
+                        </then>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="hbz-unpack-delete-dir">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <attribute name="logdir"/>
+        <attribute name="indexUnpacked" default="false"/>
+        <sequential>
+            <mkdir dir="@{dest}"/>
+            <mkdir dir="@{logdir}"/>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}" includes="*.gvi.d.*.lst.gz"/>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".lst.gz"/>
+                    <echo>Basename=${basename}</echo>
+                    <var name="is_del_avaliable" unset="true"/>
+                    <available property="is_del_avaliable" file="@{dest}/${basename}.lst"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_del_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <gunzip src="@{filename}" dest="@{dest}/${basename}.lst"/>
+                            <solr-delete-file-hbz file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
+                            <if>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
+                                <then>
+                                    <solr-delete-file-hbz file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
+                                </then>
+                            </if>
+                        </then>
+                    </if>
+                </sequential>
+            </for>
+        </sequential>
+    </macrodef>
+    
+    <macrodef name="solr-delete-file-hbz" description="Delete records by other_id" >
+        <attribute name="file"/>
+        <attribute name="logdir"/>
+        <attribute name="solrmarc.config" default="${solrmarc.config}"/> 
+        <attribute name="solr.indexer"    default="${solr.indexer}"/>
+        <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
+        <attribute name="solr.core"       default="${solr.core}"/>
+        <sequential>
+            <condition property="fileSizeGreaterNull">
+                <length file="@{file}" when="greater" length="0" />                
+            </condition>
+            <if>
+                <equals arg1="${fileSizeGreaterNull}" arg2="true"/>
+                <then>                    
+                    <var name="basename" unset="true"/>	   
+                    <basename property="basename" file="@{file}" suffix=".txt"/>
+                    <echo>Deleting from Index @{file}</echo>
+                    <build-delete-by-query-file src="@{file}" dest="@{file}.batch"/>
+                    <solr-exec-batch file="@{file}.batch" response-property="msg"/>
+                    <echo>Solr Result: ${msg}</echo>
+                </then>  
+            </if>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="build-delete-by-query-file">
+        <attribute name="src"/>
+        <attribute name="dest"/>
+        <sequential>
+            <concat destfile="@{dest}.tmp">
+                <path path="@{src}"/>
+                <filterchain>
+                    <tokenfilter>
+                        <replacestring from="(DE-605)" to="other_id:\(DE-605\)"/>
+                        <trim/>
+                    </tokenfilter>
+                    <prefixlines prefix="&lt;query>"/>
+                    <suffixlines suffix="&lt;/query>"/>    
+                </filterchain>
+            </concat>
+            <concat destfile="@{dest}">
+                <path path="@{dest}.tmp"/>
+                <header>&lt;?xml version="1.0" encoding="UTF-8"?>
+                &lt;delete>
+                </header>
+                <footer>&lt;/delete>
+                </footer>
+                <filterchain>
+                    <tokenfilter>
+                        <trim/>
+                    </tokenfilter>
+                </filterchain>
+            </concat>
+            <delete file="@{dest}.tmp"/>
+        </sequential>
+    </macrodef>
+    
+</project>
