@@ -139,7 +139,7 @@
         </sequential>
     </macrodef>
     
-    <macrodef name="hbz-unpack-delete-dir">
+    <macrodef name="hbzfix-unpack-delete-dir">
         <attribute name="src"/>
         <attribute name="dest"/>
         <attribute name="logdir"/>
