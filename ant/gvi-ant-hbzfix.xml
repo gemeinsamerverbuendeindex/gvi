@@ -50,11 +50,11 @@
     </target>
     
     <target name="-index-updates" depends="download-updates-hbzfix" if="updates.found">
-        <hbz-unpack-index-dir src="${update.input.dir}" 
+        <hbzfix-unpack-index-dir src="${update.input.dir}" 
                               dest="${update.work.dir}" 
                               logdir="${update.log.dir}" 
                               indexUnpacked="true"/>
-        <hbz-unpack-delete-dir src="${update.input.dir}" 
+        <hbzfix-unpack-delete-dir src="${update.input.dir}" 
                                dest="${update.work.dir}" 
                                logdir="${update.log.dir}" 
                                indexUnpacked="true"/>
