@@ -71,12 +71,12 @@
             </path>
             <sequential>
                 <echo>Datadir @{dir}</echo>
-                <hbzoebi-unpack-index-dir
+                <hbzfix-unpack-index-dir
                     src="@{dir}" 
                     dest="${update.work.dir}" 
                     logdir="${update.log.dir}" 
                     indexUnpacked="false"/>
-                <hbzoebi-unpack-delete-dir
+                <hbzfix-unpack-delete-dir
                     src="@{dir}" 
                     dest="${update.work.dir}"
                     logdir="${update.log.dir}" 
@@ -92,7 +92,7 @@
             <fileset dir="${full.log.dir}"  includes="*" erroronmissingdir="false"/>
             <fileset dir="${full.work.dir}" includes="*" erroronmissingdir="false"/>
         </delete>
-        <hbzoebi-unpack-index-dir src="${full.input.dir}" 
+        <hbzfix-unpack-index-dir src="${full.input.dir}" 
                               dest="${full.work.dir}" 
                               logdir="${full.log.dir}" 
                               indexUnpacked="false"/> 
