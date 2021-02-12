@@ -92,10 +92,12 @@
             <fileset dir="${full.log.dir}"  includes="*" erroronmissingdir="false"/>
             <fileset dir="${full.work.dir}" includes="*" erroronmissingdir="false"/>
         </delete>
+        <!--
         <hbzfix-unpack-index-dir src="${full.input.dir}" 
                               dest="${full.work.dir}" 
                               logdir="${full.log.dir}" 
                               indexUnpacked="false"/> 
+        -->
         <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" suffix=".xml"/> 
     </target>
     
