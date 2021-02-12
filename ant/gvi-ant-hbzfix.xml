@@ -99,7 +99,7 @@
                               indexUnpacked="false"/> 
         <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" suffix=".xml"/> 
         -->
-        <solrmarc-index-dir src="${full.input.dir}" logdir="${full.log.dir}" suffix=".xml"/> 
+        <solrmarc-index-dir src="${full.input.dir}" logdir="${full.log.dir}" suffix=".marcxml"/> 
     </target>
     
     <!-- Macros for HBZ -->
