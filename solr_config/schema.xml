@@ -124,6 +124,10 @@
     <field name="musical_cast"            type="text" />
     <field name="musical_cast_facet"      type="FacetPlus" />
        
+    <!-- Musikalische Notation -->
+    <field name="musical_notation"        type="text" />
+    <field name="musical_notation_facet"  type="FacetPlus" />
+
     <!-- IDs -->
     <!-- Intenatonale Standart Nummern (isbn, issn, ismn, ...) -->
     <field name="isbn"                    type="ISBN" />
@@ -278,6 +282,7 @@
     <copyField source="subject_*"         dest="subject_all_norm" />
     <copyField source="musical_cast"      dest="musical_cast_facet"/>
     <copyField source="musical_presentation" dest="musical_presentation_facet"/>
+    <copyField source="musical_notation"  dest="musical_notation_facet"/>
     
     <!-- 
     ###########################################
