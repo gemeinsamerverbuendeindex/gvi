@@ -778,7 +778,7 @@ public class GVIIndexer extends SolrIndexer {
          catalog = "DE-600";
       }
       else if (collection.equals("HBZFIX")) {
-         catalog = "HBZFIX";
+         catalog = "DE-605";
       }
       else if (collection.equals("OBV")) {
          catalog = "AT-OBV";
