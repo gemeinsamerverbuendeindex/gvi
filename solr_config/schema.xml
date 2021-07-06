@@ -170,6 +170,11 @@
     
     <!-- Zusammenfassungen: 500a:501a:502a:504a:505a -->
     <field name="summary"                 type="text"/>
+    
+    <!-- Verlinkte Titelanreicherungen aus in Titeldaten referenzierten Quellen -->
+    <field name="has_enrichments"             type="boolean" default="false" />
+    <field name="enrichments"                 type="text"/>
+       
     <!-- 
     ###########################################
     Optionale Felder zur Erweiterung der Kernfunktionalität
