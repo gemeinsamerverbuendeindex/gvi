@@ -43,12 +43,8 @@
     ###########################################-->
     <!-- Vereinfachte SuchFelder für minimalistische Anwendungen -->
     <!-- allfields:
-         Alle Textfelder ohne Normdaten  fehlertolerant aufgearbeitet. -->
-    <field name="allfields"               type="text_stemm" />
-    
-    <!-- allfields_unstemmed:
-         Wie 'allfields' aber ohne Stemming und Phonetik -->
-    <field name="allfields_unstemmed"     type="text" />
+         Alle Textfelder ohne Normdaten fehlertolerant aufgearbeitet. -->
+    <field name="allfields"               type="text" />
     
     <!-- author:
          Alle Verfasser (auch Körperschaften) und beteiligte Personen.
@@ -259,12 +255,7 @@
     ###########################################
     Automatisches mitfüllen von Hilfsfeldern 
     ###########################################-->
-    <copyField source="allfields"         dest="allfields_unstemmed" />
-    
-    <!-- macht Probleme, wenn der Term > 32k Byte ist
-    <copyField source="allfields"         dest="allfields_suggest" />
-    -->
-    
+
     <copyField source="author"            dest="author_facet" />
     <copyField source="author"            dest="author_unstemmed" />
     <copyField source="author"            dest="author_norm" />
