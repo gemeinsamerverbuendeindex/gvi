@@ -312,6 +312,16 @@ public class GVIIndexer extends SolrIndexer {
       return lastName;
    }
    
+   /**
+    * Return always TRUE<br>
+    * Use his method, when just the presence of a marc field is the information. 
+    * @param record
+    * @return
+    */
+   public boolean detectLinkToEnrichment(Record record) {
+      return true;
+   }
+   
    public String matchkeyPublisher(Record record) {
       String publisherKey = "";
       String publisher = getFirstFieldVal(record, "260b:264b:502c");
