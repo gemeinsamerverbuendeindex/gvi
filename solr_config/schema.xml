@@ -168,7 +168,7 @@
     <field name="summary"                 type="text"/>
     
     <!-- Verlinkte Titelanreicherungen aus in Titeldaten referenzierten Quellen -->
-    <field name="has_enrichments"             type="boolean" default="false" />
+    <field name="has_enrichments"             type="Flag" />
     <field name="enrichments"                 type="text"/>
        
     <!-- 
@@ -256,7 +256,9 @@
     ###########################################
     -->
     <!-- Identifikation für Zeitschriftenbände GVI-217 -->
-    <field name="is_journal_volume"           type="boolean" default="false" />
+    <field name="is_journal_volume"           type="Flag" />
+    <!-- Number of libraries that hold at least one item -->
+    <field name="library_count"               type="Count" />
     
     <!-- 
     ###########################################
@@ -322,6 +324,20 @@
                stored="false" 
                required="false" 
                multiValued="true"/>
+
+    <!-- Integer for counters -->
+    <fieldType name="Count" class="solr.TrieIntField" 
+               indexed="true" 
+               stored="true" 
+               default="0" 
+               multiValued="false" />
+               
+    <!-- Boolean for flags -->
+    <fieldType name="Flag" class="solr.BoolField"
+               indexed="true" 
+               stored="true" 
+               default="false" /> 
+
     
     <!-- Für Facetnsuche: Keine Modifikationen. -->
     <fieldType name="Facet" class="solr.StrField" 
