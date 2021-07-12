@@ -257,8 +257,8 @@
     -->
     <!-- Identifikation für Zeitschriftenbände GVI-217 -->
     <field name="is_journal_volume"           type="Flag" />
-    <!-- Number of libraries that hold at least one item -->
-    <field name="library_count"               type="Count" />
+    <!-- Number of libraries that hold at least one item GVI-223-->
+    <field name="library_hold_count"          type="Count" />
     
     <!-- 
     ###########################################
