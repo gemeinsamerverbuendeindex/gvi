@@ -298,6 +298,9 @@
     <copyField source="classification_fivrk"  dest="classification_fivr"/>
     <copyField source="classification_fivsk"  dest="classification_fivs"/>
       
+    <!--  deprecated -->
+    <copyField source="clusterkey"         dest="test_matchkey_3" />
+    
     <!-- 
     ###########################################
     Definition der Feldtypen 
