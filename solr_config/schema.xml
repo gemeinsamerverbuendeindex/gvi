@@ -244,9 +244,17 @@
     <!-- ID, die z.B zum übergeordneten Werk zeigt. Dient der Anzeige der Bände.
          Verlinkt aber natürlich nur innerhalb des Subsets eines Verbundes.
     -->
-    <field name="id_related"                     type="string" />
+    <field name="id_related"                 type="string" />
         
     <!-- Experimentelle (!) Matchkeys -->
+    <field name="clusterkey" type="string" stored="true" multiValued="false" docValues="true" />
+    <dynamicField name="clusterkey_*" type="string" stored="true" multiValued="false" docValues="true" />
+
+    <!-- 
+    ###########################################
+    deprecated | veraltet | wird in nächster Version entfernt
+    ###########################################
+    -->
     <field name="test_matchkey_1" type="string" stored="true" multiValued="false" docValues="true" />
     <field name="test_matchkey_2" type="string" stored="true" multiValued="false" docValues="true" />
     <field name="test_matchkey_3" type="string" stored="true" multiValued="false" docValues="true" />
