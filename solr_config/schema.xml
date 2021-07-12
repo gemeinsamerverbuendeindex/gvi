@@ -252,6 +252,14 @@
 
     <!-- 
     ###########################################
+    prelimary | vorläufig | unter Vorbehalt
+    ###########################################
+    -->
+    <!-- Identifikation für Zeitschriftenbände GVI-217 -->
+    <field name="is_journal_volume"           type="boolean" default="false" />
+    
+    <!-- 
+    ###########################################
     deprecated | veraltet | wird in nächster Version entfernt
     ###########################################
     -->
