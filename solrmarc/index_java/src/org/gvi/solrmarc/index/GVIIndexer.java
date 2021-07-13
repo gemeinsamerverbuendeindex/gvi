@@ -971,6 +971,27 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
+    * Count the number of 924 fields.<br>
+    * <dl>
+    * <dt>History</dt>
+    * <dd>uh, 2021-07-13, initial version</dd>
+    * </dl>
+    * @param record
+    * @return
+    */
+   public int countHoldingLibraries(Record record) {
+      int count = 0;
+      List<VariableField> fields = record.getVariableFields("924");
+      if (fields != null) {
+         Iterator<VariableField> iterator = fields.iterator();
+         while (iterator.hasNext()) {
+            count++;
+         }
+      }
+      return count;      
+   }
+      
+   /**
     * Determine medium of material
     *
     * @param record
