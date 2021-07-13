@@ -202,37 +202,15 @@
     -->
     <field name="language"                   type="Facet" default="und"/>
     
-    <!-- Schlagworte  -->
-    
-    <!-- Sachbegriff -->
+    <!-- Schlagworte nach Bereich -->
     <field name="subject_topic"              type="text_stemm" />
-    <field name="subject_topic_facet"        type="Facet" />
-    
-    <!-- Inhaltliche Form -->
     <field name="subject_genre"              type="text_stemm" />
-    <field name="subject_genre_facet"        type="Facet" />
-    
-    <!-- Regionaler Bezug -->
     <field name="subject_geogname"           type="text_stemm" />
-    <field name="subject_geogname_facet"     type="Facet" />
-    
-    <!-- Zeitlicher Bezug -->
     <field name="subject_chrono"             type="text_stemm" />
-    <field name="subject_chrono_facet"       type="Facet" />
-    
-    <!-- Personen, Köperschaften, Veranstaltungen als Sachbegriff -->
     <field name="subject_persname"           type="text_stemm" />
-    <field name="subject_persname_facet"     type="Facet" />
-    
     <field name="subject_corpname"           type="text_stemm" />
-    <field name="subject_corpname_facet"     type="Facet" />
-    
     <field name="subject_meetname"           type="text_stemm" />
-    <field name="subject_meetname_facet"     type="Facet" />
-    
-    <!-- Werktitel -->
     <field name="subject_worktitle"          type="text_stemm" />
-    <field name="subject_worktitle_facet"    type="Facet" />
     
     <!-- GND-IDs für externe Verlinkung http://de.wikipedia.org/wiki/Wikipedia:BEACON -->
     <!-- Pesonen- und Körperschaftsnormdaten als Verfasser oder Bearbeiter -->
@@ -268,6 +246,17 @@
     <field name="test_matchkey_1" type="string" stored="true" multiValued="false" docValues="true" />
     <field name="test_matchkey_2" type="string" stored="true" multiValued="false" docValues="true" />
     <field name="test_matchkey_3" type="string" stored="true" multiValued="false" docValues="true" />
+    
+    <!--  GVI-231 -->
+    <field name="subject_topic_facet"        type="Facet" />
+    <field name="subject_genre_facet"        type="Facet" />
+    <field name="subject_geogname_facet"     type="Facet" />
+    <field name="subject_chrono_facet"       type="Facet" />
+    <field name="subject_persname_facet"     type="Facet" />
+    <field name="subject_corpname_facet"     type="Facet" />
+    <field name="subject_meetname_facet"     type="Facet" />
+    <field name="subject_worktitle_facet"    type="Facet" />
+    
 
     <!-- 
     ###########################################
