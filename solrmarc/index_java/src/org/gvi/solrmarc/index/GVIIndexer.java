@@ -1211,26 +1211,11 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    enum IllFlag {
-      Undefined(0),
-      None(1),
-      Ecopy(2),
-      Copy(3),
-      Loan(4);
-
-      private final int value;
-
-      IllFlag(int value) {
-         this.value = value;
-      }
-
-      public int intValue() {
-         return this.value;
-      }
-
-      @Override
-      public String toString() {
-         return name();
-      }
+      Undefined,
+      None,
+      Ecopy,
+      Copy,
+      Loan;
    }
 
    /*
