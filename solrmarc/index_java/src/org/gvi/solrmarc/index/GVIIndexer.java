@@ -909,81 +909,65 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * Determine ILL (Inter Library Loan) Flag
-    *
+    * Determine ILL (Inter Library Loan) Flag<br>
+    * The values are defined in {@link IllFlag}
+    * <dl>
+    * <dt>History</dt>
+    * <dd>tk, 2021-07-13, initial version</dd>
+    * <dd>uh, 2021-07-13, redesign with new codes</dd>
+    * </dl>
+    * 
     * @param record
     * @return Set ill facets
     */
-   public Set<String> getIllFlag(Record record) {
 
-      // a = Fernleihe (nur Ausleihe)
-      // e = Fernleihe (Kopie, elektronischer Versand an Endnutzer möglich)
-      // k = Fernleihe (Nur Kopie)
-      // l = Fernleihe (Kopie und Ausleihe)
-      // n = Keine Fernleihe
-      Set<String> result = new HashSet<>();
+   public Set<String> getIllFlag(Record record) {
+      // 1. Die angegebenenen Ausleihindikatoren in HashSet sammeln.
+      Set<Character> bucket = new HashSet<>();
       List<VariableField> fields = record.getVariableFields("924");
       if (fields != null) {
          Iterator<VariableField> iterator = fields.iterator();
-
          while (iterator.hasNext()) {
             DataField field = (DataField) iterator.next();
             if (null != field.getSubfield('d')) {
                String data = field.getSubfield('d').getData();
-               String illCodeString = data.toUpperCase();
-               char illCode = illCodeString.length() > 0 ? illCodeString.charAt(0) : 'U';
-               switch (illCode) {
-                  case 'U':
-                     result.add(IllFlag.Undefined.toString());
-                     if (result.size() > 1) {
-                        result.remove(IllFlag.Undefined.toString());
-                     }
-                     break;
-                  case 'N':
-                     result.add(IllFlag.None.toString());
-                     result.remove(IllFlag.Undefined.toString());
-                     if (result.size() > 1) {
-                        result.remove(IllFlag.None.toString());
-                     }
-                     break;
-                  case 'A':
-                     result.add(IllFlag.Loan.toString());
-                     result.remove(IllFlag.Undefined.toString());
-                     result.remove(IllFlag.None.toString());
-                     break;
-                  case 'E':
-                     result.add(IllFlag.Copy.toString());
-                     result.add(IllFlag.Ecopy.toString());
-                     result.remove(IllFlag.Undefined.toString());
-                     result.remove(IllFlag.None.toString());
-                     break;
-                  case 'K':
-                     result.add(IllFlag.Copy.toString());
-                     result.remove(IllFlag.Undefined.toString());
-                     result.remove(IllFlag.None.toString());
-                     break;
-                  case 'L':
-                     result.add(IllFlag.Copy.toString());
-                     result.add(IllFlag.Loan.toString());
-                     result.remove(IllFlag.Undefined.toString());
-                     result.remove(IllFlag.None.toString());
-                     break;
-                  default:
-                     if (!(result.contains(IllFlag.Copy.toString()) || result.contains(IllFlag.Ecopy.toString()) || result.contains(IllFlag.Loan.toString()))) {
-                        result.add(IllFlag.Undefined.toString());
-                     }
-                     break;
+               if ((data == null) || data.isEmpty()) continue;
+               char ausleihindikator = data.toLowerCase().charAt(0); 
+               if ((ausleihindikator >= 'a') && (ausleihindikator <= 'e')) { // nur definierte Indikatoren.
+                  bucket.add(ausleihindikator);
                }
             }
          }
       }
-
-      if (result.isEmpty()) {
-         result.add(IllFlag.Undefined.toString());
+      // 2. Die gefundenen Ausleihindikatoren in Text übersetzen.
+      Set<String> ret = new HashSet<>();
+      if (bucket.isEmpty()) { // keine marc:924d gefunden.
+         ret.add(IllFlag.Undefined.toString());
       }
-
-      return result;
+      else if ((bucket.size() == 1) && bucket.contains('d')) {
+         // wenn nur der indikator 'd' (keine Fernleihe) gefunden wurde
+         ret.add(IllFlag.None.toString());
+      }
+      else { // die verbleibenden Codierungen auswerten
+         if (bucket.contains('a')) { // Ausleihe von Bänden möglich, keine Kopien
+            ret.add(IllFlag.Loan.toString());
+         }
+         if (bucket.contains('b')) { // Keine Ausleihe von Bänden, nur Papierkopien werden versandt
+            ret.add(IllFlag.Copy.toString());
+         }
+         if (bucket.contains('c')) { // Uneingeschränkte Fernleihe
+            ret.add(IllFlag.Loan.toString());
+            ret.add(IllFlag.Copy.toString());
+            // 'e' wird von Bibliothekaren als noch nicht eingschlossener Sonderfall angesehen
+            // ret.add(IllFlag.Ecopy.toString());
+         }
+         if (bucket.contains('e')) { // Keine Ausleihe von Bänden, der Endnutzer erhält eine elektronische Kopie
+            ret.add(IllFlag.Ecopy.toString());
+         }
+      }
+      return ret;
    }
+      
 
    /**
     * Count the number of 924 fields.<br>
@@ -1210,13 +1194,27 @@ public class GVIIndexer extends SolrIndexer {
       return result;
    }
 
+   /**
+    * Ausprägungen des Fernleihindikators,<br>
+    * @see  https://wiki.dnb.de/download/attachments/132744284/marcAend201201Leihverkehrsangabe.pdf
+    * <dl>
+    * <dd> 'a' ⇨ "Loan"</dd>
+    * <dd> 'b' ⇨ "Copy"</dd>
+    * <dd> 'c' ⇨ "Loan" and "Copy"</dd>
+    * <dd> 'd' ⇨ "None"</dd>
+    * <dd> 'e' ⇨ "None"</dd>
+    * <dd> '' ⇨ "Undefined"</dd>
+    * </dl>
+    */
    enum IllFlag {
-      Undefined,
-      None,
-      Ecopy,
-      Copy,
-      Loan;
+      Loan,       // 'a':  Ausleihe von Bänden möglich, keine Kopien
+      Copy,       // 'b':  Keine Ausleihe von Bänden, nur Papierkopien werden versandt
+      // Both     // 'c':  Uneingeschränkte Fernleihe, Kopie und Ausleihe (ergibt sich aus Kombination von 'a' und 'b'
+      None,       // 'd':  // Keine Fernleihe
+      Ecopy,      // 'e':  // Keine Ausleihe von Bänden, der Endnutzer erhält eine elektronische Kopie
+      Undefined;  // Wenn marc:924d nie angegeben ist.
    }
+   
 
    /*
     * Entitätentyp der GND: $D: "b" - Körperschaft "f" - Kongress "g" - Geografikum "n" - Person (nicht individualisiert) "p" - Person (individualisiert) "s" - Sachbegriff "u" - Werk Entitätentyp der
