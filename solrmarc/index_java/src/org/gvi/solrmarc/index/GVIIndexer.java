@@ -122,7 +122,22 @@ public class GVIIndexer extends SolrIndexer {
       return ret / 1024 / 1024;
    }
 
-   /**
+    public Set<String> splitSubfield(Record record, String tagStr) {
+	Set<String> result = new HashSet<>();
+	Set<String> fieldList = getFieldList(record, tagStr);
+	for (String str: fieldList) {
+	    String[] subStr = str.split(",");
+	    for (int i=0; i<subStr.length; i++) {
+		String term = subStr[i].trim();
+		if (term.length() > 0) {
+		    result.add(term);
+		}
+	    }           
+	}
+	return result;
+    }
+   
+    /**
     * Get first found ISBN from marc:020<br>
     * * prefer real isbns ($a)<br>
     * * check next unformatted isbns ($9)<br>
