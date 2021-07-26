@@ -8,6 +8,8 @@ package org.gvi.solrmarc.index;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
@@ -44,11 +46,13 @@ import org.solrmarc.tools.DataUtil;
  */
 public class GVIIndexer extends SolrIndexer {
 
-   private static final String                      kobvClusterInfoFile         = "kobv_clusters.properties";
-   private static final Properties                  kobvClusterInfoMap          = new Properties();
+   private static final String                      kobvClusterFile             = "kobv_clusters.properties";
+   private static Properties                        kobvClusterMap              = null;
+   private static final String                      cutureGraphClusterFile      = "cuturegraph_clusters.properties";
+   private static Properties                        cutureGraphClusterMap       = null;
    private static final String                      gndSynonymFile              = "gnd_synonyms.properties";
    private static final String                      gndLineSeperator            = "!_#_!";
-   private static final Properties                  gndSynonymMap               = new Properties();
+   private static Properties                        gndSynonymMap               = null;
    private static final PunctuationSingleNormalizer punctuationSingleNormalizer = new PunctuationSingleNormalizer();
    private static boolean                           isInitialized               = false;
    private static final Logger                      LOG                         = LogManager.getLogger(GVIIndexer.class);
@@ -66,40 +70,59 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
+    * Read big property files into the heap memory<br>
+    * This allows the fast enrichment of documents while indexing.<br>
+    * Th loading is controlled by global flags:
+    * <dl>
+    * <dt>gnd.configdir</dt>
+    * <dd>The directory, containing the files "gnd_synonyms.properties", "kobv_clusters.properties" and "cuturegraph_clusters.properties"</dd>
+    * <dt>GviIndexer.skipSynonyms</dt>
+    * <dd>If 'true' skip reading the file gnd_synonyms.properties.</dd>
+    * <dt>
     * 
     * @throws Exception
     */
    private synchronized void init() throws Exception {
       if (isInitialized) return;
       isInitialized = true;
-      
-      if (System.getProperty("GviIndexer.skipSynonyms").equals("true")) {
-        LOG.warn("Skip loading of GND synonyms.");
-      } else {
-        if (LOG.isInfoEnabled()) {
-           LOG.info("Loading of GND synonymes started at: " + LocalDateTime.now().toString());
-           listMem();
-        }
-        String gndDir = System.getProperty("gnd.configdir", ".");
-        gndSynonymMap.load(new FileInputStream(new File(gndDir, gndSynonymFile)));
-        if (LOG.isInfoEnabled()) {
-           LOG.info("Loading of GND synonymes finished at: " + LocalDateTime.now().toString());
-           listMem();
-        }
+
+      String baseDir = System.getProperty("gnd.configdir", ".");
+
+      gndSynonymMap = init_read_big_properties("skipSynonyms", baseDir, gndSynonymFile);
+      kobvClusterMap = init_read_big_properties("skipClusterMap", baseDir, kobvClusterFile);
+      cutureGraphClusterMap = init_read_big_properties("skipCultureGraph", baseDir, cutureGraphClusterFile);
+   }
+
+   /**
+    * Helper for {@link #init()}
+    * 
+    * @param flagName Abbreviation of the global flag GviIndexer.<flagName>. If true the reading of the file will be skipped.
+    * @param dir The directory containing the file
+    * @param fileName The name of the File to read
+    * @return A new property collection. Empty on error or the skip flag was set.
+    */
+   private Properties init_read_big_properties(String flagName, String dir, String fileName) {
+      Properties data = new Properties();
+      if ("true".equals(System.getProperty("GviIndexer." + flagName))) {
+         LOG.warn("GviIndexer." + flagName + " is true, skip loading.");
+         return data;
       }
-      if (System.getProperty("GviIndexer.skipClusterMap").equals("true")) {
-        LOG.warn("Skip loading of cluster map");
-      } else {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Loading of cluster map started at: " + LocalDateTime.now().toString());
-            listMem();
-        }
-        kobvClusterInfoMap.load(new FileInputStream(kobvClusterInfoFile));
-        if (LOG.isInfoEnabled()) {
-           LOG.info("Loading of cluster map finished at: " + LocalDateTime.now().toString());
-           listMem();
-        }
+      if (LOG.isInfoEnabled()) {
+         LOG.info("Loading of " + fileName + " started at: " + LocalDateTime.now().toString());
+         listMem();
       }
+      try {
+         data.load(new FileInputStream(new File(dir, fileName)));
+      }
+      catch (IOException e) {
+         LOG.warn("Fehler beim Einlesen von Anreicherungsdaten", e);
+         return data;
+      }
+      if (LOG.isInfoEnabled()) {
+         LOG.info("Loading of " + fileName + " finished at: " + LocalDateTime.now().toString());
+         listMem();
+      }
+      return data;
    }
 
    private void listMem() {
@@ -115,22 +138,22 @@ public class GVIIndexer extends SolrIndexer {
       return ret / 1024 / 1024;
    }
 
-    public Set<String> splitSubfield(Record record, String tagStr) {
-	Set<String> result = new HashSet<>();
-	Set<String> fieldList = getFieldList(record, tagStr);
-	for (String str: fieldList) {
-	    String[] subStr = str.split(",");
-	    for (int i=0; i<subStr.length; i++) {
-		String term = subStr[i].trim();
-		if (term.length() > 0) {
-		    result.add(term);
-		}
-	    }           
-	}
-	return result;
-    }
-   
-    /**
+   public Set<String> splitSubfield(Record record, String tagStr) {
+      Set<String> result = new HashSet<>();
+      Set<String> fieldList = getFieldList(record, tagStr);
+      for (String str : fieldList) {
+         String[] subStr = str.split(",");
+         for (int i = 0; i < subStr.length; i++) {
+            String term = subStr[i].trim();
+            if (term.length() > 0) {
+               result.add(term);
+            }
+         }
+      }
+      return result;
+   }
+
+   /**
     * Get first found ISBN from marc:020<br>
     * * prefer real isbns ($a)<br>
     * * check next unformatted isbns ($9)<br>
@@ -178,8 +201,7 @@ public class GVIIndexer extends SolrIndexer {
 
    /**
     * Fault tolerant Normalizer for invalid ISBNs<br>
-    * Removes all white spaces and all punctuation characters.
-    * Matches all characters to lower case.
+    * Removes all white spaces and all punctuation characters. Matches all characters to lower case.
     * 
     * @param rawISBN
     * @return The normalized string or an empty string if the given value was null or empty.
@@ -203,8 +225,7 @@ public class GVIIndexer extends SolrIndexer {
       // Article
       else if (contentTypes.contains("Article")) {
          material = "article";
-         if (contentTypes.contains("Journal/Magazine"))
-            contentTypes.remove("Journal/Magazine");
+         if (contentTypes.contains("Journal/Magazine")) contentTypes.remove("Journal/Magazine");
       }
       // EJournal
       else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
@@ -258,7 +279,8 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * Extract the last name of the first found author/contributor 
+    * Extract the last name of the first found author/contributor
+    * 
     * @param record
     * @return Normalized for of the last name
     */
@@ -270,39 +292,41 @@ public class GVIIndexer extends SolrIndexer {
       lastName = lastName.replaceAll(" ", "");
       return lastName;
    }
-   
+
    /**
     * Extract the last name from normalized fields.
+    * 
     * @param record
     * @return
     */
    public String getInvertetLastName(Record record) {
       String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a");
-      if ((firstAuthor == null)|| firstAuthor.isEmpty()) return null; 
+      if ((firstAuthor == null) || firstAuthor.isEmpty()) return null;
       String lastName = null;
-         // first normalization
-         firstAuthor = firstAuthor.trim().toLowerCase();
-        if (firstAuthor.contains(", ")) { // inverted notation: "last name, first name"
-            String[] nameParts = firstAuthor.split(",");
-            if (nameParts.length > 0) { // in some titles, the given author is really ",".
-               lastName = nameParts[0];
-            }
+      // first normalization
+      firstAuthor = firstAuthor.trim().toLowerCase();
+      if (firstAuthor.contains(", ")) { // inverted notation: "last name, first name"
+         String[] nameParts = firstAuthor.split(",");
+         if (nameParts.length > 0) { // in some titles, the given author is really ",".
+            lastName = nameParts[0];
          }
-         else { // non inverted notation: "first name last name"
-            int pos = firstAuthor.indexOf(' ');
-            lastName = (pos <0) ? firstAuthor : firstAuthor.substring(pos);
-         }
+      }
+      else { // non inverted notation: "first name last name"
+         int pos = firstAuthor.indexOf(' ');
+         lastName = (pos < 0) ? firstAuthor : firstAuthor.substring(pos);
+      }
       return lastName;
    }
-   
+
    /**
     * Extract the last name from unstructured field 245c.
+    * 
     * @param record
     * @return
     */
    public String findLastNameIn245(Record record) {
       String firstAuthor = getFirstFieldVal(record, "245c");
-      if ((firstAuthor == null)|| firstAuthor.isEmpty()) return null;
+      if ((firstAuthor == null) || firstAuthor.isEmpty()) return null;
       firstAuthor = firstAuthor.replaceAll("\\[.*?\\]", "");
       firstAuthor = firstAuthor.replaceAll("<.*?>", "");
       firstAuthor = firstAuthor.replaceAll("\\{.*?\\}", "");
@@ -319,17 +343,18 @@ public class GVIIndexer extends SolrIndexer {
       String lastName = firstAuthor.replaceAll("\\s+", "");
       return lastName;
    }
-   
+
    /**
     * Return always TRUE<br>
-    * Use his method, when just the presence of a marc field is the information. 
+    * Use his method, when just the presence of a marc field is the information.
+    * 
     * @param record
     * @return
     */
    public boolean detectLinkToEnrichment(Record record) {
       return true;
    }
-   
+
    public String matchkeyPublisher(Record record) {
       String publisherKey = "";
       String publisher = getFirstFieldVal(record, "260b:264b:502c");
@@ -499,7 +524,7 @@ public class GVIIndexer extends SolrIndexer {
     */
    public String getDupId(Record record) {
       String id = getRecordID(record);
-      return kobvClusterInfoMap.getProperty(id, id);
+      return kobvClusterMap.getProperty(id, id);
    }
 
    /**
@@ -586,8 +611,7 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * The 'tagString' of SolrMarc is a List of elements separated by a colon.
-    * Each of the elements is the number of a marc field followed by one or more subfield codes.<br>
+    * The 'tagString' of SolrMarc is a List of elements separated by a colon. Each of the elements is the number of a marc field followed by one or more subfield codes.<br>
     * This method inflates the list by normalizing tags with more codes to multiple tags with only on code.<br>
     * Example: "111a:222bc" --> "111a:222b:222c"
     * 
@@ -611,8 +635,7 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * Get all all original writing data from this record.
-    * The method sorts all marc:880$a fields as value into the result {@link Map}.<br>
+    * Get all all original writing data from this record. The method sorts all marc:880$a fields as value into the result {@link Map}.<br>
     * The key of the map are the first three chars of marc:880$6, which is the id of the related marc field.<br>
     * Since the marc:880 fields are repeatable for one reference the value has to be a {@link Set}
     * 
@@ -758,15 +781,13 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    public String getRecordID(final Record record) {
-       String catalog = getCatalog(record);
-       String localId = getLocalId(record);
-       if (catalog.equals("AT-OBV")) {
-           localId = getFirstFieldVal(record, "009");
-           if (localId == null)
-               localId = getFirstFieldVal(record, "001");
-           else if (localId.length() == 0)
-               localId = getFirstFieldVal(record, "001");
-       }
+      String catalog = getCatalog(record);
+      String localId = getLocalId(record);
+      if (catalog.equals("AT-OBV")) {
+         localId = getFirstFieldVal(record, "009");
+         if (localId == null) localId = getFirstFieldVal(record, "001");
+         else if (localId.length() == 0) localId = getFirstFieldVal(record, "001");
+      }
       return "(" + catalog + ")" + localId;
    }
 
@@ -824,8 +845,8 @@ public class GVIIndexer extends SolrIndexer {
       String collection = System.getProperty("data.collection", "UNDEFINED");
       switch (catalog) {
          case "AT-OBV":
-              consortiumSet.add("AT-OBV");
-              break;
+            consortiumSet.add("AT-OBV");
+            break;
          case "DE-101": // DNB
             if (collection.equals("ZDB")) {
                consortiumSet.add("DE-600");
@@ -845,12 +866,9 @@ public class GVIIndexer extends SolrIndexer {
             break;
          case "DE-627": // K10Plus
             Set<String> regions = getFieldList(record, "924c");
-            if (regions.contains("GBV"))
-               consortiumSet.add("DE-601");
-            if (regions.contains("BSZ"))
-               consortiumSet.add("DE-576");
-            if (consortiumSet.isEmpty())
-               consortiumSet.add("DE-627");
+            if (regions.contains("GBV")) consortiumSet.add("DE-601");
+            if (regions.contains("BSZ")) consortiumSet.add("DE-576");
+            if (consortiumSet.isEmpty()) consortiumSet.add("DE-627");
             break;
          default:
             consortiumSet.add("UNDEFINED");
@@ -925,7 +943,7 @@ public class GVIIndexer extends SolrIndexer {
             if (null != field.getSubfield('d')) {
                String data = field.getSubfield('d').getData();
                if ((data == null) || data.isEmpty()) continue;
-               char ausleihindikator = data.toLowerCase().charAt(0); 
+               char ausleihindikator = data.toLowerCase().charAt(0);
                if ((ausleihindikator >= 'a') && (ausleihindikator <= 'e')) { // nur definierte Indikatoren.
                   bucket.add(ausleihindikator);
                }
@@ -960,7 +978,6 @@ public class GVIIndexer extends SolrIndexer {
       }
       return ret;
    }
-      
 
    /**
     * Count the number of 924 fields.<br>
@@ -968,6 +985,7 @@ public class GVIIndexer extends SolrIndexer {
     * <dt>History</dt>
     * <dd>uh, 2021-07-13, initial version</dd>
     * </dl>
+    * 
     * @param record
     * @return
     */
@@ -980,9 +998,9 @@ public class GVIIndexer extends SolrIndexer {
             count++;
          }
       }
-      return count;      
+      return count;
    }
-      
+
    /**
     * Determine medium of material
     *
@@ -1189,25 +1207,25 @@ public class GVIIndexer extends SolrIndexer {
 
    /**
     * Ausprägungen des Fernleihindikators,<br>
-    * @see  https://wiki.dnb.de/download/attachments/132744284/marcAend201201Leihverkehrsangabe.pdf
-    * <dl>
-    * <dd> 'a' ⇨ "Loan"</dd>
-    * <dd> 'b' ⇨ "Copy"</dd>
-    * <dd> 'c' ⇨ "Loan" and "Copy"</dd>
-    * <dd> 'd' ⇨ "None"</dd>
-    * <dd> 'e' ⇨ "None"</dd>
-    * <dd> '' ⇨ "Undefined"</dd>
-    * </dl>
+    * 
+    * @see https://wiki.dnb.de/download/attachments/132744284/marcAend201201Leihverkehrsangabe.pdf
+    *      <dl>
+    *      <dd>'a' ⇨ "Loan"</dd>
+    *      <dd>'b' ⇨ "Copy"</dd>
+    *      <dd>'c' ⇨ "Loan" and "Copy"</dd>
+    *      <dd>'d' ⇨ "None"</dd>
+    *      <dd>'e' ⇨ "None"</dd>
+    *      <dd>'' ⇨ "Undefined"</dd>
+    *      </dl>
     */
    enum IllFlag {
-      Loan,       // 'a':  Ausleihe von Bänden möglich, keine Kopien
-      Copy,       // 'b':  Keine Ausleihe von Bänden, nur Papierkopien werden versandt
-      // Both     // 'c':  Uneingeschränkte Fernleihe, Kopie und Ausleihe (ergibt sich aus Kombination von 'a' und 'b'
-      None,       // 'd':  // Keine Fernleihe
-      Ecopy,      // 'e':  // Keine Ausleihe von Bänden, der Endnutzer erhält eine elektronische Kopie
-      Undefined;  // Wenn marc:924d nie angegeben ist.
+      Loan, // 'a': Ausleihe von Bänden möglich, keine Kopien
+      Copy, // 'b': Keine Ausleihe von Bänden, nur Papierkopien werden versandt
+      // Both // 'c': Uneingeschränkte Fernleihe, Kopie und Ausleihe (ergibt sich aus Kombination von 'a' und 'b'
+      None, // 'd': // Keine Fernleihe
+      Ecopy, // 'e': // Keine Ausleihe von Bänden, der Endnutzer erhält eine elektronische Kopie
+      Undefined; // Wenn marc:924d nie angegeben ist.
    }
-   
 
    /*
     * Entitätentyp der GND: $D: "b" - Körperschaft "f" - Kongress "g" - Geografikum "n" - Person (nicht individualisiert) "p" - Person (individualisiert) "s" - Sachbegriff "u" - Werk Entitätentyp der
@@ -1265,6 +1283,7 @@ public class GVIIndexer extends SolrIndexer {
       GEOGRAFIKUM('g'),
       SACHBEGRIFF('s'),
       WERK('u');
+
       private final char value;
 
       private GNDSubjectCategory(char c) {
