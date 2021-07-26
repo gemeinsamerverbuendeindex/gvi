@@ -66,16 +66,9 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * Internal constructor for inline tests via {@link #main(String[])}
     * 
-    * @param dummy Any integer number. The value is meaningless, but it's needed to fit the signature of the constructor.
     * @throws Exception
     */
-   private GVIIndexer(int dummy) throws Exception {
-      isInitialized = true;
-      ValueIndexerFactory.initialize(null); // this singelton has to be called once
-   }
-
    private synchronized void init() throws Exception {
       if (isInitialized) return;
       isInitialized = true;
@@ -1357,63 +1350,6 @@ public class GVIIndexer extends SolrIndexer {
       public final char valueOf() {
          return value;
       }
-   }
-
-   // #######################################################################################
-   // ########## Poor man's test environment
-   // #######################################################################################
-   /**
-    * Do simple tests while development. (w/o the full environment)
-    * 
-    * @param unused No command line parameters are evaluated.
-    * @throws Exception
-    */
-   public static void main(String[] unused) throws Exception {
-      GVIIndexer me = new GVIIndexer(1);
-      Record testRecord = me.buildTestRecord();
-      Set<String> ret = me.getAllCharSets(testRecord, "100a:245a:710abcd");
-      for (String retret : ret) {
-         System.out.println("TEST: " + retret + "#");
-      }
-   }
-
-   /**
-    * Neuen Marcrecord erzeugen sowie Label und ID voreinstellen.
-    *
-    * @return the record
-    */
-   private Record buildTestRecord() {
-      MarcFactory marcfactory = MarcFactory.newInstance();
-      Record mymarc = marcfactory.newRecord();
-      // LEADER
-      mymarc = marcfactory.newRecord("00000cam a2200000 a 4500");
-      // CONTROL
-      mymarc.addVariableField(marcfactory.newControlField("001", "test"));
-      mymarc.addVariableField(marcfactory.newControlField("003", "DE-603"));
-      mymarc.addVariableField(marcfactory.newControlField("001", "20161027161501.0"));
-      mymarc.addVariableField(marcfactory.newControlField("008", "160930s2016 xx u00 u ger c"));
-      // DATA
-      mymarc.addVariableField(newField(marcfactory, "100", null, "QayQayQay"));
-      mymarc.addVariableField(newField(marcfactory, "100", null, "HuHuHuHu"));
-      mymarc.addVariableField(newField(marcfactory, "245", null, "BlaBlaBla"));
-      mymarc.addVariableField(newField(marcfactory, "880", "245_dlkjdl", "FooFooFoo"));
-      mymarc.addVariableField(newField(marcfactory, "880", "710_dlkjdl", "BarBarBar"));
-      mymarc.addVariableField(newField(marcfactory, "880", "710_dlkjdl", "BuhBuhBuh"));
-      return mymarc;
-   }
-
-   private DataField newField(MarcFactory factory, String fieldId, String reference, String data) {
-      DataField field = factory.newDataField(fieldId, ' ', ' ');
-      if (reference != null) field.addSubfield(newSubfield(factory, '6', reference));
-      if (data != null) field.addSubfield(newSubfield(factory, 'a', data));
-      return field;
-   }
-
-   private Subfield newSubfield(MarcFactory factory, char code, String data) {
-      Subfield subfield = factory.newSubfield();
-      subfield.setCode(code);
-      subfield.setData(data);
-      return subfield;
    }
 
 }
