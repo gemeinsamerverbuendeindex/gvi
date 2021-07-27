@@ -47,14 +47,14 @@ import org.solrmarc.tools.DataUtil;
 public class GVIIndexer extends SolrIndexer {
 
    private static final String                      kobvClusterFile             = "kobv_clusters.properties";
-   private static Properties                        kobvClusterMap              = null;
+   public static Properties                         kobvClusterMap              = null;
    private static final String                      cutureGraphClusterFile      = "cuturegraph_clusters.properties";
-   private static Properties                        cutureGraphClusterMap       = null;
+   public static Properties                         cutureGraphClusterMap       = null;
    private static final String                      gndSynonymFile              = "gnd_synonyms.properties";
    private static final String                      gndLineSeperator            = "!_#_!";
-   private static Properties                        gndSynonymMap               = null;
+   public static Properties                         gndSynonymMap               = null;
    private static final PunctuationSingleNormalizer punctuationSingleNormalizer = new PunctuationSingleNormalizer();
-   private static boolean                           isInitialized               = false;
+   public static boolean                            isInitialized               = false;
    private static final Logger                      LOG                         = LogManager.getLogger(GVIIndexer.class);
    private Record                                   cachedRecord                = null;
    private Map<String, Set<String>>                 cached880Fields             = new HashMap<>();
@@ -64,7 +64,7 @@ public class GVIIndexer extends SolrIndexer {
       init();
    }
 
-   public GVIIndexer() throws Exception {
+   public GVIIndexer() {
       super(null, null);
       init();
    }
@@ -78,30 +78,35 @@ public class GVIIndexer extends SolrIndexer {
     * <dd>The directory, containing the files "gnd_synonyms.properties", "kobv_clusters.properties" and "cuturegraph_clusters.properties"</dd>
     * <dt>GviIndexer.skipSynonyms</dt>
     * <dd>If 'true' skip reading the file gnd_synonyms.properties.</dd>
+    * <dt>GviIndexer.skipClusterMap</dt>
+    * <dd>If 'true' skip reading the file kobv_clusters.properties.</dd>
+    * <dt>GviIndexer.skipCultureGraph</dt>
+    * <dd>If 'true' skip reading the file cuturegraph_clusters.properties.</dd>
     * <dt>
     * 
     * @throws Exception
     */
-   private synchronized void init() throws Exception {
+   public synchronized void init() {
       if (isInitialized) return;
       isInitialized = true;
 
       String baseDir = System.getProperty("gnd.configdir", ".");
 
-      gndSynonymMap = init_read_big_properties("skipSynonyms", baseDir, gndSynonymFile);
-      kobvClusterMap = init_read_big_properties("skipClusterMap", baseDir, kobvClusterFile);
-      cutureGraphClusterMap = init_read_big_properties("skipCultureGraph", baseDir, cutureGraphClusterFile);
+      gndSynonymMap = init_read_big_propertyFiles("skipSynonyms", baseDir, gndSynonymFile);
+      kobvClusterMap = init_read_big_propertyFiles("skipClusterMap", baseDir, kobvClusterFile);
+      cutureGraphClusterMap = init_read_big_propertyFiles("skipCultureGraph", baseDir, cutureGraphClusterFile);
    }
 
    /**
-    * Helper for {@link #init()}
+    * Helper for {@link #init()}<br>
+    * Reads the data from Disk.
     * 
     * @param flagName Abbreviation of the global flag GviIndexer.<flagName>. If true the reading of the file will be skipped.
     * @param dir The directory containing the file
     * @param fileName The name of the File to read
     * @return A new property collection. Empty on error or the skip flag was set.
     */
-   private Properties init_read_big_properties(String flagName, String dir, String fileName) {
+   private Properties init_read_big_propertyFiles(String flagName, String dir, String fileName) {
       Properties data = new Properties();
       if ("true".equals(System.getProperty("GviIndexer." + flagName))) {
          LOG.warn("GviIndexer." + flagName + " is true, skip loading.");
@@ -125,6 +130,10 @@ public class GVIIndexer extends SolrIndexer {
       return data;
    }
 
+   /**
+    * Helper for {@link #init_read_big_propertyFiles()}<br>
+    * Prints the ammount of free heap memory to log.
+    */
    private void listMem() {
       for (MemoryPoolMXBean mpBean : ManagementFactory.getMemoryPoolMXBeans()) {
          if (mpBean.getType() == MemoryType.HEAP) {
@@ -133,11 +142,18 @@ public class GVIIndexer extends SolrIndexer {
       }
    }
 
+   /**
+    * Helper for {@link #listMem()}<br>
+    * Divide by 1024³
+    * @param num
+    * @return
+    */
    private float toGb(long num) {
       float ret = num / 1024;
       return ret / 1024 / 1024;
    }
 
+   
    public Set<String> splitSubfield(Record record, String tagStr) {
       Set<String> result = new HashSet<>();
       Set<String> fieldList = getFieldList(record, tagStr);

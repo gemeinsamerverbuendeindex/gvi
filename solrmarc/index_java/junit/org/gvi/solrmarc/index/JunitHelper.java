@@ -1,10 +1,7 @@
 package org.gvi.solrmarc.index;
 
-import java.util.Set;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.gvi.solrmarc.index.GVIIndexer;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.MarcFactory;
 import org.marc4j.marc.Record;
@@ -18,21 +15,17 @@ import org.solrmarc.index.indexer.ValueIndexerFactory;
  * @version 14.07.2021 uh initial
  */
 public class JunitHelper {
-   
-   private static final Logger LOG = LogManager.getLogger(JunitHelper.class);
-   protected GVIIndexer indexer = null;
-   
+
+   private static final Logger LOG     = LogManager.getLogger(JunitHelper.class);
+   protected GVIIndexer        indexer = null;
+   protected static final String pathToData = "solrmarc/index_java/junit/data/";
+
    public JunitHelper() {
       System.setProperty("GviIndexer.skipSynonyms", "true");
       System.setProperty("GviIndexer.skipClusterMap", "true");
-      try {
-         indexer = new GVIIndexer();
-         ValueIndexerFactory.initialize(null); // this singelton has to be called once
-      }
-      catch (Exception e) {
-         LOG.error("Fehler beim initialisieren:", e);
-      }
-      
+      System.setProperty("GviIndexer.skipCultureGraph", "true");
+      indexer = new GVIIndexer();
+      ValueIndexerFactory.initialize(null); // this singelton has to be called once
    }
 
    /**
@@ -75,4 +68,3 @@ public class JunitHelper {
    }
 
 }
-
