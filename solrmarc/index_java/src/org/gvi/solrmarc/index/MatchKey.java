@@ -317,4 +317,33 @@ public class MatchKey extends Material {
       return record.getLeader().marshal().charAt(7);
    }
 
+   /**
+    * TODO Sollten Nichtsortierzeichen entfernt werden werden?
+    * TODO Soll 'nonFilingInt' die Position des ersten nichtsortierzeichens sein?
+    * @param record
+    * @return
+    */
+   private String getSortableMainTitle(Record record) {
+      String title = "";
+      DataField titleField = (DataField) record.getVariableField("245");
+      if (titleField == null) {
+         LOG.debug("No marc:245 found at record: " + getRecordID(record));
+         return "";
+      }
+
+      int nonFilingInt = 0;//  getInd2AsInt(titleField);
+
+      title = getFirstFieldVal(record, "245a");
+      if (title != null) {
+         title = title.toLowerCase();
+
+         // Skip non-filing chars, if possible.
+         if (title.length() > nonFilingInt) {
+            title = title.substring(nonFilingInt);
+         }
+         return title;
+      }
+      LOG.debug("Subfield 'a' is missing in marc:245 at record:" + getRecordID(record));
+      return "";
+   }
 }

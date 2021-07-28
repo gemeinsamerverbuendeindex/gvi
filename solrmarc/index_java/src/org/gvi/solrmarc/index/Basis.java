@@ -19,6 +19,7 @@ import org.solrmarc.tools.DataUtil;
 public class Basis extends SolrIndexer {
 
    private static final Logger LOG = LogManager.getLogger(Basis.class);
+   private static String collectionFromParameter = System.getProperty("data.collection", "UNDEFINED");
 
    public Basis(String indexingPropsFile, String[] propertyDirs) {
       super(indexingPropsFile, propertyDirs);
@@ -38,17 +39,16 @@ public class Basis extends SolrIndexer {
     public String getCatalog(final Record record) {
       String f001 = getFirstFieldVal(record, "001");
       String catalog = "UNSET";
-      String collection = getCollection(record);
       // guess catalog
       String field003 = getFirstFieldVal(record, "003");
       String field040a = getFirstFieldVal(record, "040a");
-      if (collection.equals("ZDB")) {
+      if (collectionFromParameter.equals("ZDB")) {
          catalog = "DE-600";
       }
-      else if (collection.equals("HBZFIX")) {
+      else if (collectionFromParameter.equals("HBZFIX")) {
          catalog = "DE-605";
       }
-      else if (collection.equals("OBV")) {
+      else if (collectionFromParameter.equals("OBV")) {
          catalog = "AT-OBV";
       }
       else if (field003 != null) {
@@ -69,8 +69,14 @@ public class Basis extends SolrIndexer {
       return catalog;
    }
 
+   /**
+    * The collection is defined externally, by passing the parameter 'data.collection' to the JVM.<br>
+    * This system parameter is represented as static field of this class.
+    * @param record
+    * @return The mnemomic of the current collection.
+    */
    public String getCollection(final Record record) {
-      return System.getProperty("data.collection", "UNDEFINED");
+      return collectionFromParameter;
    }
 
  
@@ -128,7 +134,7 @@ public class Basis extends SolrIndexer {
     * @param record - the marc record object
     * @return 260c/264c, "cleaned" per org.solrmarc.tools.Utils.cleanDate()
     */
-   public String getDate26xc(Record record) {
+   private String getDate26xc(Record record) {
       String date260c = getFieldVals(record, "260c", ", ");
       String date264c = getFieldVals(record, "264c", ", ");
       String date = null;
@@ -144,28 +150,7 @@ public class Basis extends SolrIndexer {
       return DataUtil.cleanDate(date);
    }
 
-   public String getSortableMainTitle(Record record) {
-      String title = "";
-      DataField titleField = (DataField) record.getVariableField("245");
-      if (titleField == null) {
-         return "";
-      }
 
-      int nonFilingInt = 0;// getInd2AsInt(titleField);
-
-      title = getFirstFieldVal(record, "245a");
-      if (title != null) {
-         title = title.toLowerCase();
-
-         // Skip non-filing chars, if possible.
-         if (title.length() > nonFilingInt) {
-            title = title.substring(nonFilingInt);
-         }
-         return title;
-      }
-      LOG.debug("MatchkeyException because no title found at record " + getRecordID(record));
-      return "";
-   }
 
    /**
     * Get value(s) of selected classification schema
@@ -353,19 +338,18 @@ public class Basis extends SolrIndexer {
       return "GviMarcDE" + catalog.substring(3);
    }
 
-   protected String findCatalog(Record record, String f001) {
+   private String findCatalog(Record record, String f001) {
       String catalog = "UNSET";
-      String collection = getCollection(record);
       // guess catalog
       String field003 = getFirstFieldVal(record, "003");
       String field040a = getFirstFieldVal(record, "040a");
-      if (collection.equals("ZDB")) {
+      if (collectionFromParameter.equals("ZDB")) {
          catalog = "DE-600";
       }
-      else if (collection.equals("HBZFIX")) {
+      else if (collectionFromParameter.equals("HBZFIX")) {
          catalog = "DE-605";
       }
-      else if (collection.equals("OBV")) {
+      else if (collectionFromParameter.equals("OBV")) {
          catalog = "AT-OBV";
       }
       else if (field003 != null) {
