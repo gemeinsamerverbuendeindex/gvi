@@ -8,7 +8,6 @@ package org.gvi.solrmarc.index;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
@@ -29,12 +28,10 @@ import org.gvi.solrmarc.normalizer.ISBNNormalizer;
 import org.gvi.solrmarc.normalizer.impl.PunctuationSingleNormalizer;
 import org.marc4j.marc.ControlField;
 import org.marc4j.marc.DataField;
-import org.marc4j.marc.MarcFactory;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
 import org.marc4j.marc.VariableField;
 import org.solrmarc.index.SolrIndexer;
-import org.solrmarc.index.indexer.ValueIndexerFactory;
 import org.solrmarc.mixin.GetFormatMixin;
 import org.solrmarc.tools.DataUtil;
 
@@ -109,7 +106,7 @@ public class GVIIndexer extends SolrIndexer {
    private Properties init_read_big_propertyFiles(String flagName, String dir, String fileName) {
       Properties data = new Properties();
       if ("true".equals(System.getProperty("GviIndexer." + flagName))) {
-         LOG.warn("GviIndexer." + flagName + " is true, skip loading.");
+         LOG.info("GviIndexer." + flagName + " is true, skip loading.");
          return data;
       }
       if (LOG.isInfoEnabled()) {
@@ -153,8 +150,15 @@ public class GVIIndexer extends SolrIndexer {
       return ret / 1024 / 1024;
    }
 
-   
-   public Set<String> splitSubfield(Record record, String tagStr) {
+   /**
+    * Ungenutzte Methode splitSubfield<br>
+    * TODO remove
+    * @param record
+    * @param tagStr
+    * @return
+    */
+   @Deprecated
+   public Set<String> xsplitSubfield(Record record, String tagStr) {
       Set<String> result = new HashSet<>();
       Set<String> fieldList = getFieldList(record, tagStr);
       for (String str : fieldList) {
@@ -202,7 +206,8 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * Short helper to get the value of the first matching subfield
+    * Short helper for {@link #matchkeyISBN(Record)}<br>
+    * Get the value of the first matching subfield
     * 
     * @param isbnField The {@link DataField} to inspect
     * @param subFieldCode The code of the wanted subfield
@@ -216,6 +221,7 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
+    * Short helper for {@link #matchkeyISBN(Record)}<br>
     * Fault tolerant Normalizer for invalid ISBNs<br>
     * Removes all white spaces and all punctuation characters. Matches all characters to lower case.
     * 
@@ -310,6 +316,7 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
+    * Short helper for {@link #matchkeyAuthor(Record)}<br>
     * Extract the last name from normalized fields.
     * 
     * @param record
@@ -335,6 +342,7 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
+    * Short helper for {@link #matchkeyAuthor(Record)}<br>
     * Extract the last name from unstructured field 245c.
     * 
     * @param record

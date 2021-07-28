@@ -1,7 +1,12 @@
 package org.gvi.solrmarc.index;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.marc4j.MarcReader;
+import org.marc4j.MarcXmlReader;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.MarcFactory;
 import org.marc4j.marc.Record;
@@ -16,17 +21,18 @@ import org.solrmarc.index.indexer.ValueIndexerFactory;
  */
 public class JunitHelper {
 
-   private static final Logger LOG     = LogManager.getLogger(JunitHelper.class);
-   protected GVIIndexer        indexer = null;
-   protected static final String pathToData = "solrmarc/index_java/junit/data/";
-   private MarcFactory marcFactory = MarcFactory.newInstance();
+   private static final Logger   LOG         = LogManager.getLogger(JunitHelper.class);
+   protected GVIIndexer          indexer     = null;
+   protected static final String pathToData  = "solrmarc/index_java/junit/data/";
+   private String homeDirs[] = {".", "solrmarc"};
+   private MarcFactory           marcFactory = MarcFactory.newInstance();
 
    public JunitHelper() {
       System.setProperty("GviIndexer.skipSynonyms", "true");
       System.setProperty("GviIndexer.skipClusterMap", "true");
       System.setProperty("GviIndexer.skipCultureGraph", "true");
       indexer = new GVIIndexer();
-      ValueIndexerFactory.initialize(null); // this singelton has to be called once
+      ValueIndexerFactory.initialize(homeDirs); // this singelton has to be called once
    }
 
    /**
@@ -54,6 +60,7 @@ public class JunitHelper {
    }
 
    /**
+    * Build new marc data field
     * 
     * @param factory
     * @param fieldId
@@ -68,6 +75,13 @@ public class JunitHelper {
       return field;
    }
 
+   /**
+    * Build new marc sub field
+    * 
+    * @param code
+    * @param data
+    * @return
+    */
    protected Subfield newSubfield(char code, String data) {
       Subfield subfield = marcFactory.newSubfield();
       subfield.setCode(code);
@@ -75,8 +89,25 @@ public class JunitHelper {
       return subfield;
    }
 
-   protected Record readMarcFile(String string) {
-      // TODO Auto-generated method stub
-      return null;
+   /**
+    * Read test data from marcXml file
+    * 
+    * @param fileName
+    * @return
+    */
+   protected Record readMarcFromFile(String fileName) {
+      InputStream inputStream = null;
+      try {
+         LOG.info("Öffne Datei: " + pathToData + fileName);
+         inputStream = new FileInputStream(pathToData + fileName);
+      }
+      catch (Exception e) {
+         LOG.error(e.toString());
+         throw new RuntimeException(e);
+      }
+
+      MarcReader reader = new MarcXmlReader(inputStream);
+      return reader.next();
    }
+
 }

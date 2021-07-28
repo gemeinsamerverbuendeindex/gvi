@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.loc.gov/marc/bibliographic">
+   <record>
+      <leader>XXXXXcam a22XXXXX c 4500</leader>
+      <controlfield tag="001">28076815X</controlfield>
+      <controlfield tag="003">DE-603</controlfield>
+      <controlfield tag="005">20180814111703.0</controlfield>
+      <controlfield tag="007">tu</controlfield>
+      <controlfield tag="008">111117s2012 xx |||| | u00||u|ger
+      </controlfield>
+      <datafield tag="015" ind1=" " ind2=" ">
+         <subfield code="a">11,A46</subfield>
+         <subfield code="z">11,N31</subfield>
+         <subfield code="2">dnb</subfield>
+      </datafield>
+      <datafield tag="016" ind1="7" ind2=" ">
+         <subfield code="2">DE-101</subfield>
+         <subfield code="a">1013798139</subfield>
+      </datafield>
+      <datafield tag="020" ind1=" " ind2=" ">
+         <subfield code="a">9783836218023</subfield>
+         <subfield code="c">Pp. : EUR 49.90 (DE), EUR 51.30 (AT),
+            sfr
+            74.90 (freier Pr.) Buch + DVD-ROM
+         </subfield>
+      </datafield>
+      <datafield tag="024" ind1="3" ind2=" ">
+         <subfield code="a">9783836218023</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(DE-599)DNB1013798139</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(OCoLC)767602010</subfield>
+      </datafield>
+      <datafield tag="040" ind1=" " ind2=" ">
+         <subfield code="a">DE-603</subfield>
+         <subfield code="b">ger</subfield>
+         <subfield code="c">DE-603</subfield>
+         <subfield code="d">DE-603</subfield>
+      </datafield>
+      <datafield tag="041" ind1=" " ind2=" ">
+         <subfield code="a">ger</subfield>
+      </datafield>
+      <datafield tag="082" ind1="0" ind2="4">
+         <subfield code="8">1\u</subfield>
+         <subfield code="a">005.133</subfield>
+         <subfield code="q">DE-101</subfield>
+         <subfield code="2">22/ger</subfield>
+      </datafield>
+      <datafield tag="084" ind1=" " ind2=" ">
+         <subfield code="a">004</subfield>
+         <subfield code="q">DE-101</subfield>
+         <subfield code="2">sdnb</subfield>
+      </datafield>
+      <datafield tag="084" ind1=" " ind2=" ">
+         <subfield code="a">ST 250</subfield>
+         <subfield code="0">(DE-625)143626:</subfield>
+         <subfield code="0">(DE-603)412314029</subfield>
+         <subfield code="2">rvk</subfield>
+      </datafield>
+      <datafield tag="085" ind1=" " ind2=" ">
+         <subfield code="8">1\u</subfield>
+         <subfield code="b">005.133</subfield>
+      </datafield>
+      <datafield tag="100" ind1="1" ind2=" ">
+         <subfield code="a">Ullenboom, Christian</subfield>
+         <subfield code="0">(DE-603)154331430</subfield>
+         <subfield code="0">(DE-588)123404738</subfield>
+         <subfield code="2">gnd</subfield>
+      </datafield>
+      <datafield tag="245" ind1="0" ind2="0">
+         <subfield code="a">Java ist auch eine Insel</subfield>
+         <subfield code="b">das umfassende Handbuch ; [aktuell zu
+            Java
+            7]
+         </subfield>
+         <subfield code="c">Christian Ullenboom</subfield>
+      </datafield>
+      <datafield tag="250" ind1=" " ind2=" ">
+         <subfield code="a">10., aktualisierte u. überarb. Aufl.
+         </subfield>
+      </datafield>
+      <datafield tag="264" ind1=" " ind2="1">
+         <subfield code="a">Bonn</subfield>
+         <subfield code="b">Galileo Press</subfield>
+         <subfield code="c">2012</subfield>
+      </datafield>
+      <datafield tag="300" ind1=" " ind2=" ">
+         <subfield code="a">1308 S.</subfield>
+         <subfield code="b">graph. Darst.</subfield>
+         <subfield code="c">25 cm</subfield>
+         <subfield code="e">1 CD-ROM</subfield>
+      </datafield>
+      <datafield tag="490" ind1="0" ind2=" ">
+         <subfield code="a">Galileo Computing</subfield>
+      </datafield>
+      <datafield tag="500" ind1=" " ind2=" ">
+         <subfield code="a">Zusätzliches Online-Angebot unter
+            www.galileocomputing.de. - DVD-ROM-Ausg. inkl.
+            vollständiger
+            HTML-Version der Java-Insel, 300 Aufgaben und Musterlösungen,
+            Java 7, Eclipse 3.7.1, NetBeans 7, viele Zusatztools
+         </subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="7">
+         <subfield code="a">Java Standard Edition 7</subfield>
+         <subfield code="0">(DE-588)7751205-4</subfield>
+         <subfield code="0">(DE-603)267938047</subfield>
+         <subfield code="2">gnd</subfield>
+      </datafield>
+      <datafield tag="776" ind1="0" ind2="8">
+         <subfield code="i">DVD-ROM-Ausg. u.d.T.</subfield>
+         <subfield code="t">Ullenboom, Christian: Java ist auch
+            eine
+            Insel
+         </subfield>
+      </datafield>
+      <datafield tag="856" ind1="4" ind2="2">
+         <subfield code="m">B:DE-101</subfield>
+         <subfield code="q">application/pdf</subfield>
+         <subfield code="u">http://d-nb.info/1013798139/04
+         </subfield>
+         <subfield code="3">Inhaltsverzeichnis</subfield>
+      </datafield>
+      <datafield tag="856" ind1="4" ind2="2">
+         <subfield code="m">X:MVB</subfield>
+         <subfield code="q">text/html</subfield>
+         <subfield code="u">http://deposit.d-nb.de/cgi-bin/dokserv?id=3858026&#x0026;prov=M&#x0026;dok_var=1&#x0026;dok_ext=htm
+         </subfield>
+         <subfield code="3">Inhaltstext</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">30</subfield>
+         <subfield code="a">(DE-603)655924884</subfield>
+         <subfield code="b">DE-30</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">89.921.97</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">30/212</subfield>
+         <subfield code="a">(DE-603)651550807</subfield>
+         <subfield code="b">DE-30-212</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">D.3-492 ex 4</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">30/212</subfield>
+         <subfield code="a">(DE-603)652289630</subfield>
+         <subfield code="b">DE-30-212</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">D.3-492 ex 4 DVD</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">30/212</subfield>
+         <subfield code="a">(DE-603)652526594</subfield>
+         <subfield code="b">DE-30-212</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">Ausgesondert: D.3-492 ex 5</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">30/212</subfield>
+         <subfield code="a">(DE-603)652526896</subfield>
+         <subfield code="b">DE-30-212</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">Ausgesondert: D.3-492 ex 5 DVD
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">30/212</subfield>
+         <subfield code="a">(DE-603)100583542X</subfield>
+         <subfield code="b">DE-30-212</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">D.3-492 ex 8</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">30/212</subfield>
+         <subfield code="a">(DE-603)1005835624</subfield>
+         <subfield code="b">DE-30-212</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">D.3-492 ex 8 DVD</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">946</subfield>
+         <subfield code="a">(DE-603)622728512</subfield>
+         <subfield code="b">DE-946</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">INF 533 Ull 10.Aufl.</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">946</subfield>
+         <subfield code="a">(DE-603)652300677</subfield>
+         <subfield code="b">DE-946</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">INF 533 Ull 10.Aufl.</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">Ds 114</subfield>
+         <subfield code="a">(DE-603)722333242</subfield>
+         <subfield code="b">DE-Ds114</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">00/ausgesondert</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">43/2</subfield>
+         <subfield code="a">(DE-603)671537776</subfield>
+         <subfield code="b">DE-43-2</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">50 YE 190 87 A.10</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">43</subfield>
+         <subfield code="a">(DE-603)651661293</subfield>
+         <subfield code="b">DE-43</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">60 13 A 410</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">974</subfield>
+         <subfield code="a">(DE-603)638976367</subfield>
+         <subfield code="b">DE-974</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">dav 250 JAV 149 Aufl. 10</subfield>
+         <subfield code="h">1. OG</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">974/1</subfield>
+         <subfield code="a">(DE-603)724645853</subfield>
+         <subfield code="b">DE-974-1</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">dav 250 JAVA 85 Aufl. 10</subfield>
+         <subfield code="h">2. OG</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">66/0</subfield>
+         <subfield code="a">(DE-603)634863738</subfield>
+         <subfield code="b">DE-66-0</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">21 / ST 250 J35 U41 (10)</subfield>
+         <subfield code="h">2. OG</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">66/0</subfield>
+         <subfield code="a">(DE-603)634863746</subfield>
+         <subfield code="b">DE-66-0</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">21 / ST 250 J35 U41 (10) +2</subfield>
+         <subfield code="h">2. OG</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">66/0</subfield>
+         <subfield code="a">(DE-603)634863754</subfield>
+         <subfield code="b">DE-66-0</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">21 / ST 250 J35 U41 (10) +3</subfield>
+         <subfield code="h">2. OG</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">34/50</subfield>
+         <subfield code="a">(DE-603)66901883X</subfield>
+         <subfield code="b">DE-34-50</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">55 inf M 5 JAV ULL</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">34/50</subfield>
+         <subfield code="a">(DE-603)669018848</subfield>
+         <subfield code="b">DE-34-50</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">55 inf M 5 JAV ULL</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">77/002</subfield>
+         <subfield code="a">(DE-603)753264889</subfield>
+         <subfield code="b">DE-77-002</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">11.3 ULBO 1/11</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">77/006</subfield>
+         <subfield code="a">(DE-603)727011847</subfield>
+         <subfield code="b">DE-77-006</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="g">32M 348-TX/DVD</subfield>
+         <subfield code="h">MIN LEHRBUCHSAMMLUNG</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">77/006</subfield>
+         <subfield code="a">(DE-603)726616702</subfield>
+         <subfield code="b">DE-77-006</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">ST 2500 J35 ULL1 (10) +2</subfield>
+         <subfield code="h">MIN</subfield>
+         <subfield code="i">PMC-CD 596</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">77/006</subfield>
+         <subfield code="a">(DE-603)72705449X</subfield>
+         <subfield code="b">DE-77-006</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">ST 2500 J35 ULL1 (10)</subfield>
+         <subfield code="h">MIN</subfield>
+         <subfield code="i">PMC-CD 592</subfield>
+      </datafield>
+      <datafield tag="924" ind1="0" ind2=" ">
+         <subfield code="9">26</subfield>
+         <subfield code="a">(DE-603)63417035X</subfield>
+         <subfield code="b">DE-26</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">c</subfield>
+         <subfield code="g">FH kyb Kl 0.50, 10.Aufl.</subfield>
+      </datafield>
+   </record>
+</collection>
+
