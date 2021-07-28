@@ -112,12 +112,13 @@ public class Gnd_Charset extends Cluster {
    }
    
    /**
-    * 
-    * @param record
-    * @param tagStr
-    * @param prefixStr
-    * @param keepPrefixStr
-    * @return
+    * Checks if the requested fields starts with the given prefix.<br>
+    * E.g. Look in relation fields for GND_IDs (starting with "DE-588")    
+    * @param record Marc data
+    * @param tagStr Marc fields to check 
+    * @param prefixStr Needed prefix
+    * @param keepPrefixStr If FALSE remove the prefix in the response 
+    * @return The found values.
     */
    public Set<String> getTermID(Record record, String tagStr, String prefixStr, String keepPrefixStr) {
       boolean keepPrefix = Boolean.parseBoolean(keepPrefixStr);
