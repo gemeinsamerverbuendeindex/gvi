@@ -150,8 +150,6 @@ public class Basis extends SolrIndexer {
       return DataUtil.cleanDate(date);
    }
 
-
-
    /**
     * Get value(s) of selected classification schema
     * 
@@ -240,18 +238,6 @@ public class Basis extends SolrIndexer {
          }
       }
       return ret;
-   }
-
-   public Set<String> getTermID(Record record, String tagStr, String prefixStr, String keepPrefixStr) {
-      boolean keepPrefix = Boolean.parseBoolean(keepPrefixStr);
-      Set<String> candidates = getFieldList(record, tagStr);
-      Set<String> result = new HashSet<>();
-      for (String candidate : candidates) {
-         if (candidate.contains(prefixStr)) {
-            result.add(keepPrefix ? candidate : candidate.substring(prefixStr.length() + 2));
-         }
-      }
-      return result;
    }
 
    /**

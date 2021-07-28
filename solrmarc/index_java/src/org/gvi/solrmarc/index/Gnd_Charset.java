@@ -110,6 +110,27 @@ public class Gnd_Charset extends Cluster {
       }
       return resultList;
    }
+   
+   /**
+    * 
+    * @param record
+    * @param tagStr
+    * @param prefixStr
+    * @param keepPrefixStr
+    * @return
+    */
+   public Set<String> getTermID(Record record, String tagStr, String prefixStr, String keepPrefixStr) {
+      boolean keepPrefix = Boolean.parseBoolean(keepPrefixStr);
+      Set<String> candidates = getFieldList(record, tagStr);
+      Set<String> result = new HashSet<>();
+      for (String candidate : candidates) {
+         if (candidate.contains(prefixStr)) {
+            result.add(keepPrefix ? candidate : candidate.substring(prefixStr.length() + 2));
+         }
+      }
+      return result;
+   }
+
 
    /**
     * The 'tagString' of SolrMarc is a List of elements separated by a colon. Each of the elements is the number of a marc field followed by one or more subfield codes.<br>
