@@ -455,6 +455,16 @@ public class Basis extends SolrIndexer {
       return result;
    }
 
+   /**
+    * Return always TRUE<br>
+    * Use his method, when just the presence of a marc field is the information.
+    * 
+    * @param record
+    * @return
+    */
+   public boolean detectLinkToEnrichment(Record record) {
+      return true;
+   }
 
 
 
