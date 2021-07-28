@@ -21,71 +21,33 @@ public class MatchKey extends Material {
       super(indexingPropsFile, propertyDirs);
    }
 
+   /**
+    * Detect the most specific material information and translate it to an shorter mnemonic.<br>
+    * 
+    * @param record
+    * @return
+    */
    public String matchkeyMaterial(Record record) {
-      String material = "";
-
-      GetFormatMixin formatMixin = new GetFormatMixin();
-      Set<String> contentTypes = formatMixin.getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
-      String materialForm = getMaterialForm(record);
-
-      // Thesis
-      if (contentTypes.contains("Thesis/Dissertation")) {
-         material = "thesis";
+      Set<String> contentTypes = new GetFormatMixin().getContentTypesAndMediaTypesMapped(record, "getformat_mixin_map.properties");
+      if (contentTypes.contains("Thesis/Dissertation")) return "thesis";
+      if (contentTypes.contains("Article")) return "article";
+      if (contentTypes.contains("Journal/Magazine")) {
+         if (contentTypes.contains("Online")) return "ejournal";
+         return "journal";
       }
-      // Article
-      else if (contentTypes.contains("Article")) {
-         material = "article";
-         if (contentTypes.contains("Journal/Magazine")) contentTypes.remove("Journal/Magazine");
+      if (contentTypes.contains("EBook")) return "ebook";
+      if (contentTypes.contains("Book")) return "book";
+      if (contentTypes.contains("Musical Score")) return "music";
+      if (contentTypes.contains("Sound Recording")) return "sound";
+      if (contentTypes.contains("Video")) return "video";
+      if (contentTypes.contains("Map")) return "map";
+      char materialFormCode = getMaterialFormCode(record);
+      if (contentTypes.contains("Mixed Materials")){
+         if (materialFormCode == 'm') return "book";
+         return "mixed";
       }
-      // EJournal
-      else if (contentTypes.contains("Journal/Magazine") && contentTypes.contains("Online")) {
-         material = "ejournal";
-      }
-      // Journal
-      else if (contentTypes.contains("Journal/Magazine")) {
-         material = "journal";
-      }
-      // E-Book
-      else if (contentTypes.contains("EBook")) {
-         material = "ebook";
-      }
-      // Book
-      else if (contentTypes.contains("Book")) {
-         material = "book";
-      }
-      // Musical Score
-      else if (contentTypes.contains("Musical Score")) {
-         material = "music";
-      }
-      // Sound
-      else if (contentTypes.contains("Sound Recording")) {
-         material = "sound";
-      }
-      // Video
-      else if (contentTypes.contains("Video")) {
-         material = "video";
-      }
-      // Map
-      else if (contentTypes.contains("Map")) {
-         material = "map";
-      }
-      // Mixed Materials
-      else if (contentTypes.contains("Mixed Materials") && materialForm.equals("m")) {
-         material = "book";
-      }
-      else if (contentTypes.contains("Mixed Materials")) {
-         material = "mixed";
-      }
-      // EBook
-      else if (contentTypes.contains("Computer Resource") && materialForm.equals("m")) {
-         material = "ebook";
-      }
-      // Undetermined
-      else {
-         material = "other";
-      }
-
-      return material;
+      if (contentTypes.contains("Computer Resource") && (materialFormCode == 'm')) return "ebook";
+      return "other";
    }
 
    public String matchkeyMaterialAuthorTitle(Record record) {
@@ -342,6 +304,17 @@ public class MatchKey extends Material {
          }
       }
       return result;
+   }
+
+   /**
+    * Determine the coded publication form of material<br>
+    * 
+    * @see https://www.loc.gov/marc/bibliographic/bdleader.html
+    * @param record
+    * @return marc leader: char at position 7
+    */
+   private char getMaterialFormCode(Record record) {
+      return record.getLeader().marshal().charAt(7);
    }
 
 }

@@ -73,18 +73,7 @@ public class Basis extends SolrIndexer {
       return System.getProperty("data.collection", "UNDEFINED");
    }
 
-   /**
-    * Determine publication form of material
-    *
-    * @param record
-    * @return Set material type of record
-    */
-   public String getMaterialForm(Record record) {
-      char publicationForm = record.getLeader().marshal().charAt(7);
-      String materialForm = "" + publicationForm;
-      return materialForm;
-   }
-
+ 
    /**
     * Stub more advanced version of getDate that looks in the 008 field as well as the 260c field this routine does some simple sanity checking to ensure that the date to return makes sense.
     *
