@@ -18,60 +18,45 @@ import org.solrmarc.tools.DataUtil;
 
 public class Basis extends SolrIndexer {
 
-   private static final Logger LOG = LogManager.getLogger(Basis.class);
-   private static String collectionFromParameter = System.getProperty("data.collection", "UNDEFINED");
+   private static final Logger LOG                     = LogManager.getLogger(Basis.class);
+   private String              collectionFromParameter = System.getProperty("data.collection", "UNDEFINED");
+   private String              myCatalog               = null;
+   private Record              myCatalogIsFor          = null;
 
    public Basis(String indexingPropsFile, String[] propertyDirs) {
       super(indexingPropsFile, propertyDirs);
    }
 
    public String getRecordID(final Record record) {
-      String catalog = getCatalog(record);
+      String catalogId = getCatalogId(record);
       String localId = getFirstFieldVal(record, "001");
-      if (catalog.equals("AT-OBV")) {
+      if (catalogId.equals("AT-OBV")) {
          localId = getFirstFieldVal(record, "009");
          if (localId == null) localId = getFirstFieldVal(record, "001");
          else if (localId.length() == 0) localId = getFirstFieldVal(record, "001");
       }
-      return "(" + catalog + ")" + localId;
+      return "(" + catalogId + ")" + localId;
    }
 
-    public String getCatalog(final Record record) {
-      String f001 = getFirstFieldVal(record, "001");
-      String catalog = "UNSET";
-      // guess catalog
-      String field003 = getFirstFieldVal(record, "003");
-      String field040a = getFirstFieldVal(record, "040a");
-      if (collectionFromParameter.equals("ZDB")) {
-         catalog = "DE-600";
+   /**
+    * Get the catalog's id fore the record<br>
+    * The id is cached evaluated only once per record by {@link #findCatalog(Record)}
+    * 
+    * @param record
+    * @return
+    */
+   public String getCatalogId(final Record record) {
+      if ((record != myCatalogIsFor) || (myCatalog == null)) synchronized (myCatalog) {
+         myCatalogIsFor = record;
+         myCatalog = findCatalog(record);
       }
-      else if (collectionFromParameter.equals("HBZFIX")) {
-         catalog = "DE-605";
-      }
-      else if (collectionFromParameter.equals("OBV")) {
-         catalog = "AT-OBV";
-      }
-      else if (field003 != null) {
-         if (field003.length() > 6) {
-            field003 = field003.substring(0, 6);
-         }
-         catalog = field003;
-      }
-      else if (field040a != null) {
-         catalog = field040a;
-      }
-      else if (f001 != null && f001.startsWith("BV")) {
-         catalog = "DE-604";
-      }
-      else {
-         catalog = "UNDEFINED";
-      }
-      return catalog;
+      return myCatalog;
    }
 
    /**
     * The collection is defined externally, by passing the parameter 'data.collection' to the JVM.<br>
     * This system parameter is represented as static field of this class.
+    * 
     * @param record
     * @return The mnemomic of the current collection.
     */
@@ -79,7 +64,6 @@ public class Basis extends SolrIndexer {
       return collectionFromParameter;
    }
 
- 
    /**
     * Stub more advanced version of getDate that looks in the 008 field as well as the 260c field this routine does some simple sanity checking to ensure that the date to return makes sense.
     *
@@ -262,22 +246,44 @@ public class Basis extends SolrIndexer {
       return count;
    }
 
+   /**
+    * Try to extract the ZDB id of the document (journal)
+    * 
+    * @param record
+    * @return
+    */
    public Set<String> getZdbId(Record record) {
       Set<String> result = new LinkedHashSet<>();
+      // 016 - National Bibliographic Agency Control Number
       List<VariableField> fields = record.getVariableFields("016");
       if (fields != null) {
          Iterator<VariableField> iterator = fields.iterator();
          while (iterator.hasNext()) {
             DataField field = (DataField) iterator.next();
-            Boolean isZDB = field.getSubfield('2') != null && field.getSubfield('2').getData() != null && field.getSubfield('2').getData().equals("DE-600");
-            if (isZDB && field.getSubfield('a') != null) {
-               result.add(field.getSubfield('a').getData());
+            Subfield dataSource = field.getSubfield('2');
+            if (dataSource == null) continue;
+            if (dataSource.getData() == null) continue;
+            if (dataSource.getData().isEmpty()) continue;
+            if (dataSource.getData().equals("DE-600")) {
+               Subfield number = field.getSubfield('a');
+               if (number == null) continue;
+               String zdbId = number.getData();
+               if (zdbId == null) continue;
+               if (zdbId.isEmpty()) continue;
+               result.add(zdbId);
+               return result; // There can only be one!
             }
          }
       }
       return result;
    }
-   
+
+   /**
+    * Get the licenced year(s) Feld 912, Kennzeichnungen für Nationallizenzen und digitale Sammlungen TODO Bei Bereichen auch die dazwischen liegenden Jahre berücksichtigen?
+    * 
+    * @param record
+    * @return
+    */
    public Set<String> getProductYear(final Record record) {
       Set<String> values912b = getFieldList(record, "912b");
       Set<String> productYears = new HashSet<>();
@@ -301,13 +307,6 @@ public class Basis extends SolrIndexer {
       return productYears;
    }
 
-
-
-   public Set<String> getConsortium(final Record record) {
-      return findConsortium(record, getCatalog(record));
-   }
-
-
    /**
     * Extension for VuFind clients.<br>
     * The interpretation of perfect MARC may be depend on the source.<br>
@@ -318,48 +317,53 @@ public class Basis extends SolrIndexer {
     * @return The concatination of "GviMarc_" and the isil of the source.
     */
    public String getMarcTypByConsortium(final Record record) {
-      String catalog = getCatalog(record);
-      if ((catalog == null) || (catalog.length() < 4)) return "GviMarcUnknown";
-      if ((catalog.equals("AT-OBV"))) return "GviMarcATOBV";
-      return "GviMarcDE" + catalog.substring(3);
+      String catalogId = getCatalogId(record);
+      if ((catalogId == null) || (catalogId.length() < 4)) return "GviMarcUnknown";
+      if ((catalogId.equals("AT-OBV"))) return "GviMarcATOBV";
+      return "GviMarcDE" + catalogId.substring(3);
    }
 
-   private String findCatalog(Record record, String f001) {
-      String catalog = "UNSET";
-      // guess catalog
+   private String findCatalog(final Record record) {
+      String f001 = getFirstFieldVal(record, "001");
+      String catalogId = "UNSET";
+      // guess catalogId
       String field003 = getFirstFieldVal(record, "003");
       String field040a = getFirstFieldVal(record, "040a");
       if (collectionFromParameter.equals("ZDB")) {
-         catalog = "DE-600";
+         catalogId = "DE-600";
       }
       else if (collectionFromParameter.equals("HBZFIX")) {
-         catalog = "DE-605";
+         catalogId = "DE-605";
       }
       else if (collectionFromParameter.equals("OBV")) {
-         catalog = "AT-OBV";
+         catalogId = "AT-OBV";
       }
       else if (field003 != null) {
          if (field003.length() > 6) {
             field003 = field003.substring(0, 6);
          }
-         catalog = field003;
+         catalogId = field003;
       }
       else if (field040a != null) {
-         catalog = field040a;
+         catalogId = field040a;
       }
       else if (f001 != null && f001.startsWith("BV")) {
-         catalog = "DE-604";
+         catalogId = "DE-604";
       }
       else {
-         catalog = "UNDEFINED";
+         catalogId = "UNDEFINED";
       }
-      return catalog;
+      return catalogId;
    }
 
-   protected Set<String> findConsortium(Record record, String catalog) {
+   public Set<String> getConsortium(final Record record) {
+      return findConsortium(record, getCatalogId(record));
+   }
+
+   protected Set<String> findConsortium(Record record, String catalogId) {
       Set<String> consortiumSet = new HashSet<>();
       String collection = System.getProperty("data.collection", "UNDEFINED");
-      switch (catalog) {
+      switch (catalogId) {
          case "AT-OBV":
             consortiumSet.add("AT-OBV");
             break;
@@ -368,7 +372,7 @@ public class Basis extends SolrIndexer {
                consortiumSet.add("DE-600");
             }
             else {
-               consortiumSet.add(catalog);
+               consortiumSet.add(catalogId);
             }
             break;
          case "DE-576": // SWB
@@ -378,7 +382,7 @@ public class Basis extends SolrIndexer {
          case "DE-603": // HEBIS
          case "DE-604": // BVB
          case "DE-605": // HBZ
-            consortiumSet.add(catalog);
+            consortiumSet.add(catalogId);
             break;
          case "DE-627": // K10Plus
             Set<String> regions = getFieldList(record, "924c");
@@ -395,6 +399,7 @@ public class Basis extends SolrIndexer {
 
    /**
     * Split string with comma separated List of entries into a set of (string)entries<br>
+    * 
     * @param record
     * @param tagStr
     * @return
@@ -424,7 +429,5 @@ public class Basis extends SolrIndexer {
    public boolean detectLinkToEnrichment(Record record) {
       return true;
    }
-
-
 
 }
