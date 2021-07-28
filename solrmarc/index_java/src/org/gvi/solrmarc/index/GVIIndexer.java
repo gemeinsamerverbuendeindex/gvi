@@ -24,6 +24,10 @@ import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.gvi.solrmarc.index.enums.GNDSubjectCategory;
+import org.gvi.solrmarc.index.enums.MARCSubjectCategory;
+import org.gvi.solrmarc.index.enums.SWDSubjectCategory;
+import org.gvi.solrmarc.index.enums.IllFlag;
 import org.gvi.solrmarc.normalizer.ISBNNormalizer;
 import org.gvi.solrmarc.normalizer.impl.PunctuationSingleNormalizer;
 import org.marc4j.marc.ControlField;
@@ -1229,170 +1233,7 @@ public class GVIIndexer extends SolrIndexer {
       return result;
    }
 
-   /**
-    * Ausprägungen des Fernleihindikators,<br>
-    * 
-    * @see https://wiki.dnb.de/download/attachments/132744284/marcAend201201Leihverkehrsangabe.pdf
-    *      <dl>
-    *      <dd>'a' ⇨ "Loan"</dd>
-    *      <dd>'b' ⇨ "Copy"</dd>
-    *      <dd>'c' ⇨ "Loan" and "Copy"</dd>
-    *      <dd>'d' ⇨ "None"</dd>
-    *      <dd>'e' ⇨ "None"</dd>
-    *      <dd>'' ⇨ "Undefined"</dd>
-    *      </dl>
-    */
-   enum IllFlag {
-      Loan, // 'a': Ausleihe von Bänden möglich, keine Kopien
-      Copy, // 'b': Keine Ausleihe von Bänden, nur Papierkopien werden versandt
-      // Both // 'c': Uneingeschränkte Fernleihe, Kopie und Ausleihe (ergibt sich aus Kombination von 'a' und 'b'
-      None, // 'd': // Keine Fernleihe
-      Ecopy, // 'e': // Keine Ausleihe von Bänden, der Endnutzer erhält eine elektronische Kopie
-      Undefined; // Wenn marc:924d nie angegeben ist.
-   }
 
-   /*
-    * Entitätentyp der GND: $D: "b" - Körperschaft "f" - Kongress "g" - Geografikum "n" - Person (nicht individualisiert) "p" - Person (individualisiert) "s" - Sachbegriff "u" - Werk Entitätentyp der
-    * SWD: $A a = Sachschlagwort b = geographisch-ethnographisches Schlagwort c = Personenschlagwort d = Koerperschaftsschlagwort f = Formschlagwort z = Zeitschlagwort
-    * 
-    */
-   public enum MARCSubjectCategory {
-      PERSONAL_NAME,
-      CORPORATE_NAME,
-      MEETING_NAME,
-      UNIFORM_TITLE,
-      CHRONOLOGICAL_TERM,
-      TOPICAL_TERM,
-      GEOGRAPHIC_NAME,
-      GENRE_FORM,
-      UNCONTROLLED_TERM;
 
-      public static final MARCSubjectCategory mapToMARCSubjectCategory(final int indicator2From653) {
-         final MARCSubjectCategory marcSubjectCategory;
-         switch (indicator2From653) {
-            case 0:
-               marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
-               break;
-            case 1:
-               marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
-               break;
-            case 2:
-               marcSubjectCategory = MARCSubjectCategory.CORPORATE_NAME;
-               break;
-            case 3:
-               marcSubjectCategory = MARCSubjectCategory.MEETING_NAME;
-               break;
-            case 4:
-               marcSubjectCategory = MARCSubjectCategory.CHRONOLOGICAL_TERM;
-               break;
-            case 5:
-               marcSubjectCategory = MARCSubjectCategory.GEOGRAPHIC_NAME;
-               break;
-            case 6:
-               marcSubjectCategory = MARCSubjectCategory.GENRE_FORM;
-               break;
-            default:
-               marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
-         }
-         return marcSubjectCategory;
-      }
-
-   }
-
-   public enum GNDSubjectCategory {
-      PERSON_NONINDIVIDUAL('n'),
-      PERSON_INDIVIDUAL('p'),
-      KOERPERSCHAFT('b'),
-      KONGRESS('f'),
-      GEOGRAFIKUM('g'),
-      SACHBEGRIFF('s'),
-      WERK('u');
-
-      private final char value;
-
-      private GNDSubjectCategory(char c) {
-         this.value = c;
-      }
-
-      public static final MARCSubjectCategory mapToMARCSubjectCategory(final char gndCategory) {
-         final MARCSubjectCategory marcSubjectCategory;
-         switch (gndCategory) {
-            case 'n':
-               marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
-               break;
-            case 'p':
-               marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
-               break;
-            case 'b':
-               marcSubjectCategory = MARCSubjectCategory.CORPORATE_NAME;
-               break;
-            case 'f':
-               marcSubjectCategory = MARCSubjectCategory.MEETING_NAME;
-               break;
-            case 'g':
-               marcSubjectCategory = MARCSubjectCategory.GEOGRAPHIC_NAME;
-               break;
-            case 's':
-               marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
-               break;
-            case 'u':
-               marcSubjectCategory = MARCSubjectCategory.UNIFORM_TITLE;
-               break;
-            default:
-               marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
-         }
-         return marcSubjectCategory;
-      }
-
-      public final char valueOf() {
-         return value;
-      }
-   }
-
-   public enum SWDSubjectCategory {
-      SACHBEGRIFF('a'),
-      GEOGRAFIKUM('b'),
-      PERSON('c'),
-      KOERPERSCHAFT('d'),
-      FORMSCHLAGWORT('f'),
-      ZEITSCHLAGWORT('z');
-
-      private final char value;
-
-      private SWDSubjectCategory(char c) {
-         this.value = c;
-      }
-
-      public static final MARCSubjectCategory mapToMARCSubjectCategory(final char swdCategory) {
-         final MARCSubjectCategory marcSubjectCategory;
-         switch (swdCategory) {
-            case 'a':
-               marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
-               break;
-            case 'b':
-               marcSubjectCategory = MARCSubjectCategory.GEOGRAPHIC_NAME;
-               break;
-            case 'c':
-               marcSubjectCategory = MARCSubjectCategory.PERSONAL_NAME;
-               break;
-            case 'd':
-               marcSubjectCategory = MARCSubjectCategory.CORPORATE_NAME;
-               break;
-            case 'f':
-               marcSubjectCategory = MARCSubjectCategory.GENRE_FORM;
-               break;
-            case 'z':
-               marcSubjectCategory = MARCSubjectCategory.CHRONOLOGICAL_TERM;
-               break;
-            default:
-               marcSubjectCategory = MARCSubjectCategory.TOPICAL_TERM;
-         }
-         return marcSubjectCategory;
-      }
-
-      public final char valueOf() {
-         return value;
-      }
-   }
 
 }
