@@ -1,0 +1,25 @@
+#! /bin/bash
+
+# This is an example test stript unsing the TestHelper
+
+
+# 1. Detect base Path and change to solrmarc's base directory
+RealScriptPath="$(dirname $(readlink -f $0))"
+cd  $RealScriptPath/../..
+echo "Now in $(pwd)"
+
+# 2. Get presets from TestHelper
+. $RealScriptPath/TestHelper
+
+# 3. Define own values
+MEM="1g"
+Input=" index_java/test/data/K10plus_012653829.xml"
+#Input="index_java/test/data/K10plus_529989859.xml"
+
+# 4. Call inherited function to run the test.
+runTest
+
+# 5. Back to old working directory
+cd -
+
+# EOF
