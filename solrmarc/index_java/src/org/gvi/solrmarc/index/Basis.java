@@ -27,6 +27,39 @@ public class Basis extends SolrIndexer {
       super(indexingPropsFile, propertyDirs);
    }
 
+   /**
+    * Count the number of 924 fields.<br>
+    * <dl>
+    * <dt>History</dt>
+    * <dd>uh, 2021-07-13, initial version</dd>
+    * </dl>
+    * 
+    * @param record
+    * @return
+    */
+   public int countHoldingLibraries(Record record) {
+      int count = 0;
+      List<VariableField> fields = record.getVariableFields("924");
+      if (fields != null) {
+         Iterator<VariableField> iterator = fields.iterator();
+         while (iterator.hasNext()) {
+            count++;
+         }
+      }
+      return count;
+   }
+
+   /**
+    * Return always TRUE<br>
+    * Use his method, when just the presence of a marc field is the information.
+    * 
+    * @param record
+    * @return
+    */
+   public boolean detectLinkToEnrichment(Record record) {
+      return true;
+   }
+
    public String getRecordID(final Record record) {
       String catalogId = getCatalogId(record);
       String localId = getFirstFieldVal(record, "001");
@@ -110,28 +143,6 @@ public class Basis extends SolrIndexer {
          retVal = pubDate26xc;
       }
       return (retVal);
-   }
-
-   /**
-    * Return the date in 260c/264c as a string
-    *
-    * @param record - the marc record object
-    * @return 260c/264c, "cleaned" per org.solrmarc.tools.Utils.cleanDate()
-    */
-   private String getDate26xc(Record record) {
-      String date260c = getFieldVals(record, "260c", ", ");
-      String date264c = getFieldVals(record, "264c", ", ");
-      String date = null;
-      if (date260c != null && date260c.length() > 0) {
-         date = date260c;
-      }
-      else if (date264c != null && date264c.length() > 0) {
-         date = date264c;
-      }
-      if (date == null || date.length() == 0) {
-         return (null);
-      }
-      return DataUtil.cleanDate(date);
    }
 
    /**
@@ -225,28 +236,6 @@ public class Basis extends SolrIndexer {
    }
 
    /**
-    * Count the number of 924 fields.<br>
-    * <dl>
-    * <dt>History</dt>
-    * <dd>uh, 2021-07-13, initial version</dd>
-    * </dl>
-    * 
-    * @param record
-    * @return
-    */
-   public int countHoldingLibraries(Record record) {
-      int count = 0;
-      List<VariableField> fields = record.getVariableFields("924");
-      if (fields != null) {
-         Iterator<VariableField> iterator = fields.iterator();
-         while (iterator.hasNext()) {
-            count++;
-         }
-      }
-      return count;
-   }
-
-   /**
     * Try to extract the ZDB id of the document (journal)
     * 
     * @param record
@@ -323,6 +312,54 @@ public class Basis extends SolrIndexer {
       return "GviMarcDE" + catalogId.substring(3);
    }
 
+   public Set<String> getConsortium(final Record record) {
+      return findConsortium(record, getCatalogId(record));
+   }
+
+   /**
+    * Split string with comma separated List of entries into a set of (string)entries<br>
+    * 
+    * @param record
+    * @param tagStr
+    * @return
+    */
+   public Set<String> splitSubfield(Record record, String tagStr) {
+      Set<String> result = new HashSet<>();
+      Set<String> fieldList = getFieldList(record, tagStr);
+      for (String str : fieldList) {
+         String[] subStr = str.split(",");
+         for (int i = 0; i < subStr.length; i++) {
+            String term = subStr[i].trim();
+            if (term.length() > 0) {
+               result.add(term);
+            }
+         }
+      }
+      return result;
+   }
+
+   /**
+    * Return the date in 260c/264c as a string
+    *
+    * @param record - the marc record object
+    * @return 260c/264c, "cleaned" per org.solrmarc.tools.Utils.cleanDate()
+    */
+   private String getDate26xc(Record record) {
+      String date260c = getFieldVals(record, "260c", ", ");
+      String date264c = getFieldVals(record, "264c", ", ");
+      String date = null;
+      if (date260c != null && date260c.length() > 0) {
+         date = date260c;
+      }
+      else if (date264c != null && date264c.length() > 0) {
+         date = date264c;
+      }
+      if (date == null || date.length() == 0) {
+         return (null);
+      }
+      return DataUtil.cleanDate(date);
+   }
+
    private String findCatalog(final Record record) {
       String f001 = getFirstFieldVal(record, "001");
       String catalogId = "UNSET";
@@ -356,11 +393,7 @@ public class Basis extends SolrIndexer {
       return catalogId;
    }
 
-   public Set<String> getConsortium(final Record record) {
-      return findConsortium(record, getCatalogId(record));
-   }
-
-   protected Set<String> findConsortium(Record record, String catalogId) {
+   private Set<String> findConsortium(Record record, String catalogId) {
       Set<String> consortiumSet = new HashSet<>();
       String collection = System.getProperty("data.collection", "UNDEFINED");
       switch (catalogId) {
@@ -395,39 +428,6 @@ public class Basis extends SolrIndexer {
             break;
       }
       return consortiumSet;
-   }
-
-   /**
-    * Split string with comma separated List of entries into a set of (string)entries<br>
-    * 
-    * @param record
-    * @param tagStr
-    * @return
-    */
-   public Set<String> splitSubfield(Record record, String tagStr) {
-      Set<String> result = new HashSet<>();
-      Set<String> fieldList = getFieldList(record, tagStr);
-      for (String str : fieldList) {
-         String[] subStr = str.split(",");
-         for (int i = 0; i < subStr.length; i++) {
-            String term = subStr[i].trim();
-            if (term.length() > 0) {
-               result.add(term);
-            }
-         }
-      }
-      return result;
-   }
-
-   /**
-    * Return always TRUE<br>
-    * Use his method, when just the presence of a marc field is the information.
-    * 
-    * @param record
-    * @return
-    */
-   public boolean detectLinkToEnrichment(Record record) {
-      return true;
    }
 
 }
