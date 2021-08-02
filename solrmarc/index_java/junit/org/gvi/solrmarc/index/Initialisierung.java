@@ -8,6 +8,9 @@ import java.nio.file.Path;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.gvi.solrmarc.index.gvi.Cluster;
+import org.gvi.solrmarc.index.gvi.Gnd_Charset;
+import org.gvi.solrmarc.index.gvi.Init;
 import org.junit.Test;
 
 /**
@@ -29,9 +32,9 @@ public class Initialisierung extends JunitHelper {
       System.setProperty("GviIndexer.skipClusterMap", "true");
       System.setProperty("GviIndexer.skipCultureGraph", "true");
       indexer.isInitialized = false;
-      assertTrue("Any GND synonyms should exist, because the reading of the file was skipped.", GVIIndexer.gndSynonymMap.isEmpty());
-      assertTrue("Any Kobv cluster infomations should exist, because the reading of the file was skipped.", GVIIndexer.gndSynonymMap.isEmpty());
-      assertTrue("Any CultureGraph cluster infomations should exist, because the reading of the file was skipped.", GVIIndexer.gndSynonymMap.isEmpty());
+      assertTrue("Any GND synonyms should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
+      assertTrue("Any Kobv cluster infomations should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
+      assertTrue("Any CultureGraph cluster infomations should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
    }
 
    /**
@@ -45,7 +48,7 @@ public class Initialisierung extends JunitHelper {
       System.setProperty("GviIndexer.skipCultureGraph", "true");
       indexer.isInitialized = false;
       indexer.init();
-      assertFalse("Kobv cluster infomations should exist.", GVIIndexer.kobvClusterMap.isEmpty());
+      assertFalse("Kobv cluster infomations should exist.", Init.kobvClusterMap.isEmpty());
    }
 
    /**
@@ -59,7 +62,7 @@ public class Initialisierung extends JunitHelper {
       System.clearProperty("GviIndexer.skipCultureGraph");
       indexer.isInitialized = false;
          indexer.init();
-         assertTrue("Any CultureGraph cluster infomations should exist, because the file is missing.", GVIIndexer.cutureGraphClusterMap.isEmpty());
+         assertTrue("Any CultureGraph cluster infomations should exist, because the file is missing.", Init.cutureGraphClusterMap.isEmpty());
    }
 
 }

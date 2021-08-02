@@ -1,4 +1,4 @@
-package org.gvi.solrmarc.index.enums;
+package org.gvi.solrmarc.index.gvi.enums;
 
 /*
  * Entitätentyp der GND: $D: "b" - Körperschaft "f" - Kongress "g" - Geografikum "n" - Person (nicht individualisiert) "p" - Person (individualisiert) "s" - Sachbegriff "u" - Werk Entitätentyp der

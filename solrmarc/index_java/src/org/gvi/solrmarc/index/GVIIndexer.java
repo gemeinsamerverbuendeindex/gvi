@@ -1,44 +1,51 @@
 package org.gvi.solrmarc.index;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryPoolMXBean;
-import java.lang.management.MemoryType;
-import java.time.LocalDateTime;
-import java.util.Properties;
+import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.gvi.solrmarc.index.gvi.Basic;
+import org.gvi.solrmarc.index.gvi.Cluster;
+import org.gvi.solrmarc.index.gvi.Gnd_Charset;
+import org.gvi.solrmarc.index.gvi.Init;
+import org.gvi.solrmarc.index.gvi.MatchKey;
+import org.gvi.solrmarc.index.gvi.Material;
+import org.gvi.solrmarc.index.gvi.Subject;
+import org.gvi.solrmarc.index.gvi.enums.MARCSubjectCategory;
+import org.marc4j.marc.Record;
 import org.solrmarc.index.SolrIndexer;
 
 /**
- * Die eigenen "custom" Methoden für die Indexierung<br>
- * Die Methoden selbst befinden sich in den thematisch geordneten Superklassen.<br>
- * In diese Einstiegs-Klasse befindet sich nur die Initialisierung von benötigten Datenstrukturen.
+ * Wrapper der eigenen "custom" Methoden für die Indexierung<br>
+ * In der Klasse werden die Aufrufe nur entgegen genommen und weitergeleitet.<br>
+ * Die Methoden selbst befinden sich in thematisch geordneten Hilfsklassen.<br>
  * <dl>
  * <li>{@link Gnd_Charset} Expansion mit GND Normdaten und indexierung von originalschriftlichen Angaben</li>
  * <li>{@link Cluster} Verknüpfung von Dubletten</li>
  * <li>{@link MatchKey} Verknüpfung von wahrscheinlichen Dubletten</li>
  * <li>{@link Material} Bestimmung von Materialeigenschaften</li>
  * <li>{@link Subject} Extraktion von Schlagworten und Klassifikationen</li>
- * <li>{@link Basis} triviale Methoden</li>
+ * <li>{@link Basic} triviale Methoden</li>
  * <li>{@link SolrIndexer} Der eigentliche Einstieg</li>
  * </dl>
+ * 
  * @author Thomas Kirchhoff <thomas.kirchhoff@bsz-bw.de>
  * @version 2017-06-26 uh, Synonyme aus File lesen und ergänzen
  * @version 2018-03-02 uh, GND-Synonyme vom remote repository lesen und ergänzen
- * @version 
+ * @version
  * @version 2021-07-28 uh, Methoden der Klasse in mehrere thematisch geordnete Superklassen aufgeteilt.
  */
-public class GVIIndexer extends Gnd_Charset{
+public class GVIIndexer extends SolrIndexer {
 
-   public static boolean                            isInitialized               = false;
-   private static final Logger                      LOG                         = LogManager.getLogger(GVIIndexer.class);
-   private static final String                      kobvClusterFile             = "kobv_clusters.properties";
-   private static final String                      cutureGraphClusterFile      = "cuturegraph_clusters.properties";
-   private static final String                      gndSynonymFile              = "gnd_synonyms.properties";
+   private static final Logger LOG           = LogManager.getLogger(GVIIndexer.class);
+   private Init                init          = new Init(this);
+   private Basic               basic         = new Basic(this);
+   private Subject             subject       = new Subject(this);
+   private Material            material      = new Material(this);
+   private MatchKey            matchKey      = new MatchKey(this);
+   private Cluster             cluster       = new Cluster(this);
+   private Gnd_Charset         gndCharset    = new Gnd_Charset(this);
+   public boolean              isInitialized = false;
 
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
       super(indexingPropsFile, propertyDirs);
@@ -49,89 +56,276 @@ public class GVIIndexer extends Gnd_Charset{
       super(null, null);
       init();
    }
-
+   
    /**
-    * Read big property files into the heap memory<br>
-    * This allows the fast enrichment of documents while indexing.<br>
-    * Th loading is controlled by global flags:
-    * <dl>
-    * <dt>gnd.configdir</dt>
-    * <dd>The directory, containing the files "gnd_synonyms.properties", "kobv_clusters.properties" and "cuturegraph_clusters.properties"</dd>
-    * <dt>GviIndexer.skipSynonyms</dt>
-    * <dd>If 'true' skip reading the file gnd_synonyms.properties.</dd>
-    * <dt>GviIndexer.skipClusterMap</dt>
-    * <dd>If 'true' skip reading the file kobv_clusters.properties.</dd>
-    * <dt>GviIndexer.skipCultureGraph</dt>
-    * <dd>If 'true' skip reading the file cuturegraph_clusters.properties.</dd>
-    * <dt>
-    * 
-    * @throws Exception
+    * Read big property files ...<br>
+    * Wrapper to {@link Init#init()}
     */
-   public synchronized void init() {
-      if (isInitialized) return;
-      isInitialized = true;
-
-      String baseDir = System.getProperty("gnd.configdir", ".");
-
-      gndSynonymMap = init_read_big_propertyFiles("skipSynonyms", baseDir, gndSynonymFile);
-      kobvClusterMap = init_read_big_propertyFiles("skipClusterMap", baseDir, kobvClusterFile);
-      cutureGraphClusterMap = init_read_big_propertyFiles("skipCultureGraph", baseDir, cutureGraphClusterFile);
+   protected void init() {
+      init.init();
    }
 
    /**
-    * Helper for {@link #init()}<br>
-    * Reads the data from Disk.
-    * 
-    * @param flagName Abbreviation of the global flag GviIndexer.<flagName>. If true the reading of the file will be skipped.
-    * @param dir The directory containing the file
-    * @param fileName The name of the File to read
-    * @return A new property collection. Empty on error or the skip flag was set.
+    * Get the catalog's id fore the record ...<br>
+    * Wrapper to {@link Basic#getCatalogId(Record)}
     */
-   private Properties init_read_big_propertyFiles(String flagName, String dir, String fileName) {
-      Properties data = new Properties();
-      if ("true".equals(System.getProperty("GviIndexer." + flagName))) {
-         LOG.info("GviIndexer." + flagName + " is true, skip loading.");
-         return data;
-      }
-      if (LOG.isInfoEnabled()) {
-         LOG.info("Loading of " + fileName + " started at: " + LocalDateTime.now().toString());
-         listMem();
-      }
-      try {
-         data.load(new FileInputStream(new File(dir, fileName)));
-      }
-      catch (IOException e) {
-         LOG.warn("Fehler beim Einlesen von Anreicherungsdaten", e);
-         return data;
-      }
-      if (LOG.isInfoEnabled()) {
-         LOG.info("Loading of " + fileName + " finished at: " + LocalDateTime.now().toString());
-         listMem();
-      }
-      return data;
+   public String getRecordID(Record record) {
+      return basic.getCatalogId(record);
    }
 
    /**
-    * Helper for {@link #init_read_big_propertyFiles()}<br>
-    * Prints the ammount of free heap memory to log.
+    * More advanced version of getDate ...<br>
+    * Wrapper to {@link Basic#getPublicationDate008or26xc(Record)}
     */
-   private void listMem() {
-      for (MemoryPoolMXBean mpBean : ManagementFactory.getMemoryPoolMXBeans()) {
-         if (mpBean.getType() == MemoryType.HEAP) {
-            LOG.info(String.format("Name: %s max_used: %2.2fG now_used: %2.2fG (max_avail: %2.2fG)\n", mpBean.getName(), toGb(mpBean.getPeakUsage().getUsed()), toGb(mpBean.getUsage().getUsed()), toGb(mpBean.getUsage().getMax())));
-         }
-      }
+   public String getPublicationDate008or26xc(Record record) {
+      return basic.getPublicationDate008or26xc(record);
    }
 
    /**
-    * Helper for {@link #listMem()}<br>
-    * Divide by 1024³
-    * @param num
-    * @return
+    * Count the number of 924 fields ...<br>
+    * Wrapper to {@link Basic#countHoldingLibraries(Record)}
     */
-   private float toGb(long num) {
-      float ret = num / 1024;
-      return ret / 1024 / 1024;
+   public String countHoldingLibraries(Record record) {
+      return basic.countHoldingLibraries(record);
    }
 
+   /**
+    * <br>
+    * Wrapper to {@link Basic#hasEnrichment(Record)
+    */
+   public String hasEnrichment(Record record) {
+      return basic.hasEnrichment(record);
+   }
+
+   /**
+    * Get Id of collection ... <br>
+    * Wrapper to {@link Basic#getCollection(Record)}
+    */
+   public String getCollection(final Record record) {
+      return basic.getCollection(record);
+   }
+
+   /**
+    * Get the catalog's id for this record ... <br>
+    * Wrapper to {@link Basic#getCatalogId(Record)}
+    */
+   public String getCatalogId(final Record record) {
+      return basic.getCatalogId(record);
+   }
+
+   /**
+    * Get value(s) of selected classification schema ...<br>
+    * Wrapper to {@link Basic#getClassification(Record, String, String)}
+    */
+   public Set<String> getClassification(Record record, String notationField, String schemaName) {
+      return basic.getClassification(record, notationField, schemaName);
+   }
+
+   /**
+    * Determine ILL (Inter Library Loan) Flag ...<br>
+    * Wrapper to {@link Basic#getIllFlag(Record)}
+    */
+   public Set<String> getIllFlag(Record record) {
+      return basic.getIllFlag(record);
+   }
+
+   /**
+    * Try to extract the ZDB id ...<br>
+    * Wrapper to {@link Basic#getZdbId(Record)}
+    */
+   public Set<String> getZdbId(Record record) {
+      return basic.getZdbId(record);
+   }
+
+   /**
+    * Get the licenced year(s) Field 912 ...<br>
+    * Wrapper to {@link Basic#getProductYear(Record)}
+    */
+   public Set<String> getProductYear(final Record record) {
+      return basic.getProductYear(record);
+   }
+
+   /**
+    * Find and patch the ISIL of the Consortium.<br>
+    * Wrapper to {@link Basic#getConsortium(Record)}
+    */
+   public Set<String> getConsortium(final Record record) {
+      return basic.getConsortium(record);
+   }
+
+   /**
+    * Extension for VuFind clients ...<br>
+    * Wrapper to {@link Basic#getMarcTypByConsortium(Record)}
+    */
+   public String getMarcTypByConsortium(final Record record) {
+      return basic.getMarcTypByConsortium(record);
+   }
+
+   /**
+    * Split string with comma separated List ...<br>
+    * Wrapper to {@link Basic#splitSubfield(Record)}
+    */
+   public Set<String> splitSubfield(Record record, String tagStr) {
+      return basic.splitSubfield(record, tagStr);
+   }
+
+   /**
+    * Lookup to get the duplicate key to the record's id ...<br>
+    * Wrapper to {@link Cluster#getDupId(Record)}
+    */
+   public String getDupId(Record record) {
+      return cluster.getDupId(record);
+   }
+
+   /**
+    * Expand GND synonyms from provided finder ...<br>
+    * Wrapper to {@link Gnd_Charset}
+    */
+   public Set<String> expandGnd(Record record, String tagStr1, String tagStr2) {
+      return gndCharset.expandGnd(record, tagStr1, tagStr2);
+   }
+
+   /**
+    * Expand GND synonyms from provided finder ...<br>
+    * Wrapper to {@link Gnd_Charset}
+    */
+   public Set<String> expandGnd(Record record, String tagStr) {
+      return gndCharset.expandGnd(record, tagStr);
+   }
+
+   /**
+    * Extent the category tags with their version in original writing ...<br>
+    * Wrapper to {@link Gnd_Charset#getAllCharSets(Record, String)}
+    */
+   public Set<String> getAllCharSets(Record record, String tagString) {
+      return gndCharset.getAllCharSets(record, tagString);
+   }
+
+   /**
+    * Checks if the requested fields starts with ...<br>
+    * Wrapper to {@link Gnd_Charset#getTermID(Record, String, String, String)}
+    */
+   public Set<String> getTermID(Record record, String tagStr, String prefixStr, String keepPrefixStr) {
+      return gndCharset.getTermID(record, tagStr, prefixStr, keepPrefixStr);
+   }
+
+   /**
+    * Detect the most specific material information ...<br>
+    * Wrapper to {@link MatchKey#matchkeyMaterial(Record)}
+    */
+   public String matchkeyMaterial(Record record) {
+      return matchKey.matchkeyMaterial(record);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link MatchKey#matchkeyMaterialAuthorTitle(Record)}
+    */
+   public String matchkeyMaterialAuthorTitle(Record record) {
+      return matchKey.matchkeyMaterialAuthorTitle(record);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link MatchKey#matchkeyMaterialAuthorTitleYear(Record)}
+    */
+   public String matchkeyMaterialAuthorTitleYear(Record record) {
+      return matchKey.matchkeyMaterialAuthorTitleYear(record);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link MatchKey#matchkeyMaterialAuthorTitleYearPublisher(Record)}
+    */
+   public String matchkeyMaterialAuthorTitleYearPublisher(Record record) {
+      return matchKey.matchkeyMaterialAuthorTitleYearPublisher(record);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link MatchKey#matchkeyMaterialISBNYear(Record)}
+    */
+   public String matchkeyMaterialISBNYear(Record record) {
+      return matchKey.matchkeyMaterialISBNYear(record);
+   }
+
+   /**
+    * Determine type of material ...<br>
+    * Wrapper to {@link Material#getMaterialType(Record)}
+    */
+   public Set<String> getMaterialType(Record record) {
+      return material.getMaterialType(record);
+   }
+
+   /**
+    * Determine access method of material (physical, online) ...<br>
+    * Wrapper to {@link Material#getMaterialAccess(Record)}
+    */
+   public Set<String> getMaterialAccess(Record record) {
+      return material.getMaterialAccess(record);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link Subject#getSubjectChronologicalTerm(Record, String)}
+    */
+   public Set<String> getSubjectChronologicalTerm(Record record, String tagStr) {
+      return subject.getSubjectChronologicalTerm(record, tagStr);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link Subject#getSubjectCorporateName(Record, String)}
+    */
+   public Set<String> getSubjectCorporateName(Record record, String tagStr) {
+      return subject.getSubjectCorporateName(record, tagStr);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link Subject#getSubjectGeographicalName(Record, String)}
+    */
+   public Set<String> getSubjectGeographicalName(Record record, String tagStr) {
+      return subject.getSubjectGeographicalName(record, tagStr);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link Subject#getSubjectGenreForm(Record, String)}
+    */
+   public Set<String> getSubjectGenreForm(Record record, String tagStr) {
+      return subject.getSubjectGenreForm(record, tagStr);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link Subject#getSubjectMeetingName(Record, String)}
+    */
+   public Set<String> getSubjectMeetingName(Record record, String tagStr) {
+      return subject.getSubjectMeetingName(record, tagStr);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link Subject#getSubjectPersonalName(Record, String)}
+    */
+   public Set<String> getSubjectPersonalName(Record record, String tagStr) {
+      return subject.getSubjectPersonalName(record, tagStr);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link Subject#getSubjectTopicalTerm(Record, String)}
+    */
+   public Set<String> getSubjectTopicalTerm(Record record, String tagStr) {
+      return subject.getSubjectTopicalTerm(record, tagStr);
+   }
+
+   /**
+    * ...<br>
+    * Wrapper to {@link Subject#getSubjectUniformTitle(Record, String)}
+    */
+   public Set<String> getSubjectUniformTitle(Record record, String tagStr) {
+      return subject.getSubjectUniformTitle(record, tagStr);
+   }
 }

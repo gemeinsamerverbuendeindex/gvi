@@ -1,4 +1,4 @@
-package org.gvi.solrmarc.index;
+package org.gvi.solrmarc.index.gvi;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -7,20 +7,21 @@ import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.gvi.solrmarc.index.enums.GNDSubjectCategory;
-import org.gvi.solrmarc.index.enums.MARCSubjectCategory;
-import org.gvi.solrmarc.index.enums.SWDSubjectCategory;
+import org.gvi.solrmarc.index.GVIIndexer;
+import org.gvi.solrmarc.index.gvi.enums.GNDSubjectCategory;
+import org.gvi.solrmarc.index.gvi.enums.MARCSubjectCategory;
+import org.gvi.solrmarc.index.gvi.enums.SWDSubjectCategory;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
 import org.marc4j.marc.VariableField;
 
-public class Subject extends Basis {
-   private static final Logger LOG = LogManager.getLogger(Material.class);
+public class Subject {
+   private static final Logger LOG  = LogManager.getLogger(Subject.class);
+   private GVIIndexer          main = null;
 
-   
-   public Subject(String indexingPropsFile, String[] propertyDirs) {
-      super(indexingPropsFile, propertyDirs);
+   public Subject(GVIIndexer callback) {
+      main = callback;
    }
 
    public Set<String> getSubjectTopicalTerm(Record record, String tagStr) {
@@ -55,14 +56,14 @@ public class Subject extends Basis {
       return getSubject(record, tagStr, MARCSubjectCategory.CHRONOLOGICAL_TERM);
    }
 
-   public Set<String> getSubject(Record record, String tagStr, MARCSubjectCategory subjectCategory) {
-      Set<String> result = getFieldList(record, tagStr);
+   private Set<String> getSubject(Record record, String tagStr, MARCSubjectCategory subjectCategory) {
+      Set<String> result = main.getFieldList(record, tagStr);
       result.addAll(getSubjectUncontrolled(record, subjectCategory));
       result.addAll(getSWDSubject(record, subjectCategory));
       return result;
    }
 
-   public Set<String> getSubjectUncontrolled(Record record, MARCSubjectCategory subjectCategory) {
+   private Set<String> getSubjectUncontrolled(Record record, MARCSubjectCategory subjectCategory) {
       Set<String> result = new LinkedHashSet<>();
       List<VariableField> fields = record.getVariableFields("653");
       if (fields != null) {

@@ -1,4 +1,4 @@
-package org.gvi.solrmarc.index.enums;
+package org.gvi.solrmarc.index.gvi.enums;
 
 /**
  * Ausprägungen des Fernleihindikators,<br>

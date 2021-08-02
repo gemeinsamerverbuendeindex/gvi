@@ -1,10 +1,11 @@
-package org.gvi.solrmarc.index;
+package org.gvi.solrmarc.index.gvi;
 
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.gvi.solrmarc.index.GVIIndexer;
 import org.gvi.solrmarc.normalizer.ISBNNormalizer;
 import org.gvi.solrmarc.normalizer.impl.PunctuationSingleNormalizer;
 import org.marc4j.marc.DataField;
@@ -12,13 +13,14 @@ import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
 import org.solrmarc.mixin.GetFormatMixin;
 
-public class MatchKey extends Material {
+public class MatchKey {
 
    private static final Logger                      LOG                         = LogManager.getLogger(MatchKey.class);
+   private GVIIndexer                               main                        = null;
    private static final PunctuationSingleNormalizer punctuationSingleNormalizer = new PunctuationSingleNormalizer();
 
-   public MatchKey(String indexingPropsFile, String[] propertyDirs) {
-      super(indexingPropsFile, propertyDirs);
+   public MatchKey(GVIIndexer callback) {
+      main = callback;
    }
 
    /**
@@ -42,7 +44,7 @@ public class MatchKey extends Material {
       if (contentTypes.contains("Video")) return "video";
       if (contentTypes.contains("Map")) return "map";
       char materialFormCode = getMaterialFormCode(record);
-      if (contentTypes.contains("Mixed Materials")){
+      if (contentTypes.contains("Mixed Materials")) {
          if (materialFormCode == 'm') return "book";
          return "mixed";
       }
@@ -71,8 +73,8 @@ public class MatchKey extends Material {
             }
          }
          else if (material.equals("article")) {
-            hostTitle = extractWords(getFirstFieldVal(record, "773t"), 3);
-            relatedPart = extractWords(getFirstFieldVal(record, "773g"), 3);
+            hostTitle = extractWords(main.getFirstFieldVal(record, "773t"), 3);
+            relatedPart = extractWords(main.getFirstFieldVal(record, "773g"), 3);
             if (!hostTitle.isEmpty()) {
                matchkey = String.format("%s:%s", matchkey, hostTitle);
             }
@@ -82,7 +84,7 @@ public class MatchKey extends Material {
          }
       }
       catch (Throwable e) {
-         LOG.warn("MatchkeyException at record " + getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + main.getRecordID(record), e);
       }
 
       return matchkey;
@@ -102,7 +104,7 @@ public class MatchKey extends Material {
          }
       }
       catch (Throwable e) {
-         LOG.warn("MatchkeyException at record " + getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + main.getRecordID(record), e);
       }
       return matchkey;
    }
@@ -115,7 +117,7 @@ public class MatchKey extends Material {
          matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitle(record), pubdate);
       }
       catch (Throwable e) {
-         LOG.warn("MatchkeyException at record " + getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + main.getRecordID(record), e);
       }
       return matchkey;
    }
@@ -149,7 +151,7 @@ public class MatchKey extends Material {
     * @return
     */
    private String getInvertetLastName(Record record) {
-      String firstAuthor = getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a");
+      String firstAuthor = main.getFirstFieldVal(record, "100a:110a:111a:700a:710a:711a");
       if ((firstAuthor == null) || firstAuthor.isEmpty()) return null;
       String lastName = null;
       // first normalization
@@ -175,7 +177,7 @@ public class MatchKey extends Material {
     * @return
     */
    private String findLastNameIn245(Record record) {
-      String firstAuthor = getFirstFieldVal(record, "245c");
+      String firstAuthor = main.getFirstFieldVal(record, "245c");
       if ((firstAuthor == null) || firstAuthor.isEmpty()) return null;
       firstAuthor = firstAuthor.replaceAll("\\[.*?\\]", "");
       firstAuthor = firstAuthor.replaceAll("<.*?>", "");
@@ -196,7 +198,7 @@ public class MatchKey extends Material {
 
    private String matchkeyPublisher(Record record) {
       String publisherKey = "";
-      String publisher = getFirstFieldVal(record, "260b:264b:502c");
+      String publisher = main.getFirstFieldVal(record, "260b:264b:502c");
       if (publisher != null) {
          publisher = publisher.replaceAll("[Vv]erlag", "");
          publisher = publisher.replaceAll("[Vv]erl[\\.]", "");
@@ -207,7 +209,7 @@ public class MatchKey extends Material {
    }
 
    private String matchkeyPubdate(Record record) {
-      String pubdateKey = getPublicationDate008or26xc(record);
+      String pubdateKey = main.getPublicationDate008or26xc(record);
       if (pubdateKey == null) {
          pubdateKey = "";
       }
@@ -225,7 +227,7 @@ public class MatchKey extends Material {
 
    private String matchkeyVolume(Record record) {
       String volume = "";
-      String field = getFirstFieldVal(record, "800v:810v:811v:830v");
+      String field = main.getFirstFieldVal(record, "800v:810v:811v:830v");
       if (field != null) {
          volume = punctuationSingleNormalizer.normalize(field);
       }
@@ -253,7 +255,7 @@ public class MatchKey extends Material {
             return ISBNNormalizer.normalize(isbn);
          }
          catch (IllegalArgumentException e) {
-            LOG.warn("Invalid ISBN " + getRecordID(record) + ": " + e.getMessage());
+            LOG.warn("Invalid ISBN " + main.getRecordID(record) + ": " + e.getMessage());
             return simpleIsbnNormalisation(isbn);
          }
          // still here? 3nd try: $z
@@ -318,8 +320,8 @@ public class MatchKey extends Material {
    }
 
    /**
-    * TODO Sollten Nichtsortierzeichen entfernt werden werden?
-    * TODO Soll 'nonFilingInt' die Position des ersten nichtsortierzeichens sein?
+    * TODO Sollten Nichtsortierzeichen entfernt werden werden? TODO Soll 'nonFilingInt' die Position des ersten nichtsortierzeichens sein?
+    * 
     * @param record
     * @return
     */
@@ -327,13 +329,13 @@ public class MatchKey extends Material {
       String title = "";
       DataField titleField = (DataField) record.getVariableField("245");
       if (titleField == null) {
-         LOG.debug("No marc:245 found at record: " + getRecordID(record));
+         LOG.debug("No marc:245 found at record: " + main.getRecordID(record));
          return "";
       }
 
-      int nonFilingInt = 0;//  getInd2AsInt(titleField);
+      int nonFilingInt = 0;// getInd2AsInt(titleField);
 
-      title = getFirstFieldVal(record, "245a");
+      title = main.getFirstFieldVal(record, "245a");
       if (title != null) {
          title = title.toLowerCase();
 
@@ -343,7 +345,7 @@ public class MatchKey extends Material {
          }
          return title;
       }
-      LOG.debug("Subfield 'a' is missing in marc:245 at record:" + getRecordID(record));
+      LOG.debug("Subfield 'a' is missing in marc:245 at record:" + main.getRecordID(record));
       return "";
    }
 }
