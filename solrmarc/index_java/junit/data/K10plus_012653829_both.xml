@@ -31,41 +31,12 @@
   <datafield tag="044" ind1=" " ind2=" ">
     <subfield code="c">XA-DE</subfield>
   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">blk #1</subfield>
-      <subfield code="2">blk</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">bcl #1</subfield>
-      <subfield code="2">bcl</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">ssgn #1</subfield>
-      <subfield code="2">ssgn</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">DFI #1</subfield>
-      <subfield code="2">DFI</subfield>
-   </datafield>
-   
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">FIV #1</subfield>
-      <subfield code="2">FIV</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">ZL 3210</subfield>
-      <subfield code="2">rvk</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">100.123</subfield>
-      <subfield code="2">ddc</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">23a</subfield>
-      <subfield code="a">06a</subfield>
-      <subfield code="2">sdnb</subfield>
-   </datafield>
-   <datafield tag="100" ind1="1" ind2=" ">
+  <datafield tag="084" ind1=" " ind2=" ">
+    <subfield code="a">23a</subfield>
+    <subfield code="a">06a</subfield>
+    <subfield code="2">sdnb</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
     <subfield code="a">Gloede, Walter</subfield>
   </datafield>
   <datafield tag="245" ind1="1" ind2="0">
@@ -168,7 +139,7 @@
     <subfield code="a">879038810</subfield>
     <subfield code="b">DE-517</subfield>
     <subfield code="9">517</subfield>
-    <subfield code="c">GBV</subfield>
+    <subfield code="c">BSZ</subfield>
     <subfield code="d">c</subfield>
     <subfield code="g">08016179</subfield>
     <subfield code="h">2200</subfield>

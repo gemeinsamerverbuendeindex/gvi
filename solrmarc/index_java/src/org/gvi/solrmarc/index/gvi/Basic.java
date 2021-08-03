@@ -20,16 +20,16 @@ public class Basic {
 
    private static final Logger LOG                     = LogManager.getLogger(Basic.class);
    private GVIIndexer          main                    = null;
-   private String              collectionFromParameter = System.getProperty("data.collection", "UNDEFINED");
    private String              myCatalog               = "";
    private Record              myCatalogIsFor          = null;
+   private String              collectionFromParameter = System.getProperty("data.collection", "UNDEFINED");
 
    public Basic(GVIIndexer callback) {
       main = callback;
    }
 
    /**
-    * Count the number of 924 fields.<br>
+    * Get the number of 924 fields.<br>
     * <dl>
     * <dt>History</dt>
     * <dd>uh, 2021-07-13, initial version</dd>
@@ -38,22 +38,17 @@ public class Basic {
     * @param record
     * @return
     */
-   public String countHoldingLibraries(Record record) {
-      int count = 0;
+   public String getHoldingCount(Record record) {
       List<VariableField> fields = record.getVariableFields("924");
-      if (fields != null) {
-         Iterator<VariableField> iterator = fields.iterator();
-         while (iterator.hasNext()) {
-            count++;
-         }
+      if (fields == null) {
+         return "0";
       }
-      return String.valueOf(count);
+      return String.valueOf(fields.size());
    }
 
    /**
     * Return always TRUE<br>
-    * TODO evaluate marc fields
-    * Use his method, when just the presence of a marc field is the information.
+    * TODO evaluate marc fields Use his method, when just the presence of a marc field is the information.
     * 
     * @param record
     * @return
@@ -62,13 +57,20 @@ public class Basic {
       return "true";
    }
 
+   /**
+    * Build the GVI-ID for the Record.<br>
+    * 
+    * @param record
+    * @return The composed id: The ISIL of the catalog in brackets and the local id. "(DE-601)123456"
+    */
    public String getRecordID(final Record record) {
+      String localId = null;
       String catalogId = getCatalogId(record);
-      String localId = main.getFirstFieldVal(record, "001");
-      if (catalogId.equals("AT-OBV")) {
+      if ("AT-OBV".equals(catalogId)) {
          localId = main.getFirstFieldVal(record, "009");
-         if (localId == null) localId = main.getFirstFieldVal(record, "001");
-         else if (localId.length() == 0) localId = main.getFirstFieldVal(record, "001");
+      }
+      if ((localId == null) || localId.isEmpty()) {
+         localId = main.getFirstFieldVal(record, "001");
       }
       return "(" + catalogId + ")" + localId;
    }
@@ -106,7 +108,7 @@ public class Basic {
     */
    public String getPublicationDate008or26xc(final Record record) {
       String field008 = main.getFirstFieldVal(record, "008");
-      String pubDate26xc = getDate26xc(record);
+      String pubDate26xc = findDate26xc(record);
       String pubDate26xcJustDigits = null;
 
       if (pubDate26xc != null) {
@@ -269,34 +271,60 @@ public class Basic {
    }
 
    /**
-    * Get the licenced year(s) Field 912, Kennzeichnungen für Nationallizenzen und digitale Sammlungen<br>
-    * TODO Bei Bereichen auch die dazwischen liegenden Jahre berücksichtigen?
+    * Get the licensed year(s) of products from marc:912b<br>
+    * * Aug. 2021 only used at K10plus.<br>
+    * * Definition is still on discussion at the AG-KVA
     * 
     * @param record
-    * @return
+    * @return The year or all years of date ranges
     */
    public Set<String> getProductYear(final Record record) {
-      Set<String> values912b = main.getFieldList(record, "912b");
       Set<String> productYears = new HashSet<>();
-      for (String yearExpr : values912b) {
-         String yearExprs[] = yearExpr.replaceAll("[^0-9,^\\-,^\\,]", "").split(",");
-         for (String y : yearExprs) {
-            String range[] = y.split("\\-", -1);
-            String year = DataUtil.cleanDate(range[0]);
-            if (year != null) {
-               productYears.add(year);
-            }
-
-            if (range.length > 1) {
-               year = DataUtil.cleanDate(range[1]);
-               if (year != null) {
-                  productYears.add(year);
-               }
+      Set<String> values912b = main.getFieldList(record, "912b");
+      if (values912b == null) {
+         return productYears;
+      }
+      for (String yearEntry : values912b) {
+         String yearExpressions[] = yearEntry.split(",");
+         for (String expression : yearExpressions) {
+            String dateRange[] = expression.split("-");
+            switch (dateRange.length) {
+               case 1:
+                  addDate(productYears, dateRange[0]);
+                  break;
+               case 2:
+                  String anfang = DataUtil.cleanDate(dateRange[0]);
+                  if (anfang == null) break;
+                  String ende = DataUtil.cleanDate(dateRange[1]);
+                  if (ende == null) break;
+                  for (int year = Integer.valueOf(anfang); year <= Integer.valueOf(ende); year++) {
+                     addDate(productYears, String.valueOf(year));
+                  }
+                  break;
+               default:
+                  LOG.warn("Fehlerhafte Angaben zu Produktjahr (912b) in Titel: " + main.getRecordID(record));
             }
          }
       }
       return productYears;
    }
+
+   /**
+    * Helper to {@link #getProductYear(Record)}<br>
+    * 
+    * @param years Set to add the validated year from 'rawDate'
+    * @param rawDate Year to be validated and cleaned
+    * @return The probably modified set 'years'
+    */
+   private Set<String> addDate(Set<String> years, String rawDate) {
+      String year = DataUtil.cleanDate(rawDate);
+      if (year != null) {
+         years.add(year);
+      }
+      return years;
+   }
+
+   // String yearExprs[] = yearExpr.replaceAll("[^0-9,^\\-,^\\,]", "").split(",");
 
    /**
     * Extension for VuFind clients.<br>
@@ -315,7 +343,7 @@ public class Basic {
    }
 
    /**
-    * Find and patch the ISIL of the Consortium.<br>
+    * Find the ISIL of the Consortium.<br>
     * 
     * @param record
     * @return
@@ -323,19 +351,16 @@ public class Basic {
    public Set<String> getConsortium(final Record record) {
       String catalogId = getCatalogId(record);
       Set<String> consortiumSet = new HashSet<>();
-      String collection = System.getProperty("data.collection", "UNDEFINED");
       switch (catalogId) {
-         case "AT-OBV":
-            consortiumSet.add("AT-OBV");
-            break;
          case "DE-101": // DNB
-            if (collection.equals("ZDB")) {
+            if ("ZDB".equals(collectionFromParameter)) {
                consortiumSet.add("DE-600");
             }
             else {
                consortiumSet.add(catalogId);
             }
             break;
+         case "AT-OBV":
          case "DE-576": // SWB
          case "DE-600": // ZDB
          case "DE-601": // GBV+KOBV+ZDB
@@ -381,12 +406,24 @@ public class Basic {
    }
 
    /**
+    * Set a new collection id<br>
+    * The cached catalog id is invalidated too. So the next call of {@link #getCatalogId(Record)} has to call {@link #findCatalog(Record)}.<br>
+    * This method is intended for Junit tests only.
+    */
+   public void setCollection(String collectionId) {
+      // patch the value
+      collectionFromParameter = collectionId;
+      // Invalidate cached catalog Id
+      myCatalogIsFor = null;
+   }
+
+   /**
     * Return the date in 260c/264c as a string
     *
     * @param record - the marc record object
     * @return 260c/264c, "cleaned" per org.solrmarc.tools.Utils.cleanDate()
     */
-   private String getDate26xc(Record record) {
+   String findDate26xc(Record record) {
       String date260c = main.getFieldVals(record, "260c", ", ");
       String date264c = main.getFieldVals(record, "264c", ", ");
       String date = null;
@@ -402,37 +439,33 @@ public class Basic {
       return DataUtil.cleanDate(date);
    }
 
-   private String findCatalog(final Record record) {
+   String findCatalog(final Record record) {
       String f001 = main.getFirstFieldVal(record, "001");
-      String catalogId = "UNSET";
       // guess catalogId
       String field003 = main.getFirstFieldVal(record, "003");
       String field040a = main.getFirstFieldVal(record, "040a");
       if (collectionFromParameter.equals("ZDB")) {
-         catalogId = "DE-600";
+         return "DE-600";
       }
-      else if (collectionFromParameter.equals("HBZFIX")) {
-         catalogId = "DE-605";
+      if (collectionFromParameter.equals("HBZFIX")) {
+         return "DE-605";
       }
-      else if (collectionFromParameter.equals("OBV")) {
-         catalogId = "AT-OBV";
+      if (collectionFromParameter.equals("OBV")) {
+         return "AT-OBV";
       }
-      else if (field003 != null) {
+      if (field003 != null) {
          if (field003.length() > 6) {
             field003 = field003.substring(0, 6);
          }
-         catalogId = field003;
+         return field003; // default case
       }
-      else if (field040a != null) {
-         catalogId = field040a;
+      if (field040a != null) {
+         return field040a; //
       }
-      else if (f001 != null && f001.startsWith("BV")) {
-         catalogId = "DE-604";
+      if (f001 != null && f001.startsWith("BV")) {
+         return "DE-604";
       }
-      else {
-         catalogId = "UNDEFINED";
-      }
-      return catalogId;
+      return "UNDEFINED";
    }
 
 }

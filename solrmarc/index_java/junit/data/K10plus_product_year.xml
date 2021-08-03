@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+   <record>
+      <leader>03696cam a2200661   4500</leader>
+      <controlfield tag="001">1694289818</controlfield>
+      <controlfield tag="003">DE-627</controlfield>
+      <controlfield tag="005">20210217115330.0</controlfield>
+      <controlfield tag="007">cr uuu---uuuuu</controlfield>
+      <controlfield tag="008">200408s2020 xx |||||o 00| ||eng c
+      </controlfield>
+      <datafield tag="020" ind1=" " ind2=" ">
+         <subfield code="a">9781799819769</subfield>
+         <subfield code="c">ebook</subfield>
+         <subfield code="9">978-1-79981-976-9</subfield>
+      </datafield>
+      <datafield tag="024" ind1="7" ind2=" ">
+         <subfield code="a">10.4018/978-1-7998-1974-5</subfield>
+         <subfield code="2">doi</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(DE-627)1694289818</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(DE-599)BVBBV046655370</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(DE-604)BV046655370</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(IGIG)00234654</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(EBP)051969084</subfield>
+      </datafield>
+      <datafield tag="040" ind1=" " ind2=" ">
+         <subfield code="a">DE-627</subfield>
+         <subfield code="b">ger</subfield>
+         <subfield code="c">DE-627</subfield>
+         <subfield code="e">rda</subfield>
+      </datafield>
+      <datafield tag="041" ind1=" " ind2=" ">
+         <subfield code="a">eng</subfield>
+      </datafield>
+      <datafield tag="082" ind1="0" ind2=" ">
+         <subfield code="a">620.8/2</subfield>
+      </datafield>
+      <datafield tag="245" ind1="1" ind2="0">
+         <subfield code="a">Tools and technologies for the
+            development of cyber-physical systems</subfield>
+         <subfield code="c">Sergey Balandin (FRUCT Oy, Finland),
+            Ekaterina Balandina (Tampere University, Finland), editors
+         </subfield>
+      </datafield>
+      <datafield tag="264" ind1=" " ind2="1">
+         <subfield code="a">Hershey, Pennsylvania</subfield>
+         <subfield code="b">IGI Global</subfield>
+         <subfield code="c">[2020]</subfield>
+      </datafield>
+      <datafield tag="264" ind1=" " ind2="4">
+         <subfield code="c">© 2020</subfield>
+      </datafield>
+      <datafield tag="300" ind1=" " ind2=" ">
+         <subfield code="a">1 Online-Ressource (344 Seiten)
+         </subfield>
+      </datafield>
+      <datafield tag="336" ind1=" " ind2=" ">
+         <subfield code="a">Text</subfield>
+         <subfield code="b">txt</subfield>
+         <subfield code="2">rdacontent</subfield>
+      </datafield>
+      <datafield tag="337" ind1=" " ind2=" ">
+         <subfield code="a">Computermedien</subfield>
+         <subfield code="b">c</subfield>
+         <subfield code="2">rdamedia</subfield>
+      </datafield>
+      <datafield tag="338" ind1=" " ind2=" ">
+         <subfield code="a">Online-Ressource</subfield>
+         <subfield code="b">cr</subfield>
+         <subfield code="2">rdacarrier</subfield>
+      </datafield>
+      <datafield tag="490" ind1="0" ind2=" ">
+         <subfield code="a">Advances in computer and electrical
+            engineering (ACEE) book series</subfield>
+      </datafield>
+      <datafield tag="500" ind1=" " ind2=" ">
+         <subfield code="a">Description based on title screen (IGI
+            Global, viewed 02/15/2020)</subfield>
+      </datafield>
+      <datafield tag="520" ind1=" " ind2=" ">
+         <subfield code="a">"This book discusses recent
+            advancements of cyber-physical systems and its application
+            within the health, information, and computer science
+            industries"--</subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="4">
+         <subfield code="a">Cooperating objects (Computer systems)
+         </subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="4">
+         <subfield code="a">Human-machine systems</subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="4">
+         <subfield code="a">Internet of things</subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="4">
+         <subfield code="a">Cooperating objects (Computer systems)
+            ; fast</subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="4">
+         <subfield code="a">Human-machine systems ; fast</subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="4">
+         <subfield code="a">Internet of things ; fast</subfield>
+      </datafield>
+      <datafield tag="700" ind1="1" ind2=" ">
+         <subfield code="a">Balandin, Sergeĭ I.</subfield>
+         <subfield code="e">HerausgeberIn</subfield>
+         <subfield code="4">edt</subfield>
+      </datafield>
+      <datafield tag="700" ind1="1" ind2=" ">
+         <subfield code="a">Balandina, Ekaterina</subfield>
+         <subfield code="e">HerausgeberIn</subfield>
+         <subfield code="4">edt</subfield>
+      </datafield>
+      <datafield tag="776" ind1="1" ind2=" ">
+         <subfield code="z">1799819744</subfield>
+         <subfield code="c">hardcover</subfield>
+      </datafield>
+      <datafield tag="776" ind1="1" ind2=" ">
+         <subfield code="z">9781799819745</subfield>
+         <subfield code="c">hardcover</subfield>
+      </datafield>
+      <datafield tag="776" ind1="1" ind2=" ">
+         <subfield code="z">9781799819752</subfield>
+         <subfield code="c">paperback</subfield>
+      </datafield>
+      <datafield tag="776" ind1="0" ind2="8">
+         <subfield code="i">Erscheint auch als</subfield>
+         <subfield code="n">Druck-Ausgabe</subfield>
+         <subfield code="t">Tools and technologies for the
+            development of cyber-physical systems</subfield>
+         <subfield code="d">Hershey, PA : Engineering Science
+            Reference, an imprint of IGI Global, 2020</subfield>
+         <subfield code="h">pages cm</subfield>
+         <subfield code="w">(DE-627)1675845840</subfield>
+         <subfield code="z">9781799819745</subfield>
+         <subfield code="z">9781799819752</subfield>
+      </datafield>
+      <datafield tag="856" ind1="4" ind2="0">
+         <subfield code="u">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+         <subfield code="m">X:IGIG</subfield>
+         <subfield code="x">Verlag</subfield>
+         <subfield code="z">Lizenzpflichtig</subfield>
+      </datafield>
+      <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">ZDB-1-IGE</subfield>
+      </datafield>
+      <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">ZDB-1-IGE</subfield>
+         <subfield code="b">2020</subfield>
+      </datafield>
+      <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">ZDB-98-IGB</subfield>
+         <subfield code="b">2020</subfield>
+      </datafield>
+      <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">BSZ-98-IGB-MAUB</subfield>
+         <subfield code="b">2015-2021</subfield>
+      </datafield>
+      <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">ZDB-98-IGB</subfield>
+      </datafield>
+         <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">Test</subfield>
+         <subfield code="b">1015-1021, 1030-1033,1040-1042</subfield>
+         <subfield code="b">1201-1202</subfield>
+      </datafield>  
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3882007877</subfield>
+         <subfield code="b">DE-46</subfield>
+         <subfield code="9">46</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">383235994X</subfield>
+         <subfield code="b">DE-206</subfield>
+         <subfield code="9">206</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">381160547X</subfield>
+         <subfield code="b">DE-3</subfield>
+         <subfield code="9">3</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3620678871</subfield>
+         <subfield code="b">DE-89</subfield>
+         <subfield code="9">89</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3832316558</subfield>
+         <subfield code="b">DE-916</subfield>
+         <subfield code="9">916</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">363704823X</subfield>
+         <subfield code="b">DE-21</subfield>
+         <subfield code="9">21</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">p</subfield>
+         <subfield code="k">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+         <subfield code="l">Zugang für die Universität Tübingen
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">369091387X</subfield>
+         <subfield code="b">DE-180</subfield>
+         <subfield code="9">180</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://primo-49man.hosted.exlibrisgroup.com/openurl/MAN/MAN_UB_service_page?u.ignore_date_coverage=true&amp;rft.mms_id=9918642840502561
+         </subfield>
+         <subfield code="l">BSO</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3637064111</subfield>
+         <subfield code="b">DE-Ch1</subfield>
+         <subfield code="9">Ch 1</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3637056909</subfield>
+         <subfield code="b">DE-L189</subfield>
+         <subfield code="9">L 189</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://services.igi-global.com/resolvedoi/resolve.aspx?doi=10.4018/978-1-7998-1974-5
+         </subfield>
+      </datafield>
+      <datafield tag="951" ind1=" " ind2=" ">
+         <subfield code="a">BO</subfield>
+      </datafield>
+   </record>
+</collection>

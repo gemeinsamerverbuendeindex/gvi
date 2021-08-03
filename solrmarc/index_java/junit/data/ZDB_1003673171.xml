@@ -1,0 +1,2252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+   <record>
+      <leader>00000nas a2200000 c 4500</leader>
+      <controlfield tag="001">1003673171</controlfield>
+      <controlfield tag="003">DE-101</controlfield>
+      <controlfield tag="005">20210210215144.0</controlfield>
+      <controlfield tag="006">sz</controlfield>
+      <controlfield tag="007">cr||||||||||||</controlfield>
+      <controlfield tag="008">100621d20002008xxuq||p|o |||
+         0||||1eng c</controlfield>
+      <datafield tag="016" ind1="7" ind2=" ">
+         <subfield code="2">DE-101</subfield>
+         <subfield code="a">1003673171</subfield>
+      </datafield>
+      <datafield tag="016" ind1="7" ind2=" ">
+         <subfield code="2">DE-600</subfield>
+         <subfield code="a">2559636-6</subfield>
+      </datafield>
+      <datafield tag="022" ind1=" " ind2=" ">
+         <subfield code="a">1098-4232</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(DE-599)ZDB2559636-6</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(OCoLC)643550880</subfield>
+      </datafield>
+      <datafield tag="040" ind1=" " ind2=" ">
+         <subfield code="a">0361</subfield>
+         <subfield code="b">ger</subfield>
+         <subfield code="c">DE-101</subfield>
+         <subfield code="d">9999</subfield>
+      </datafield>
+      <datafield tag="041" ind1=" " ind2=" ">
+         <subfield code="a">eng</subfield>
+      </datafield>
+      <datafield tag="044" ind1=" " ind2=" ">
+         <subfield code="c">XD-US</subfield>
+      </datafield>
+      <datafield tag="082" ind1="7" ind2="4">
+         <subfield code="a">620</subfield>
+         <subfield code="q">DE-600</subfield>
+         <subfield code="2">22sdnb</subfield>
+      </datafield>
+      <datafield tag="110" ind1="2" ind2=" ">
+         <subfield code="0">(DE-588)1692-5</subfield>
+         <subfield code="0">https://d-nb.info/gnd/1692-5</subfield>
+         <subfield code="0">(DE-101)000016926</subfield>
+         <subfield code="a">Institute of Electrical and Electronics
+            Engineers</subfield>
+         <subfield code="e">Verfasser</subfield>
+         <subfield code="4">aut</subfield>
+         <subfield code="2">gnd</subfield>
+      </datafield>
+      <datafield tag="245" ind1="1" ind2="0">
+         <subfield code="a">IEEE Solid state circuits news
+         </subfield>
+         <subfield code="c">SSCS, Solid-Stad Circuits Society
+         </subfield>
+      </datafield>
+      <datafield tag="246" ind1="3" ind2=" ">
+         <subfield code="a">Solid-state circuits news</subfield>
+      </datafield>
+      <datafield tag="246" ind1="3" ind2=" ">
+         <subfield code="a">IEEE Solid-state circuits news
+         </subfield>
+      </datafield>
+      <datafield tag="246" ind1="3" ind2=" ">
+         <subfield code="a">SSCS</subfield>
+      </datafield>
+      <datafield tag="247" ind1="0" ind2="0">
+         <subfield code="a">IEEE SSCS newsletter</subfield>
+         <subfield code="f">Nebent. teils</subfield>
+      </datafield>
+      <datafield tag="247" ind1="0" ind2="0">
+         <subfield code="a">IEEE SSCS news</subfield>
+         <subfield code="f">Nebent. teils</subfield>
+      </datafield>
+      <datafield tag="247" ind1="0" ind2="0">
+         <subfield code="a">IEEE Solid-State Circuits Society
+            Newsletter</subfield>
+         <subfield code="f">Nebent. teils</subfield>
+      </datafield>
+      <datafield tag="264" ind1="3" ind2="1">
+         <subfield code="a">New York, NY</subfield>
+         <subfield code="b">IEEE</subfield>
+         <subfield code="c">2000-2008</subfield>
+      </datafield>
+      <datafield tag="300" ind1=" " ind2=" ">
+         <subfield code="a">Online-Ressource</subfield>
+      </datafield>
+      <datafield tag="336" ind1=" " ind2=" ">
+         <subfield code="a">Text</subfield>
+         <subfield code="b">txt</subfield>
+         <subfield code="2">rdacontent</subfield>
+      </datafield>
+      <datafield tag="337" ind1=" " ind2=" ">
+         <subfield code="a">Computermedien</subfield>
+         <subfield code="b">c</subfield>
+         <subfield code="2">rdamedia</subfield>
+      </datafield>
+      <datafield tag="338" ind1=" " ind2=" ">
+         <subfield code="a">Online-Ressource</subfield>
+         <subfield code="b">cr</subfield>
+         <subfield code="2">rdacarrier</subfield>
+      </datafield>
+      <datafield tag="362" ind1="0" ind2=" ">
+         <subfield code="a">Nachgewiesen 5.2000 - 13.2008
+         </subfield>
+      </datafield>
+      <datafield tag="363" ind1="0" ind2="0">
+         <subfield code="8">1.1\\x</subfield>
+         <subfield code="a">5</subfield>
+         <subfield code="i">2000</subfield>
+      </datafield>
+      <datafield tag="363" ind1="1" ind2="0">
+         <subfield code="8">1.2\\x</subfield>
+         <subfield code="a">13</subfield>
+         <subfield code="i">2008</subfield>
+      </datafield>
+      <datafield tag="500" ind1=" " ind2=" ">
+         <subfield code="a">Gesehen am 21.06.10</subfield>
+      </datafield>
+      <datafield tag="591" ind1=" " ind2=" ">
+         <subfield code="a">Wg. Schreibweise von solid state OHNE
+            Bindestrich vgl. RAK 204,3,Anmerk. 4</subfield>
+      </datafield>
+      <datafield tag="655" ind1=" " ind2="7">
+         <subfield code="0">(DE-588)4067488-5</subfield>
+         <subfield code="0">https://d-nb.info/gnd/4067488-5
+         </subfield>
+         <subfield code="0">(DE-101)040674886</subfield>
+         <subfield code="a">Zeitschrift</subfield>
+         <subfield code="2">gnd-content</subfield>
+      </datafield>
+      <datafield tag="710" ind1="2" ind2=" ">
+         <subfield code="0">(DE-588)5292063-X</subfield>
+         <subfield code="0">https://d-nb.info/gnd/5292063-X
+         </subfield>
+         <subfield code="0">(DE-101)954554523</subfield>
+         <subfield code="a">IEEE Solid-State Circuits Society
+         </subfield>
+         <subfield code="e">Herausgebendes Organ</subfield>
+         <subfield code="4">isb</subfield>
+         <subfield code="2">gnd</subfield>
+      </datafield>
+      <datafield tag="776" ind1="0" ind2="8">
+         <subfield code="i">Druckausg.</subfield>
+         <subfield code="a">Institute of Electrical and Electronics
+            Engineers</subfield>
+         <subfield code="t">IEEE Solid state circuits news
+         </subfield>
+         <subfield code="d">New York, NY : IEEE, 2007-2008
+         </subfield>
+         <subfield code="x">1098-4232</subfield>
+         <subfield code="w">(DE-600)2587452-4</subfield>
+         <subfield code="w">(DE-101)1009298771</subfield>
+      </datafield>
+      <datafield tag="785" ind1="0" ind2="0">
+         <subfield code="i">Forts.:</subfield>
+         <subfield code="a">Institute of Electrical and Electronics
+            Engineers</subfield>
+         <subfield code="t">IEEE Solid state circuits magazine
+         </subfield>
+         <subfield code="d">New York, NY : IEEE, 2009-</subfield>
+         <subfield code="h">Online-Ressource</subfield>
+         <subfield code="x">1943-0582</subfield>
+         <subfield code="w">(DE-600)2479078-3</subfield>
+         <subfield code="w">(DE-101)992604273</subfield>
+      </datafield>
+      <datafield tag="856" ind1="4" ind2=" ">
+         <subfield code="u">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="x">Verlag</subfield>
+      </datafield>
+      <datafield tag="856" ind1="4" ind2=" ">
+         <subfield code="u">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636
+         </subfield>
+         <subfield code="x">EZB</subfield>
+      </datafield>
+      <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">ZDB-37-IEA</subfield>
+      </datafield>
+      <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">ZDB-37-IEL</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">14</subfield>
+         <subfield code="b">DE-14</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=SLUB
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=SLUB&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">15</subfield>
+         <subfield code="b">DE-15</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBL
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBL&amp;owner=UBL&amp;anchor=IEEE
+            2016&amp;lang=de&amp;lang=de#IEEE 2016</subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">15</subfield>
+         <subfield code="b">DE-15</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBL
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBL&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">15/292</subfield>
+         <subfield code="b">DE-15-292</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBL
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBL&amp;owner=UBL&amp;anchor=IEEE
+            2016&amp;lang=de&amp;lang=de#IEEE 2016</subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">15/292</subfield>
+         <subfield code="b">DE-15-292</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBL
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBL&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">16</subfield>
+         <subfield code="b">DE-16</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBHE
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBHE&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Ds 114</subfield>
+         <subfield code="b">DE-Ds114</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHDA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHDA&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">M 347</subfield>
+         <subfield code="b">DE-M347</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHM
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHM&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">20</subfield>
+         <subfield code="b">DE-20</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBW
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBW&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">863</subfield>
+         <subfield code="b">DE-863</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBWS
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHBWS&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">862</subfield>
+         <subfield code="b">DE-862</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBWS
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHBWS&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">1043</subfield>
+         <subfield code="b">DE-1043</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBAB
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHBAB&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Ofb 1</subfield>
+         <subfield code="b">DE-Ofb1</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBOG
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHBOG&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Fn 1</subfield>
+         <subfield code="b">DE-Fn1</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHFU
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">25</subfield>
+         <subfield code="b">DE-25</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBFRE
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBFRE&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">27</subfield>
+         <subfield code="b">DE-27</subfield>
+         <subfield code="c">THU</subfield>
+         <subfield code="k">http://rzblx1.uni-regensburg.de/ezeit/detail.phtml?bibid=THULB&amp;colors=7&amp;lang=de&amp;jour_id=136371
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">29</subfield>
+         <subfield code="b">DE-29</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBEN
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBEN&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">92</subfield>
+         <subfield code="b">DE-92</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHN
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHN&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">946</subfield>
+         <subfield code="b">DE-946</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHF
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHF&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">34/10</subfield>
+         <subfield code="b">DE-34-10</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBKAS
+         </subfield>
+         <subfield code="l">F</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">43</subfield>
+         <subfield code="b">DE-43</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HLB
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">66</subfield>
+         <subfield code="b">DE-66</subfield>
+         <subfield code="c">HES</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHFD
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHFD&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">83</subfield>
+         <subfield code="b">DE-83</subfield>
+         <subfield code="c">BER</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=TUBB
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=TUBB&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">90</subfield>
+         <subfield code="b">DE-90</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=KIT
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=KIT&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">90/4</subfield>
+         <subfield code="b">DE-90-4</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FBHKA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FBHKA&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">91</subfield>
+         <subfield code="b">DE-91</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=TUM
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=TUM&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">861</subfield>
+         <subfield code="b">DE-861</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBRO
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">93</subfield>
+         <subfield code="b">DE-93</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBS
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBS&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Stg 259</subfield>
+         <subfield code="b">DE-Stg259</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=BAS
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">100</subfield>
+         <subfield code="b">DE-100</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBHOH
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBHOH&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">180</subfield>
+         <subfield code="b">DE-180</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBMAN
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBMAN&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">953</subfield>
+         <subfield code="b">DE-953</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHMA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http%3A%2F%2Fezb.ur.de%2FReadMe%3Fbibid%3DFHMA%26owner%3DIEE%26anchor%3DIEEE%26lang%3Den%3Flang%3Den%23IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">289</subfield>
+         <subfield code="b">DE-289</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBU
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBU&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">943</subfield>
+         <subfield code="b">DE-943</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHUL
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHUL&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Hed 2</subfield>
+         <subfield code="b">DE-Hed2</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=BAH
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=BAH&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">291/415</subfield>
+         <subfield code="b">DE-291-415</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=INM
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Sa 16</subfield>
+         <subfield code="b">DE-Sa16</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HTWS
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=HTWS&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Sa 18</subfield>
+         <subfield code="b">DE-Sa18</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=MPII
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=MPII&amp;owner=MPG&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">1050</subfield>
+         <subfield code="b">DE-1050</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHDEG
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">898</subfield>
+         <subfield code="b">DE-898</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBR
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHBR&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">384</subfield>
+         <subfield code="b">DE-384</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBA&amp;owner=UBA&amp;anchor=ieee&amp;lang=de&amp;lang=de#ieee
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">384</subfield>
+         <subfield code="b">DE-384</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBA&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Aug 4</subfield>
+         <subfield code="b">DE-Aug4</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">859</subfield>
+         <subfield code="b">DE-859</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBKA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">1049</subfield>
+         <subfield code="b">DE-1049</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBNU
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">703</subfield>
+         <subfield code="b">DE-703</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBBAY
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBBAY&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">858</subfield>
+         <subfield code="b">DE-858</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBCO
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">705</subfield>
+         <subfield code="a">(DE-705)629839611</subfield>
+         <subfield code="b">DE-705</subfield>
+         <subfield code="c">HAM</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBWH
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">739</subfield>
+         <subfield code="b">DE-739</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBPA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=UBPA&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">573</subfield>
+         <subfield code="b">DE-573</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBIN
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHBIN&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Ma 9</subfield>
+         <subfield code="b">DE-Ma9</subfield>
+         <subfield code="c">SAA</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;amp;bibid=UBMD
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Ch 1</subfield>
+         <subfield code="b">DE-Ch1</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=TUCHE
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=TUCHE&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Ilm 1</subfield>
+         <subfield code="b">DE-Ilm1</subfield>
+         <subfield code="c">THU</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;amp;bibid=UBIL
+         </subfield>
+         <subfield code="z">&lt;Campuslizenz TU Ilmenau&gt;
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">B 1532</subfield>
+         <subfield code="a">(DE-B1532)629839611</subfield>
+         <subfield code="b">DE-B1532</subfield>
+         <subfield code="c">BER</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=MPIBF
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Ki 109</subfield>
+         <subfield code="a">(DE-Ki109)629839611</subfield>
+         <subfield code="b">DE-Ki109</subfield>
+         <subfield code="c">HAM</subfield>
+         <subfield code="d">b</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Ki 95</subfield>
+         <subfield code="b">DE-Ki95</subfield>
+         <subfield code="c">HAM</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;amp;bibid=FHKI
+         </subfield>
+         <subfield code="z">&lt;Zugang nur aus dem Rechnernetz der
+            Fachhochschule Kiel&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">916</subfield>
+         <subfield code="a">(DE-916)629839611</subfield>
+         <subfield code="b">DE-916</subfield>
+         <subfield code="c">NIE</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHWF
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Gö 116</subfield>
+         <subfield code="a">(DE-Goe116)629839611</subfield>
+         <subfield code="b">DE-Goe116</subfield>
+         <subfield code="c">NIE</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=MPIBP
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Kt 1</subfield>
+         <subfield code="b">DE-Kt1</subfield>
+         <subfield code="c">SAA</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;amp;bibid=HSB
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Ma 54</subfield>
+         <subfield code="a">(DE-Ma54)629839611</subfield>
+         <subfield code="b">DE-Ma54</subfield>
+         <subfield code="c">SAA</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=MPIDS
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">753</subfield>
+         <subfield code="b">DE-753</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HBES
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">972</subfield>
+         <subfield code="b">DE-972</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HBES
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">634</subfield>
+         <subfield code="b">DE-634</subfield>
+         <subfield code="c">BER</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=TUCB
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=TUCB&amp;owner=UNIEE&amp;anchor=IELGERMANUNIV&amp;lang=de&amp;lang=de#IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">1033</subfield>
+         <subfield code="b">DE-1033</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HFTS
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">944</subfield>
+         <subfield code="b">DE-944</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHAA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Rt 2</subfield>
+         <subfield code="b">DE-Rt2</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHRT
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Kon 4</subfield>
+         <subfield code="b">DE-Kon4</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHKN
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FHKN&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">991</subfield>
+         <subfield code="b">DE-991</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HSASI
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">520</subfield>
+         <subfield code="b">DE-520</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HTWDD
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">D 120</subfield>
+         <subfield code="b">DE-D120</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">x</subfield>
+         <subfield code="e">p</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FZR
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=FZR&amp;owner=HGF&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt; - 13.2008&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">B 768</subfield>
+         <subfield code="b">DE-B768</subfield>
+         <subfield code="c">BER</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=TFHB
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">706</subfield>
+         <subfield code="b">DE-706</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBWM
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http%3A%2F%2Fezb.ur.de%2FReadMe%3Fbibid%3DUBWM%26owner%3DUBWM%26anchor%3Dieee%26lang%3Den%3Flang%3Den%23ieee
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">706</subfield>
+         <subfield code="b">DE-706</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=UBWM
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http%3A%2F%2Fezb.ur.de%2FReadMe%3Fbibid%3DUBWM%26owner%3DUNIEE%26anchor%3DIELGERMANUNIV%26lang%3Den%3Flang%3Den%23IELGERMANUNIV
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">M 382</subfield>
+         <subfield code="b">DE-M382</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=IPMPG
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">ZDB-37-IEA</subfield>
+         <subfield code="b">ZDB-37-IEA</subfield>
+         <subfield code="c">WWW</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/xpl/RecentIssue.jsp?punumber=4563671
+         </subfield>
+         <subfield code="l">2006,3 - 13.2008</subfield>
+         <subfield code="q">2006</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;Zugang nur für lizenzierte
+            Einrichtungen&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">ZDB-37-IEL</subfield>
+         <subfield code="b">ZDB-37-IEL</subfield>
+         <subfield code="c">WWW</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000 - 13.2008&gt;</subfield>
+         <subfield code="z">&lt;Zugang nur für lizenzierte
+            Einrichtungen&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">L 189</subfield>
+         <subfield code="b">DE-L189</subfield>
+         <subfield code="c">SAX</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HTWK
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">522</subfield>
+         <subfield code="b">DE-522</subfield>
+         <subfield code="c">BER</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHBRB
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Y 2</subfield>
+         <subfield code="b">DE-Y2</subfield>
+         <subfield code="c">WEU</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HERTZ
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Y 3</subfield>
+         <subfield code="b">DE-Y3</subfield>
+         <subfield code="c">WEU</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=KHIFI
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=KHIFI&amp;owner=MPG&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">960/1</subfield>
+         <subfield code="b">DE-960-1</subfield>
+         <subfield code="c">NIE</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;lizenziert: 5.2000,4 -
+            13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">960/3</subfield>
+         <subfield code="b">DE-960-3</subfield>
+         <subfield code="c">NIE</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;lizenziert: 5.2000,4 -
+            13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">526</subfield>
+         <subfield code="b">DE-526</subfield>
+         <subfield code="c">BER</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=TFHW
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http%3A%2F%2Fezb.ur.de%2FReadMe%3Fbibid%3DTFHW%26owner%3DIEE%26anchor%3DIEEE%26lang%3Den%3Flang%3Den%23IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Kn 182</subfield>
+         <subfield code="b">DE-Kn182</subfield>
+         <subfield code="c">NRW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">x</subfield>
+         <subfield code="e">p</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=DLLR
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt; - 13.2008&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">523</subfield>
+         <subfield code="b">DE-523</subfield>
+         <subfield code="c">BER</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HTW
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">1871</subfield>
+         <subfield code="b">DE-1871</subfield>
+         <subfield code="c">NRW</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HSHL
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=HSHL&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">1926</subfield>
+         <subfield code="b">DE-1926</subfield>
+         <subfield code="c">NRW</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=HSHL
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=HSHL&amp;owner=IEE&amp;anchor=IEEE&amp;lang=de&amp;lang=de#IEEE
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Stg 258</subfield>
+         <subfield code="b">DE-Stg258</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=BAS
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">Mh 35</subfield>
+         <subfield code="b">DE-Mh35</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=BAMA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">840</subfield>
+         <subfield code="b">DE-840</subfield>
+         <subfield code="c">BAW</subfield>
+         <subfield code="d">b</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=FHHN
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">https://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="9">201</subfield>
+         <subfield code="b">DE-201</subfield>
+         <subfield code="c">BAY</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">http://www.bibliothek.uni-regensburg.de/ezeit/?2559636&amp;bibid=DPMA
+         </subfield>
+         <subfield code="l">EZB</subfield>
+         <subfield code="k">http://ezb.ur.de/ReadMe?bibid=DPMA&amp;owner=DPMA&amp;anchor=ZDB-37-IET&amp;lang=de&amp;lang=de#ZDB-37-IET
+         </subfield>
+         <subfield code="l">Read me</subfield>
+         <subfield code="k">http://ieeexplore.ieee.org/servlet/opac?punumber=4563671
+         </subfield>
+         <subfield code="l">Volltext</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="m">5</subfield>
+         <subfield code="n">4</subfield>
+         <subfield code="q">2000</subfield>
+         <subfield code="r">13</subfield>
+         <subfield code="s">4</subfield>
+         <subfield code="v">2008</subfield>
+         <subfield code="z">&lt;5.2000,4 - 13.2008,4&gt;</subfield>
+      </datafield>
+   </record>
+</collection>

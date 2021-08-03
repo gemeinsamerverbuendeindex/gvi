@@ -39,13 +39,13 @@ public class GVIIndexer extends SolrIndexer {
 
    private static final Logger LOG           = LogManager.getLogger(GVIIndexer.class);
    private Init                init          = new Init(this);
-   private Basic               basic         = new Basic(this);
-   private Subject             subject       = new Subject(this);
-   private Material            material      = new Material(this);
-   private MatchKey            matchKey      = new MatchKey(this);
-   private Cluster             cluster       = new Cluster(this);
-   private Gnd_Charset         gndCharset    = new Gnd_Charset(this);
    public boolean              isInitialized = false;
+   Basic                       basic         = new Basic(this);
+   Subject                     subject       = new Subject(this);
+   Material                    material      = new Material(this);
+   MatchKey                    matchKey      = new MatchKey(this);
+   Cluster                     cluster       = new Cluster(this);
+   Gnd_Charset                 gndCharset    = new Gnd_Charset(this);
 
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
       super(indexingPropsFile, propertyDirs);
@@ -56,7 +56,7 @@ public class GVIIndexer extends SolrIndexer {
       super(null, null);
       init();
    }
-   
+
    /**
     * Read big property files ...<br>
     * Wrapper to {@link Init#init()}
@@ -85,8 +85,8 @@ public class GVIIndexer extends SolrIndexer {
     * Count the number of 924 fields ...<br>
     * Wrapper to {@link Basic#countHoldingLibraries(Record)}
     */
-   public String countHoldingLibraries(Record record) {
-      return basic.countHoldingLibraries(record);
+   public String getHoldingCount(Record record) {
+      return basic.getHoldingCount(record);
    }
 
    /**

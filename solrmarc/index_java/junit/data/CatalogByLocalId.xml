@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record xmlns="http://www.loc.gov/MARC21/slim">
   <leader>     cam a22        4500</leader>
-  <controlfield tag="001">012653829</controlfield>
+<!-- Patched local id -->  
+  <controlfield tag="001">BV012653829</controlfield>
+<!-- No 003 
   <controlfield tag="003">DE-627</controlfield>
+--> 
   <controlfield tag="005">20181214200936.0</controlfield>
   <controlfield tag="007">tu</controlfield>
   <controlfield tag="008">710101s1980    xx |||||      00| ||ger c</controlfield>
@@ -19,53 +22,26 @@
   <datafield tag="035" ind1=" " ind2=" ">
     <subfield code="a">(OCoLC)15113352</subfield>
   </datafield>
+<!-- No 040
   <datafield tag="040" ind1=" " ind2=" ">
-    <subfield code="a">DE-627</subfield>
+    <subfield code="a">DE-603</subfield>
     <subfield code="b">ger</subfield>
-    <subfield code="c">DE-627</subfield>
+    <subfield code="c">DE-603</subfield>
     <subfield code="e">rakwb</subfield>
   </datafield>
+-->
   <datafield tag="041" ind1=" " ind2=" ">
     <subfield code="a">ger</subfield>
   </datafield>
   <datafield tag="044" ind1=" " ind2=" ">
     <subfield code="c">XA-DE</subfield>
   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">blk #1</subfield>
-      <subfield code="2">blk</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">bcl #1</subfield>
-      <subfield code="2">bcl</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">ssgn #1</subfield>
-      <subfield code="2">ssgn</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">DFI #1</subfield>
-      <subfield code="2">DFI</subfield>
-   </datafield>
-   
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">FIV #1</subfield>
-      <subfield code="2">FIV</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">ZL 3210</subfield>
-      <subfield code="2">rvk</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">100.123</subfield>
-      <subfield code="2">ddc</subfield>
-   </datafield>
-   <datafield tag="084" ind1=" " ind2=" ">
-      <subfield code="a">23a</subfield>
-      <subfield code="a">06a</subfield>
-      <subfield code="2">sdnb</subfield>
-   </datafield>
-   <datafield tag="100" ind1="1" ind2=" ">
+  <datafield tag="084" ind1=" " ind2=" ">
+    <subfield code="a">23a</subfield>
+    <subfield code="a">06a</subfield>
+    <subfield code="2">sdnb</subfield>
+  </datafield>
+  <datafield tag="100" ind1="1" ind2=" ">
     <subfield code="a">Gloede, Walter</subfield>
   </datafield>
   <datafield tag="245" ind1="1" ind2="0">
