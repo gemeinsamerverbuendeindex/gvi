@@ -63,7 +63,7 @@ public class Basic {
     * @param record
     * @return The composed id: The ISIL of the catalog in brackets and the local id. "(DE-601)123456"
     */
-   public String getRecordID(final Record record) {
+   public String getRecordId(final Record record) {
       String localId = null;
       String catalogId = getCatalogId(record);
       if ("AT-OBV".equals(catalogId)) {
@@ -101,14 +101,16 @@ public class Basic {
    }
 
    /**
-    * Stub more advanced version of getDate that looks in the 008 field as well as the 260c field this routine does some simple sanity checking to ensure that the date to return makes sense.
+    * Stub more advanced version of getDate<br>
+    * Looks in marc:008 and as well in marc:264c and marc:260c.<br>
+    * This routine does some simple sanity checking to ensure that the date to return makes sense.
     *
     * @param record - the marc record object
-    * @return 260c or 008[7-10] or 008[11-14], "cleaned" per org.solrmarc.tools.Utils.cleanDate()
+    * @return 26[04]c or 008[7-10] or 008[11-14], "cleaned" per org.solrmarc.tools.Utils.cleanDate()
     */
    public String getPublicationDate008or26xc(final Record record) {
       String field008 = main.getFirstFieldVal(record, "008");
-      String pubDate26xc = findDate26xc(record);
+      String pubDate26xc = findDateIn26x(record);
       String pubDate26xcJustDigits = null;
 
       if (pubDate26xc != null) {
@@ -302,7 +304,7 @@ public class Basic {
                   }
                   break;
                default:
-                  LOG.warn("Fehlerhafte Angaben zu Produktjahr (912b) in Titel: " + main.getRecordID(record));
+                  LOG.warn("Fehlerhafte Angaben zu Produktjahr (912b) in Titel: " + getRecordId(record));
             }
          }
       }
@@ -418,27 +420,29 @@ public class Basic {
    }
 
    /**
-    * Return the date in 260c/264c as a string
+    * Helper to {@link #getPublicationDate008or26xc(Record)}
+    * Return the date in 264c/260c as a string
     *
     * @param record - the marc record object
     * @return 260c/264c, "cleaned" per org.solrmarc.tools.Utils.cleanDate()
     */
-   String findDate26xc(Record record) {
-      String date260c = main.getFieldVals(record, "260c", ", ");
-      String date264c = main.getFieldVals(record, "264c", ", ");
-      String date = null;
-      if (date260c != null && date260c.length() > 0) {
-         date = date260c;
-      }
-      else if (date264c != null && date264c.length() > 0) {
-         date = date264c;
-      }
-      if (date == null || date.length() == 0) {
-         return (null);
-      }
-      return DataUtil.cleanDate(date);
+   String findDateIn26x(Record record) {
+      String date = findDateInX(record, "264c");
+      return (date != null) ? date : findDateInX(record, "260c");
    }
 
+   /**
+    * Helper to {@link #findDateIn26x(Record, String)}
+    * @param record
+    * @param fieldName
+    * @return
+    */
+   String findDateInX(Record record, String fieldName) {
+      String date = main.getFieldVals(record, fieldName, ", ");
+      return (date == null) ? null : DataUtil.cleanDate(date);
+   }
+
+   
    String findCatalog(final Record record) {
       String f001 = main.getFirstFieldVal(record, "001");
       // guess catalogId
