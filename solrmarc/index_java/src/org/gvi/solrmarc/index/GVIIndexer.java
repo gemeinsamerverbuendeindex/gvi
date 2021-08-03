@@ -69,16 +69,8 @@ public class GVIIndexer extends SolrIndexer {
     * Get the catalog's id fore the record ...<br>
     * Wrapper to {@link Basic#getCatalogId(Record)}
     */
-   public String getRecordID(Record record) {
-      return basic.getCatalogId(record);
-   }
-
-   /**
-    * More advanced version of getDate ...<br>
-    * Wrapper to {@link Basic#getPublicationDate008or26xc(Record)}
-    */
-   public String getPublicationDate008or26xc(Record record) {
-      return basic.getPublicationDate008or26xc(record);
+   public String getRecordId(Record record) {
+      return basic.getRecordId(record);
    }
 
    /**

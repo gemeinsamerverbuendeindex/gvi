@@ -270,6 +270,7 @@
     <copyField source="title"             dest="title_unstemmed" />
 
     <copyField source="publisher"         dest="publisher_facet" />
+    <copyField source="publish_date"      dest="publish_date_sort" />
 
     <copyField source="subject_topic"     dest="subject_topic_facet" />
     <copyField source="subject_genre"     dest="subject_genre_facet" />

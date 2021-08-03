@@ -100,55 +100,7 @@ public class Basic {
       return collectionFromParameter;
    }
 
-   /**
-    * Stub more advanced version of getDate<br>
-    * Looks in marc:008 and as well in marc:264c and marc:260c.<br>
-    * This routine does some simple sanity checking to ensure that the date to return makes sense.
-    *
-    * @param record - the marc record object
-    * @return 26[04]c or 008[7-10] or 008[11-14], "cleaned" per org.solrmarc.tools.Utils.cleanDate()
-    */
-   public String getPublicationDate008or26xc(final Record record) {
-      String field008 = main.getFirstFieldVal(record, "008");
-      String pubDate26xc = findDateIn26x(record);
-      String pubDate26xcJustDigits = null;
-
-      if (pubDate26xc != null) {
-         pubDate26xcJustDigits = pubDate26xc.replaceAll("[^0-9]", "");
-      }
-
-      if (field008 == null || field008.length() < 16) {
-         return (pubDate26xc);
-      }
-
-      String field008_d1 = field008.substring(7, 11);
-      String field008_d2 = field008.substring(11, 15);
-
-      String retVal = null;
-      char dateType = field008.charAt(6);
-      if (dateType == 'r' && field008_d2.equals(pubDate26xc)) {
-         retVal = field008_d2;
-      }
-      else if (field008_d1.equals(pubDate26xc)) {
-         retVal = field008_d1;
-      }
-      else if (field008_d2.equals(pubDate26xc)) {
-         retVal = field008_d2;
-      }
-      else if (pubDate26xcJustDigits != null && pubDate26xcJustDigits.length() == 4 && pubDate26xc != null && pubDate26xc.matches("(20|19|18|17|16|15)[0-9][0-9]")) {
-         retVal = pubDate26xc;
-      }
-      else if (field008_d1.matches("(20|1[98765432])[0-9][0-9]")) {
-         retVal = field008_d1;
-      }
-      else if (field008_d2.matches("(20|1[98765432])[0-9][0-9]")) {
-         retVal = field008_d2;
-      }
-      else {
-         retVal = pubDate26xc;
-      }
-      return (retVal);
-   }
+ 
 
    /**
     * Get value(s) of selected classification schema
@@ -417,18 +369,6 @@ public class Basic {
       collectionFromParameter = collectionId;
       // Invalidate cached catalog Id
       myCatalogIsFor = null;
-   }
-
-   /**
-    * Helper to {@link #getPublicationDate008or26xc(Record)}
-    * Return the date in 264c/260c as a string
-    *
-    * @param record - the marc record object
-    * @return 260c/264c, "cleaned" per org.solrmarc.tools.Utils.cleanDate()
-    */
-   String findDateIn26x(Record record) {
-      String date = findDateInX(record, "264c");
-      return (date != null) ? date : findDateInX(record, "260c");
    }
 
    /**
