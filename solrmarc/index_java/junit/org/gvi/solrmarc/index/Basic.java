@@ -2,6 +2,7 @@ package org.gvi.solrmarc.index;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -11,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.marc4j.marc.Record;
+import org.marc4j.marc.VariableField;
+import org.solrmarc.index.SolrIndexer;
 
 /**
  * Tests for matchKey methods
@@ -153,6 +156,14 @@ public class Basic extends JunitHelper {
    }
 
    /**
+    * Validate the generation of GVI-ID
+    */
+   @Test
+   public void recordId() {
+      assertEquals("Wrong id.", "(DE-627)012653829", indexer.getRecordId(testRecord_1));
+   }
+
+   /**
     * Validate the generation of the VuFind marker 'recordtype'
     */
    @Test
@@ -189,7 +200,29 @@ public class Basic extends JunitHelper {
       assertTrue("\"" + productYear + "\" for " + productId + " is missing", years.contains(productYear));
    }
 
+   /**
+    * Validate the default extraction of the publish date.<br>
+    * !Be aware {@link SolrIndexer#getPublicationDate(record)} ignores Dates before 1200 and after 2099
+    */
+   @Test
+   public void publicationDate() {
+      Record patchMe = readMarcFromFile("K10plus_012653829.xml");
+      assertEquals("Wrong publish date in 008.", "1980", indexer.getPublicationDate(patchMe));
+      publicationDatePurgeField(patchMe, "008");
+      assertEquals("Wrong publish date in 260.", "1960", indexer.getPublicationDate(patchMe));
+      publicationDatePurgeField(patchMe, "260");
+      assertEquals("Wrong publish date in 264.", "1964", indexer.getPublicationDate(patchMe));
+      publicationDatePurgeField(patchMe, "264");
+      assertTrue("The should be no more date", indexer.getPublicationDate(patchMe).isEmpty());
+   }
+
+   private void publicationDatePurgeField(Record patchMe, String fieldName) {
+      VariableField purge = patchMe.getVariableField(fieldName);
+      assertNotNull("Check test data", purge);
+      patchMe.removeVariableField(purge);
+   }
+
 }
 /*
- * getPublicationDate008or26xc(Record) getRecordID(Record) getZdbId(Record) hasEnrichment(Record) splitSubfield(Record, String)
+ * getZdbId(Record) hasEnrichment(Record) splitSubfield(Record, String)
  */

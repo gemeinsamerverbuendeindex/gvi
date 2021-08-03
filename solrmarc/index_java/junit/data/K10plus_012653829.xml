@@ -76,10 +76,15 @@
   <datafield tag="250" ind1=" " ind2=" ">
     <subfield code="a">1. Aufl., Orig.-Ausg.</subfield>
   </datafield>
+  <datafield tag="260" ind1=" " ind2="1">
+    <subfield code="a">München</subfield>
+    <subfield code="b">Goldmann</subfield>
+    <subfield code="c">1960</subfield>
+  </datafield>
   <datafield tag="264" ind1=" " ind2="1">
     <subfield code="a">München</subfield>
     <subfield code="b">Goldmann</subfield>
-    <subfield code="c">1980</subfield>
+    <subfield code="c">1964</subfield>
   </datafield>
   <datafield tag="300" ind1=" " ind2=" ">
     <subfield code="a">448 S</subfield>
