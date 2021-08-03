@@ -11,7 +11,6 @@ import org.gvi.solrmarc.index.gvi.Init;
 import org.gvi.solrmarc.index.gvi.MatchKey;
 import org.gvi.solrmarc.index.gvi.Material;
 import org.gvi.solrmarc.index.gvi.Subject;
-import org.gvi.solrmarc.index.gvi.enums.MARCSubjectCategory;
 import org.marc4j.marc.Record;
 import org.solrmarc.index.SolrIndexer;
 
