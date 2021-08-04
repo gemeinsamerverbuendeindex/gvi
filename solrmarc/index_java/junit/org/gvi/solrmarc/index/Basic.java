@@ -2,6 +2,7 @@ package org.gvi.solrmarc.index;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -219,7 +220,7 @@ public class Basic extends JunitHelper {
    /**
     * Remove the named variable Field from the Record.<br>
     * This allows additional negative tests with the same loaded data.
-    *  
+    * 
     * @param patchMe
     * @param fieldName
     */
@@ -238,8 +239,7 @@ public class Basic extends JunitHelper {
    }
 
    /**
-    * Validate the generation of GVI-ID
-    * TODO replace mock with real code.
+    * Validate the generation of GVI-ID TODO replace mock with real code.
     */
    @Test
    public void hasEnrichment() {
@@ -247,15 +247,14 @@ public class Basic extends JunitHelper {
    }
 
    /**
-    * Validate the generation of GVI-ID
+    * Validate the separation of lists in subfields.<br>
+    *  
     */
    @Test
    public void splitSubfield() {
-    Set<String> result = indexer.splitSubfield(testRecord_1, "937[a-f]");
-      assertEquals("\nMethode trennt nicht bei Subfeldern. ('1 zwei' und '22 drei')\n"
-         + "Bei wiederholtem Feld wird getrennt. ('33', 'vier')\n"
-         + "Result = " + result + "\n"
-         + "Anzahl der Elemente ", 14, result.size());
+      Set<String> result = indexer.splitSubfield(testRecord_1, "937a:937b:937c:937d:937e:937f");
+      assertEquals("Anzahl der Elemente ", 14, result.size());
+      result = indexer.splitSubfield(testRecord_1, "937[a-f]");
+      assertNotEquals("The behavior of SolrIndexer.getFieldList() has changed. (see GVI-235)", 14, result.size());
    }
 }
-
