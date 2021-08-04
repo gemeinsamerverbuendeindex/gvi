@@ -84,7 +84,7 @@ public class MatchKey {
          }
       }
       catch (Throwable e) {
-         LOG.warn("MatchkeyException at record " + main.getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + main.getRecordId(record), e);
       }
 
       return matchkey;
@@ -104,7 +104,7 @@ public class MatchKey {
          }
       }
       catch (Throwable e) {
-         LOG.warn("MatchkeyException at record " + main.getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + main.getRecordId(record), e);
       }
       return matchkey;
    }
@@ -117,7 +117,7 @@ public class MatchKey {
          matchkey = String.format("%s:%s", matchkeyMaterialAuthorTitle(record), pubdate);
       }
       catch (Throwable e) {
-         LOG.warn("MatchkeyException at record " + main.getRecordID(record), e);
+         LOG.warn("MatchkeyException at record " + main.getRecordId(record), e);
       }
       return matchkey;
    }
@@ -209,7 +209,7 @@ public class MatchKey {
    }
 
    private String matchkeyPubdate(Record record) {
-      String pubdateKey = main.getPublicationDate008or26xc(record);
+      String pubdateKey = main.getPublicationDate(record);
       if (pubdateKey == null) {
          pubdateKey = "";
       }
@@ -255,7 +255,7 @@ public class MatchKey {
             return ISBNNormalizer.normalize(isbn);
          }
          catch (IllegalArgumentException e) {
-            LOG.warn("Invalid ISBN " + main.getRecordID(record) + ": " + e.getMessage());
+            LOG.warn("Invalid ISBN " + main.getRecordId(record) + ": " + e.getMessage());
             return simpleIsbnNormalisation(isbn);
          }
          // still here? 3nd try: $z
@@ -329,7 +329,7 @@ public class MatchKey {
       String title = "";
       DataField titleField = (DataField) record.getVariableField("245");
       if (titleField == null) {
-         LOG.debug("No marc:245 found at record: " + main.getRecordID(record));
+         LOG.debug("No marc:245 found at record: " + main.getRecordId(record));
          return "";
       }
 
@@ -345,7 +345,7 @@ public class MatchKey {
          }
          return title;
       }
-      LOG.debug("Subfield 'a' is missing in marc:245 at record:" + main.getRecordID(record));
+      LOG.debug("Subfield 'a' is missing in marc:245 at record:" + main.getRecordId(record));
       return "";
    }
 }

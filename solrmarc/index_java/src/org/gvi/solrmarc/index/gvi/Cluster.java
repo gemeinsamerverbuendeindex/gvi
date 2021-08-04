@@ -20,7 +20,7 @@ public class Cluster {
     * @return If found the duplicate key else the own id.
     */
    public String getDupId(Record record) {
-      String id = main.getRecordID(record);
+      String id = main.getRecordId(record);
       return Init.kobvClusterMap.getProperty(id, id);
    }
 }
