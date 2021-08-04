@@ -178,6 +178,14 @@
     <subfield code="g">08016179</subfield>
     <subfield code="h">2200</subfield>
   </datafield>
+   <datafield tag="937" ind1="0" ind2=" ">
+    <subfield code="a">eins, 1</subfield>
+    <subfield code="b">zwei, 21, 22</subfield>
+    <subfield code="c">drei, 31, 32, 33</subfield>
+  </datafield>
+   <datafield tag="937" ind1="0" ind2=" ">
+    <subfield code="a">vier, 41,42,43,   44</subfield>
+  </datafield>
   <datafield tag="951" ind1=" " ind2=" ">
     <subfield code="a">BO</subfield>
   </datafield>

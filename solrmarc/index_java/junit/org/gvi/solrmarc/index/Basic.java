@@ -96,7 +96,7 @@ public class Basic extends JunitHelper {
 
    /**
     * Can't test the evaluation of system parameter at startup.<br>
-    * The dynamic usage of {@link GVIIndexer#getCollection(Record)} is imlicit tested in other tests e.g.{@link #consortium()}.
+    * The dynamic usage of {@link GVIIndexer#getCollection(Record)} is implicitly tested in other tests e.g.{@link #consortium()}.
     */
    @Test
    @Ignore
@@ -216,13 +216,46 @@ public class Basic extends JunitHelper {
       assertTrue("The should be no more date", indexer.getPublicationDate(patchMe).isEmpty());
    }
 
+   /**
+    * Remove the named variable Field from the Record.<br>
+    * This allows additional negative tests with the same loaded data.
+    *  
+    * @param patchMe
+    * @param fieldName
+    */
    private void publicationDatePurgeField(Record patchMe, String fieldName) {
       VariableField purge = patchMe.getVariableField(fieldName);
       assertNotNull("Check test data", purge);
       patchMe.removeVariableField(purge);
    }
 
+   /**
+    * Validate the generation of GVI-ID
+    */
+   @Test
+   public void zdbId() {
+      assertTrue("Wrong ZDB id.", indexer.getZdbId(testRecord_2).contains("2559636-6"));
+   }
+
+   /**
+    * Validate the generation of GVI-ID
+    * TODO replace mock with real code.
+    */
+   @Test
+   public void hasEnrichment() {
+      assertEquals(" ", "true", indexer.hasEnrichment(testRecord_1));
+   }
+
+   /**
+    * Validate the generation of GVI-ID
+    */
+   @Test
+   public void splitSubfield() {
+    Set<String> result = indexer.splitSubfield(testRecord_1, "937[a-f]");
+      assertEquals("\nMethode trennt nicht bei Subfeldern. ('1 zwei' und '22 drei')\n"
+         + "Bei wiederholtem Feld wird getrennt. ('33', 'vier')\n"
+         + "Result = " + result + "\n"
+         + "Anzahl der Elemente ", 14, result.size());
+   }
 }
-/*
- * getZdbId(Record) hasEnrichment(Record) splitSubfield(Record, String)
- */
+

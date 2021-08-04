@@ -341,7 +341,7 @@ public class Basic {
     * Split string with comma separated List of entries into a set of (string)entries<br>
     * 
     * @param record
-    * @param tagStr
+    * @param tagStr List of fields
     * @return
     */
    public Set<String> splitSubfield(Record record, String tagStr) {
