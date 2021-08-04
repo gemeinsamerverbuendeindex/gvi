@@ -84,8 +84,8 @@ public class GVIIndexer extends SolrIndexer {
     * <br>
     * Wrapper to {@link Basic#hasEnrichment(Record)
     */
-   public String hasEnrichment(Record record) {
-      return basic.hasEnrichment(record);
+   public Set<String> getEnrichmentTypes(Record record) {
+      return basic.getEnrichmentTypes(record);
    }
 
    /**

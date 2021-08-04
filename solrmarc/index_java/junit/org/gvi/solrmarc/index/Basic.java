@@ -17,7 +17,7 @@ import org.marc4j.marc.VariableField;
 import org.solrmarc.index.SolrIndexer;
 
 /**
- * Tests for matchKey methods
+ * Tests for basic methods
  * 
  * @author uwe
  *
@@ -243,7 +243,9 @@ public class Basic extends JunitHelper {
     */
    @Test
    public void hasEnrichment() {
-      assertEquals(" ", "true", indexer.hasEnrichment(testRecord_1));
+      assertTrue("Should contain the key for resource", indexer.getEnrichmentTypes(testRecord_1).contains(" "));
+      assertTrue("Should contain the key for resource", indexer.getEnrichmentTypes(testRecord_1).contains("0"));
+      assertTrue("Should contain the key for releated resource", indexer.getEnrichmentTypes(testRecord_1).contains("2"));
    }
 
    /**

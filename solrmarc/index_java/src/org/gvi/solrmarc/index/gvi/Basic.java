@@ -47,14 +47,21 @@ public class Basic {
    }
 
    /**
-    * Return always TRUE<br>
-    * TODO evaluate marc fields Use his method, when just the presence of a marc field is the information.
+    * Collect the indicator2 of the fields marc:856<br>
+    * 
     * 
     * @param record
-    * @return
+    * @return the different found indicators.
     */
-   public String hasEnrichment(Record record) {
-      return "true";
+   public Set<String> getEnrichmentTypes(Record record) {
+      Set<String> result = new HashSet<>();
+      List<VariableField> fields_856 = record.getVariableFields("856");
+      if (fields_856 == null) return result;
+      for (VariableField field : fields_856) {
+         DataField dataField = (DataField) field;
+         result.add(String.valueOf(dataField.getIndicator2()));
+      }
+      return result;
    }
 
    /**

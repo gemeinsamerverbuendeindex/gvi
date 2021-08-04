@@ -168,7 +168,7 @@
     <field name="summary"                 type="text"/>
     
     <!-- Verlinkte Titelanreicherungen aus in Titeldaten referenzierten Quellen -->
-    <field name="has_enrichments"             type="Flag" />
+    <field name="enrichment_types"            type="Chars" />
     <field name="enrichments"                 type="text"/>
        
     <!-- 
@@ -315,19 +315,29 @@
                required="false" 
                multiValued="true"/>
 
-    <!-- Integer for counters -->
-    <fieldType name="Count" class="solr.TrieIntField" 
+    <!-- Integer and counters -->
+    <fieldType name="Numbers" class="solr.TrieIntField" 
+               indexed="true" 
+               stored="true" 
+               multiValued="true" />
+               
+   <fieldType name="Count" class="solr.TrieIntField" 
                indexed="true" 
                stored="true" 
                default="0" 
                multiValued="false" />
-               
+                
     <!-- Boolean for flags -->
     <fieldType name="Flag" class="solr.BoolField"
                indexed="true" 
                stored="true" 
-               default="false" /> 
-
+               default="false" />
+                
+    <!-- Character for indicators -->           
+    <fieldType name="Chars" class="solr.CharField" 
+               indexed="true" 
+               stored="true" 
+               multiValued="true" />
     
     <!-- Für Facetnsuche: Keine Modifikationen. -->
     <fieldType name="Facet" class="solr.StrField" 
