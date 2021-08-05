@@ -71,7 +71,7 @@ public class Subject {
          while (iterator.hasNext()) {
             DataField field = (DataField) iterator.next();
             if (field.getSubfield('a') != null) {
-               final int ind2 = field.getIndicator2();
+               final char ind2 = field.getIndicator2();
                MARCSubjectCategory marcSubjectCategory = MARCSubjectCategory.mapToMARCSubjectCategory(ind2);
                if (marcSubjectCategory.equals(subjectCategory)) {
                   List<Subfield> subjects = field.getSubfields('a');
@@ -85,7 +85,7 @@ public class Subject {
       return result;
    }
 
-   public Set<String> getSWDSubject(Record record, MARCSubjectCategory subjectCategory) {
+   private Set<String> getSWDSubject(Record record, MARCSubjectCategory subjectCategory) {
       Set<String> result = new LinkedHashSet<>();
       List<VariableField> fields = record.getVariableFields("689");
       if (fields != null) {
