@@ -1,9 +1,18 @@
 package org.gvi.solrmarc.index.gvi.enums;
 
-/*
- * Entitätentyp der GND: $D: "b" - Körperschaft "f" - Kongress "g" - Geografikum "n" - Person (nicht individualisiert) "p" - Person (individualisiert) "s" - Sachbegriff "u" - Werk Entitätentyp der
- * SWD: $A a = Sachschlagwort b = geographisch-ethnographisches Schlagwort c = Personenschlagwort d = Koerperschaftsschlagwort f = Formschlagwort z = Zeitschlagwort
- * 
+
+/**
+ * Representation of the SWD notation of the DNB. (marc:689)<br>
+ * @see https://d-nb.info/1072442361/34
+ * SWD Entitättyp in $A<br>
+ * <dl>
+ * <li>a = Sachschlagwort</li>
+ * <li>b = geographisch-ethnographisches Schlagwort
+ * <li>c = Personenschlagwort
+ * <li>d = Koerperschaftsschlagwort
+ * <li>f = Formschlagwort
+ * <li>z = Zeitschlagwort
+ * </dl>
  */
 public enum SWDSubjectCategory {
    SACHBEGRIFF('a'),
