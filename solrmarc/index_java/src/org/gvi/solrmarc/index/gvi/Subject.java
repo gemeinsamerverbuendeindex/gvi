@@ -1,5 +1,6 @@
 package org.gvi.solrmarc.index.gvi;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -63,6 +64,12 @@ public class Subject {
       return result;
    }
 
+   /**
+    * Evaluate marc:653
+    * @param record
+    * @param subjectCategory
+    * @return
+    */
    private Set<String> getSubjectUncontrolled(Record record, MARCSubjectCategory subjectCategory) {
       Set<String> result = new LinkedHashSet<>();
       List<VariableField> fields = record.getVariableFields("653");
@@ -70,21 +77,21 @@ public class Subject {
          Iterator<VariableField> iterator = fields.iterator();
          while (iterator.hasNext()) {
             DataField field = (DataField) iterator.next();
-            if (field.getSubfield('a') != null) {
-               final char ind2 = field.getIndicator2();
-               MARCSubjectCategory marcSubjectCategory = MARCSubjectCategory.mapToMARCSubjectCategory(ind2);
-               if (marcSubjectCategory.equals(subjectCategory)) {
-                  List<Subfield> subjects = field.getSubfields('a');
-                  for (Subfield subject : subjects) {
-                     result.add(subject.getData());
-                  }
-               }
+            Character subjectKey = getSubjectKey(field);
+            if (subjectKey != null) {
+               result.addAll(getSubjectTerms(field, subjectCategory, MARCSubjectCategory.mapToMARCSubjectCategory(subjectKey)));
             }
          }
       }
       return result;
    }
 
+   /**
+    * Evaluate marc:689
+    * @param record
+    * @param subjectCategory
+    * @return
+    */
    private Set<String> getSWDSubject(Record record, MARCSubjectCategory subjectCategory) {
       Set<String> result = new LinkedHashSet<>();
       List<VariableField> fields = record.getVariableFields("689");
@@ -92,38 +99,62 @@ public class Subject {
          Iterator<VariableField> iterator = fields.iterator();
          while (iterator.hasNext()) {
             DataField field = (DataField) iterator.next();
-            if (field.getSubfield('D') != null) {
-               String gndCategoryString = field.getSubfield('D').getData();
-               // GND Sachbegriff
-               if (gndCategoryString != null && !gndCategoryString.isEmpty()) {
-                  char gndCategory = field.getSubfield('D').getData().charAt(0);
-                  MARCSubjectCategory marcSubjectCategory = GNDSubjectCategory.mapToMARCSubjectCategory(gndCategory);
-                  if (marcSubjectCategory.equals(subjectCategory)) {
-                     List<Subfield> subjects = field.getSubfields('a');
-                     for (Subfield subject : subjects) {
-                        result.add(subject.getData());
-                     }
-                  }
-               }
+            // GND Sachbegriff
+            Character subjectKey = getSubjectKey(field, 'D');
+            if (subjectKey != null) {
+               result.addAll(getSubjectTerms(field, subjectCategory, GNDSubjectCategory.mapToMARCSubjectCategory(subjectKey)));
             }
-            else if (field.getSubfield('A') != null) {
+            else {
                // Alter SWD Sachbegriff. Muss gemappt werden!
-               String swdCategoryString = field.getSubfield('A').getData();
-               if (swdCategoryString != null && !swdCategoryString.isEmpty()) {
-                  char swdCategory = field.getSubfield('A').getData().charAt(0);
-                  MARCSubjectCategory marcSubjectCategory = SWDSubjectCategory.mapToMARCSubjectCategory(swdCategory);
-                  if (marcSubjectCategory.equals(subjectCategory)) {
-                     List<Subfield> subjects = field.getSubfields('a');
-                     for (Subfield subject : subjects) {
-                        result.add(subject.getData());
-                     }
-
-                  }
+               subjectKey = getSubjectKey(field, 'A');
+               if (subjectKey != null) {
+                  result.addAll(getSubjectTerms(field, subjectCategory, SWDSubjectCategory.mapToMARCSubjectCategory(subjectKey)));
                }
             }
          }
       }
       return result;
+   }
+
+   /**
+    * Get Indicator 2 as key
+    * @param field
+    * @return
+    */
+   private char getSubjectKey(DataField field) {
+      return field.getIndicator2();
+   }
+
+   /**
+    * Get content of subfield as key
+    * @param field
+    * @param subFieldKey
+    * @return
+    */
+   private Character getSubjectKey(DataField field, char subFieldKey) {
+      Subfield subField = field.getSubfield(subFieldKey);
+      if (subField == null) return null;
+      String data = subField.getData();
+      if (data.length() != 1) return null;
+      return data.charAt(0);
+   }
+
+   /**
+    * Get subject terms from the 'a' subfield(s)
+    * @param field
+    * @param result
+    * @param neededSubjectCategory
+    * @param detectedSubjectCategory
+    */
+   private Set<String> getSubjectTerms(DataField field, MARCSubjectCategory neededSubjectCategory, MARCSubjectCategory detectedSubjectCategory) {
+      Set<String> ret = new HashSet<String>();
+      if (neededSubjectCategory.equals(detectedSubjectCategory)) {
+         List<Subfield> subjects = field.getSubfields('a');
+         for (Subfield subject : subjects) {
+            ret.add(subject.getData());
+         }
+      }
+      return ret;
    }
 
 }
