@@ -13,8 +13,7 @@ echo "Now in $(pwd)"
 
 # 3. Define own values
 MEM="1g"
-Input=" index_java/test/data/K10plus_012653829.xml"
-#Input="index_java/test/data/K10plus_529989859.xml"
+Input="$(ls $RealScriptPath/../junit/data/*.xml)"
 
 # 4. Call inherited function to run the test.
 runTest

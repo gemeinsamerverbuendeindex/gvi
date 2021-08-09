@@ -7,7 +7,7 @@
 ## $Rules Path to Indexing Rules (index.properties) (default .../solrmarc/gvi_index.properties)
 ## $SolrCore URL of designated SOLR index. If undefined a dryrun will print to stdout.
 ## $Profiling Flag to turn on solrmarc's profiling option. (default: false) 
-## $SkipBig Flag to controll the long running loading of optional big property files (GND, Cluster) (default: true)
+## $SkipBig Flag to control the long running loading of optional big property files (GND, Cluster) (default: true)
 ## $LoggingConfig  Path to the config file for Log4j. (Default: .../solrmarc/test/log4j2.xml)
 ## $MEM Size of the heap to reseve while indexing. Should be quite big. (default: 20g)
 #
@@ -29,8 +29,8 @@ function runTest {
 	CMD="$CMD -DGviIndexer.skipClusterMap=$SkipCLusterKOBV"
 	CMD="$CMD -DGviIndexer.skipCultureGraph=$SkipCLusterDNB"
 	CMD="$CMD -jar solrmarc_core_3.4.jar IndexDriver"
-	CMD="$CMD -r $Rules"
-	CMD="$CMD -u $TARGET"
+	CMD="$CMD --config $Rules"
+	CMD="$CMD --solrURL $TARGET"
 	CMD="$CMD $Input"
 	echo
 	echo "########################################"

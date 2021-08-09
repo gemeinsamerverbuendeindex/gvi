@@ -13,8 +13,8 @@ echo "Now in $(pwd)"
 
 # 3. Define own values
 MEM="1g"
-Input="$(ls /tmp/swb/*)"
-#Input="index_java/test/data/K10plus_012653829.xml"
+#Input="$(ls /tmp/swb/*)"
+Input="index_java/test/data/K10plus_012653829.xml"
 #Input="index_java/test/data/K10plus_529989859.xml"
 
 # 4. Call inherited function to run the test.
