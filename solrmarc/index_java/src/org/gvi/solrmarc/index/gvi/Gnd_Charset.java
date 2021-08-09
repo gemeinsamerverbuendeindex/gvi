@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.log4j.LogManager;
@@ -16,6 +15,7 @@ import org.marc4j.marc.Subfield;
 import org.marc4j.marc.VariableField;
 
 public class Gnd_Charset {
+   @SuppressWarnings("unused")
    private static final Logger      LOG              = LogManager.getLogger(Gnd_Charset.class);
    private GVIIndexer               main             = null;
    private static final String      gndLineSeperator = "!_#_!";
@@ -77,7 +77,7 @@ public class Gnd_Charset {
    }
 
    /**
-    * Checks if the requested fields starts with the given prefix.<br>
+    * Checks if the requested field(s) are starting with the given prefix.<br>
     * E.g. Look in relation fields for GND_IDs (starting with "DE-588")
     * 
     * @param record Marc data
@@ -115,7 +115,10 @@ public class Gnd_Charset {
             if (alreadyProcessed.contains(testId)) continue; // only once
             alreadyProcessed.add(testId);
             String normData = Init.gndSynonymMap.getProperty(testId);
-            if (normData == null) continue; // wenn es keinen passenden Normdatensatz gibt, dann weiter
+            if (normData == null) { // wenn es keinen passenden Normdatensatz gibt, dann weiter
+               if (LOG.isDebugEnabled()) LOG.debug(testId); 
+               continue;
+            }
             if (tagStr.startsWith("689")) { // workaround for RSWK
                // TODO "continue" if the type (subfield 'D') isn't 's'
             }

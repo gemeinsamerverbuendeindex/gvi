@@ -6,6 +6,7 @@ import org.gvi.solrmarc.index.GVIIndexer;
 import org.marc4j.marc.Record;
 
 public class Cluster {
+   @SuppressWarnings("unused")
    private static final Logger LOG  = LogManager.getLogger(Cluster.class);
    private GVIIndexer          main = null;
 

@@ -9,8 +9,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 import org.marc4j.marc.Record;
 
-import com.sun.tools.sjavac.Log;
-
 /**
  * Tests for the 'topic' methods<br>
  * TODO validate the field lists because they are not disjunct.

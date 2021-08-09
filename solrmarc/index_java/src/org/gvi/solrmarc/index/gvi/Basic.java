@@ -47,8 +47,15 @@ public class Basic {
    }
 
    /**
-    * Collect the indicator2 of the fields marc:856<br>
-    * 
+    * Collect distinct the indicator2 values for the fields marc:856<br>
+    * Second Indicator: Relationship:
+    * <dl>
+    * <dd># - No information provided</dd>
+    * <dd>0 - Resource</dd>
+    * <dd>1 - Version of resource</dd>
+    * <dd>2 - Related resource</dd>
+    * <dd>8 - No display constant generated</dd>
+    * </dl>
     * 
     * @param record
     * @return the different found indicators.
@@ -106,8 +113,6 @@ public class Basic {
    public String getCollection(final Record record) {
       return collectionFromParameter;
    }
-
- 
 
    /**
     * Get value(s) of selected classification schema
@@ -380,6 +385,7 @@ public class Basic {
 
    /**
     * Helper to {@link #findDateIn26x(Record, String)}
+    * 
     * @param record
     * @param fieldName
     * @return
@@ -389,7 +395,6 @@ public class Basic {
       return (date == null) ? null : DataUtil.cleanDate(date);
    }
 
-   
    String findCatalog(final Record record) {
       String f001 = main.getFirstFieldVal(record, "001");
       // guess catalogId
