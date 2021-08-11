@@ -162,7 +162,7 @@ public class Material {
       }
       for (VariableField field : fields856) {
          DataField data856 = (DataField) field;
-         Subfield accessStatus = data856.getSubfield('7');
+         Subfield accessStatus = data856.getSubfield('7'); // Currently not used in D-A-CH
          if ((accessStatus != null) && "0".equals(accessStatus.getData())) {
             result.add("Online Kostenfrei");
          }
