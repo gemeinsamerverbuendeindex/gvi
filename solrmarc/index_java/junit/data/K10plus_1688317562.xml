@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.loc.gov/MARC21/slim">
+   <record>
+      <leader>05888cgm a22006132  4500</leader>
+      <controlfield tag="001">1688317562</controlfield>
+      <controlfield tag="003">DE-627</controlfield>
+      <controlfield tag="005">20210428122630.0</controlfield>
+      <controlfield tag="006">m o | |      </controlfield>
+      <controlfield tag="007">cr uuu---uuuuu</controlfield>
+      <controlfield tag="007">vu uuuuuu</controlfield>
+      <controlfield tag="008">200123s2017 xx ||| | o ||eng c
+      </controlfield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(DE-627)1688317562</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(DE-599)KEP049425773</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(OCoLC)1137490865</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(LKDN)LDC560887</subfield>
+      </datafield>
+      <datafield tag="035" ind1=" " ind2=" ">
+         <subfield code="a">(EBP)049425773</subfield>
+      </datafield>
+      <datafield tag="040" ind1=" " ind2=" ">
+         <subfield code="a">DE-627</subfield>
+         <subfield code="b">ger</subfield>
+         <subfield code="c">DE-627</subfield>
+         <subfield code="e">rakwb</subfield>
+      </datafield>
+      <datafield tag="041" ind1=" " ind2=" ">
+         <subfield code="a">eng</subfield>
+      </datafield>
+      <datafield tag="100" ind1="1" ind2=" ">
+         <subfield code="a">Lott, Steven</subfield>
+         <subfield code="e">ErzählerIn</subfield>
+         <subfield code="4">nrt</subfield>
+      </datafield>
+      <datafield tag="245" ind1="1" ind2="0">
+         <subfield code="a">Migrating from Python 2.7 to Python 3
+         </subfield>
+      </datafield>
+      <datafield tag="264" ind1=" " ind2="1">
+         <subfield code="a">Carpenteria, CA</subfield>
+         <subfield code="b">linkedin.com</subfield>
+         <subfield code="c">2018</subfield>
+      </datafield>
+      <datafield tag="300" ind1=" " ind2=" ">
+         <subfield code="a">1 Online-Ressource (Laufzeit:
+            02:39:56.00)</subfield>
+      </datafield>
+      <datafield tag="336" ind1=" " ind2=" ">
+         <subfield code="a">zweidimensionales bewegtes Bild
+         </subfield>
+         <subfield code="b">tdi</subfield>
+         <subfield code="2">rdacontent</subfield>
+      </datafield>
+      <datafield tag="337" ind1=" " ind2=" ">
+         <subfield code="a">Computermedien</subfield>
+         <subfield code="b">c</subfield>
+         <subfield code="2">rdamedia</subfield>
+      </datafield>
+      <datafield tag="338" ind1=" " ind2=" ">
+         <subfield code="a">Online-Ressource</subfield>
+         <subfield code="b">cr</subfield>
+         <subfield code="2">rdacarrier</subfield>
+      </datafield>
+      <datafield tag="520" ind1=" " ind2=" ">
+         <subfield code="a">Are you still using Python 2.7? If
+            you've been meaning to make the jump to Python 3, but aren't
+            entirely sure what's different in the latest version of this
+            popular language—or how to migrate your code—then this
+            course is for you. Instructor Steven Lott illuminates the
+            differences between the two Python versions, going over
+            elements such as changes to built-in Python functions and
+            the Python standard library. He also walks through a number
+            of ways to convert your Python 2.7 applications to Python 3,
+            showing how to use packages like six, future, and 2to3.
+            Along the way, Steven shares his own experiences with this
+            transition, and offers helpful suggestions for enhancing the
+            overall quality and performance of your code.</subfield>
+      </datafield>
+      <datafield tag="538" ind1=" " ind2=" ">
+         <subfield code="a">Latest version of the following
+            browsers: Chrome, Safari, Firefox, or Internet Explorer.
+            Adobe Flash Player Plugin. JavaScript and cookies must be
+            enabled. A broadband Internet connection.</subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="4">
+         <subfield code="a">Instructional films</subfield>
+      </datafield>
+      <datafield tag="650" ind1=" " ind2="4">
+         <subfield code="a">Educational films</subfield>
+      </datafield>
+      <datafield tag="856" ind1="4" ind2="0">
+         <subfield code="u">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3
+         </subfield>
+         <subfield code="m">X:LKDN</subfield>
+         <subfield code="x">Verlag</subfield>
+      </datafield>
+      <datafield tag="912" ind1=" " ind2=" ">
+         <subfield code="a">ZDB-101-LET</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3584737079</subfield>
+         <subfield code="b">DE-897</subfield>
+         <subfield code="9">897</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=82720546&amp;auth=true
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3598769474</subfield>
+         <subfield code="b">DE-Wis1</subfield>
+         <subfield code="9">Wis 1</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=80614114&amp;auth=true
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3584895561</subfield>
+         <subfield code="b">DE-839</subfield>
+         <subfield code="9">839</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=82720546&amp;auth=true
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3835485695</subfield>
+         <subfield code="b">DE-916</subfield>
+         <subfield code="9">916</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3585051774</subfield>
+         <subfield code="b">DE-897-1</subfield>
+         <subfield code="9">897/1</subfield>
+         <subfield code="c">GBV</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=82720546&amp;auth=true
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3580717413</subfield>
+         <subfield code="b">DE-14</subfield>
+         <subfield code="9">14</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=75876386&amp;auth=true
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3580128736</subfield>
+         <subfield code="b">DE-289</subfield>
+         <subfield code="9">289</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=83005858&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Dokument</subfield>
+         <subfield code="l">nur aus dem Campusnetz erreichbar
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3585992218</subfield>
+         <subfield code="b">DE-100</subfield>
+         <subfield code="9">100</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=57692049&amp;auth=true
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3580128744</subfield>
+         <subfield code="b">DE-Kon4</subfield>
+         <subfield code="9">Kon 4</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">eVideo LinkedIn</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=80125546&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Video</subfield>
+         <subfield code="l">Zugang nur mit Hochschulaccount
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3580128752</subfield>
+         <subfield code="b">DE-958</subfield>
+         <subfield code="9">958</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">LinkedIn Tutorials</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=82266642&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Dokument</subfield>
+         <subfield code="l">Zugang über Shibboleth (Login mit
+            Campus-Benutzerdaten)</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3580128760</subfield>
+         <subfield code="b">DE-Fn1</subfield>
+         <subfield code="9">Fn 1</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">Video LinkedIn</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=47996500&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Dokument</subfield>
+         <subfield code="l">Campuslizenz / extern auch via
+            Shibboleth</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3595627385</subfield>
+         <subfield code="b">DE-Stg259</subfield>
+         <subfield code="9">Stg 259</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">k</subfield>
+         <subfield code="e">n</subfield>
+         <subfield code="g">Lernvideo LinkedIn</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=83558282&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Dokument</subfield>
+         <subfield code="l">Anmeldung via Shibboleth</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3585793347</subfield>
+         <subfield code="b">DE-991</subfield>
+         <subfield code="9">991</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">Video LinkedIn</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=80604202&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Dokument</subfield>
+         <subfield code="l">Nur mit E-Mail-Account der Hochschule
+            zugänglich</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3595627393</subfield>
+         <subfield code="b">DE-1033</subfield>
+         <subfield code="9">1033</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">LinkedIn Learning</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=82269490&amp;auth=true
+         </subfield>
+         <subfield code="l">nur für Hochschulangehörige über
+            Shibboleth</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3662729970</subfield>
+         <subfield code="b">DE-943</subfield>
+         <subfield code="9">943</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">Video, LinkedIn</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=82266970&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Dokument</subfield>
+         <subfield code="l">Nur aus dem Campusnetz erreichbar
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3585693407</subfield>
+         <subfield code="b">DE-Ofb1</subfield>
+         <subfield code="9">Ofb 1</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">Video LinkedIn</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=81095722&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Dokument</subfield>
+         <subfield code="l">Zugang über Shibboleth (Login mit
+            Campus-Benutzerdaten)</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3580128787</subfield>
+         <subfield code="b">DE-950</subfield>
+         <subfield code="9">950</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">Video LinkedIn</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=82266658&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Online-Dokument (Lernvideo)
+         </subfield>
+         <subfield code="l">Zugriff nur für Hochschulmitglieder und
+            nach Anmeldung mit Hochschulaccount (innerhalb und außerhalb
+            des Campusnetzes)</subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3580128795</subfield>
+         <subfield code="b">DE-984</subfield>
+         <subfield code="9">984</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="g">Tutorial LinkedIn</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=82266650&amp;auth=true
+         </subfield>
+         <subfield code="l">Zum Tutorial</subfield>
+         <subfield code="l">Einloggen mit Ihrer HfG-E-Mail-Adresse
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">380937685X</subfield>
+         <subfield code="b">DE-1871</subfield>
+         <subfield code="9">1871</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=76882098&amp;auth=true
+         </subfield>
+         <subfield code="l">Nur aus dem Campusnetz erreichbar
+         </subfield>
+      </datafield>
+      <datafield tag="924" ind1="1" ind2=" ">
+         <subfield code="a">3809376868</subfield>
+         <subfield code="b">DE-1926</subfield>
+         <subfield code="9">1926</subfield>
+         <subfield code="c">BSZ</subfield>
+         <subfield code="d">d</subfield>
+         <subfield code="k">https://www.linkedin.com/learning/migrating-from-python-2-7-to-python-3?u=76882098&amp;auth=true
+         </subfield>
+         <subfield code="l">Nur aus dem Campusnetz erreichbar
+         </subfield>
+      </datafield>
+      <datafield tag="935" ind1=" " ind2=" ">
+         <subfield code="c">vide</subfield>
+      </datafield>
+      <datafield tag="951" ind1=" " ind2=" ">
+         <subfield code="a">BO</subfield>
+      </datafield>
+   </record>
+</collection>

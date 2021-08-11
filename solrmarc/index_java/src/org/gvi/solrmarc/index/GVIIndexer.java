@@ -36,6 +36,7 @@ import org.solrmarc.index.SolrIndexer;
  */
 public class GVIIndexer extends SolrIndexer {
 
+   @SuppressWarnings("unused")
    private static final Logger LOG           = LogManager.getLogger(GVIIndexer.class);
    private Init                init          = new Init(this);
    public boolean              isInitialized = false;
@@ -254,6 +255,14 @@ public class GVIIndexer extends SolrIndexer {
     */
    public Set<String> getMaterialAccess(Record record) {
       return material.getMaterialAccess(record);
+   }
+
+   /**
+    * Detects convolutes of journal issues ...<br>
+    * Wrapper to {@link Material#isJournalVolume(Record)}
+    */
+   public String isJournalVolume(Record record) {
+      return material.isJournalVolume(record);
    }
 
    /**

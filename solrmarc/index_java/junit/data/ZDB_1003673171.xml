@@ -179,6 +179,11 @@
          </subfield>
          <subfield code="x">EZB</subfield>
       </datafield>
+      <datafield tag="856" ind1="4" ind2="0">
+         <subfield code="u">http://somewhere.neverland.edu
+         </subfield>
+         <subfield code="z">kostenfrei</subfield>
+      </datafield>
       <datafield tag="912" ind1=" " ind2=" ">
          <subfield code="a">ZDB-37-IEA</subfield>
       </datafield>

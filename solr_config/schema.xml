@@ -79,9 +79,6 @@
     <!-- Wie 'title_unstemmed'  aber als Phrase indexiert -->
     <field name="title_phrase"            type="string_lc" />
     
-    <!-- Zusätzliches Feld entsprechend GVI-27 -->
-    <field name="title_slim"              type="text" />
-    
     <!-- Angaben zur Erscheinung -->
     <!-- Verlag ohne Stemming und Phonetik -->
     <field name="publisher"               type="text" />
@@ -145,9 +142,6 @@
 
     <!-- Regionale Identifikationsnummer der erstkatalogisierenden Institution -->
     <field name="eki_id"                  type="GenericID" />
-    
-    <!-- Deduplikationsidentifikationsnummer (was 'dup_id') -->
-    <field name="cluster_id"              type="string" stored="true"  multiValued="false" docValues="true" />
     
     <!-- Inhaltliche Erschliesung: Topic -->
     <!-- Schlagworte RSWK -->
@@ -224,7 +218,7 @@
     -->
     <field name="id_related"                 type="string" />
         
-    <!-- Experimentelle (!) Matchkeys -->
+    <!-- Cluster Informationen / Matchkeys -->
     <field name="clusterkey" type="string" stored="true" multiValued="false" docValues="true" />
     <dynamicField name="clusterkey_*" type="string" stored="true" multiValued="false" docValues="true" />
 
@@ -234,20 +228,24 @@
     ###########################################
     -->
     <!-- Identifikation für Zeitschriftenbände GVI-217 -->
-    <field name="is_journal_volume"           type="Flag" />
+    <field name="is_journal_volume"       type="Flag" />
     <!-- Number of libraries that hold at least one item GVI-223-->
-    <field name="library_hold_count"          type="Count" />
+    <field name="library_hold_count"      type="Count" />
+    <dynamicField name="shelfMark_*"      type="shelfMark" />
     
     <!-- 
     ###########################################
     deprecated | veraltet | wird in nächster Version entfernt
     ###########################################
     -->
+    <!-- Wird ersetzt durch "clusterkey_*" -->
     <field name="test_matchkey_1" type="string" stored="true" multiValued="false" docValues="true" />
     <field name="test_matchkey_2" type="string" stored="true" multiValued="false" docValues="true" />
     <field name="test_matchkey_3" type="string" stored="true" multiValued="false" docValues="true" />
+        <!-- Deduplikationsidentifikationsnummer (was 'dup_id') -->
+    <field name="cluster_id"      type="string" stored="true"  multiValued="false" docValues="true" />  
     
-    <!--  GVI-231 -->
+    <!--  Überflüssig GVI-231 -->
     <field name="subject_topic_facet"        type="Facet" />
     <field name="subject_genre_facet"        type="Facet" />
     <field name="subject_geogname_facet"     type="Facet" />
@@ -290,8 +288,17 @@
     <copyField source="classification_fivrk"  dest="classification_fivr"/>
     <copyField source="classification_fivsk"  dest="classification_fivs"/>
       
-    <!--  deprecated -->
+    <!--  deprecated (to be removed in next release after 3.0)-->
     <copyField source="clusterkey"         dest="test_matchkey_3" />
+    <copyField source="clusterkey_match2"  dest="test_matchkey_2" />
+    <copyField source="clusterkey_match1"  dest="test_matchkey_1" />
+    <copyField source="clusterkey_kobv"    dest="cluster_id" />
+
+    <!-- Removed in release 3 -->
+    <!--
+    <field name="title_slim"              type="text" /> Duplett zu 'title_unstemmed'
+    -->
+
     
     <!-- 
     ###########################################
@@ -456,7 +463,23 @@
         </analyzer>
     </fieldType>
     
-    
+   <!-- shelfMark: Alle Sonderzeichen als Worttrenner nutzen und Kleinschreibung, sonst keine Abstraktion -->
+    <fieldType name="shelfMark" class="solr.TextField"
+               sortMissingLast="true" 
+               positionIncrementGap="100" 
+               indexed="true" 
+               stored="false" 
+               required="false" 
+               docValues="true"
+               multiValued="true">
+        <analyzer>
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\W" replacement=" " />
+            <charFilter class="solr.PatternReplaceFilterFactory" pattern="\s{2,}"    replacement=" " />
+            <tokenizer class="solr.WhitespaceTokenizerFactory" />
+            <filter class="solr.LowerCaseFilterFactory" />
+        </analyzer>
+    </fieldType>
+        
     <!-- Standort als WGS84 Längen- und Breitengrade (siehe https://cwiki.apache.org/confluence/display/solr/Spatial+Search) -->
     <fieldType name="GeoLocation" class="solr.SpatialRecursivePrefixTreeFieldType"
                geo="true" 
