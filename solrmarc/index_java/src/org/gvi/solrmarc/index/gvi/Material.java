@@ -1,7 +1,9 @@
 package org.gvi.solrmarc.index.gvi;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.LogManager;
@@ -11,6 +13,7 @@ import org.marc4j.marc.ControlField;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
 import org.marc4j.marc.Subfield;
+import org.marc4j.marc.VariableField;
 
 public class Material {
 
@@ -22,7 +25,8 @@ public class Material {
    }
 
    /**
-    * Determine medium of material
+    * Determine medium of material<br>
+    * TODO Is this method obsolete?
     *
     * @param record
     * @return Set material medium of record
@@ -38,11 +42,13 @@ public class Material {
    }
 
    /**
-    * Determine type of material
-    *
+    * Determine type of material<br>
+    * TODO Is this method obsolete?
+    * 
     * @param record
     * @return Set material type of record
     */
+   @Deprecated // never used
    public Set<String> getMaterialType(Record record) {
       Set<String> result = new LinkedHashSet<>();
       char materialTypeCode = record.getLeader().getTypeOfRecord();
@@ -52,39 +58,121 @@ public class Material {
    }
 
    /**
-    * Determine access method of material (physical, online)
-    *
+    * Detects convolutes of journal issues<br>
+    * The criteria (according to GVI-217) are:<br>
+    * marc:951p == "JV" AND marc:245p is undefined<br>
+    * 
     * @param record
-    * @return Set access record
+    * @return ("true"|"false")
     */
-   public Set<String> getMaterialAccess(Record record) {
-      Set<String> result = new HashSet<>();
-      // material_access.Online = 007[01]=cr OR has 856 field with indicator 40
-      ControlField field007 = ((ControlField) record.getVariableField("007"));
-      if (field007 != null) {
-         // System.out.println("DEBUG "+field007.getData());
-         String accessCode = field007.getData();
-         DataField data856 = (DataField) record.getVariableField("856");
-
-         if (accessCode.length() > 1 && "cr".equals(accessCode.substring(0, 2)) || (data856 != null && data856.getIndicator1() == '4' && data856.getIndicator1() == '0')) {
-            result.add("Online");
-            // check 856 field again
-            if (data856 != null) {
-               Subfield noteField = data856.getSubfield('z');
-               if (noteField != null) {
-                  String note = noteField.getData();
-                  if (note != null && note.matches("[Kk]ostenfrei")) {
-                     result.add("Online Kostenfrei");
-                  }
-               }
+   public String isJournalVolume(Record record) {
+      DataField field951 = (DataField) record.getVariableField("951");
+      if (field951 == null) return "false";
+      Subfield materialcode = field951.getSubfield('a');
+      if (materialcode == null) return "false";
+      if ("JV".equals(materialcode.getData())) {
+         DataField field245 = (DataField) record.getVariableField("245");
+         if (field245 != null) {
+            if (field245.getSubfield('p') != null) {
+               return "false";
             }
          }
       }
+      return "true";
 
+   }
+
+   /**
+    * Determine access methods of material<br>
+    * ("Physical", "Online", "Online Kostenfrei")
+    *
+    * @param record
+    * @return  
+    */
+   public Set<String> getMaterialAccess(Record record) {
+      Set<String> result = getAccessTypeBy007(record);
+      result.addAll(getAccessTypeBy856(record));
       if (result.isEmpty()) {
          result.add("Physical");
       }
+      return result;
+   }
 
+   /**
+    * Detect the online availability of the resource.<br>
+    * The title is online available when at least one control field marc:007
+    * starts with "cr".
+    * 
+    * @param record
+    * @return An empty set or the result of {@link #getOnlineTypes(Record)}
+    */
+   // material_access.Online = 007[01]=cr
+   private Set<String> getAccessTypeBy007(Record record) {
+      Set<String> result = new HashSet<>();
+      List<VariableField> fields007 = record.getVariableFields("007");
+      if (fields007 == null) {
+         return result;
+      }
+      for (VariableField field : fields007) {
+         ControlField data007 = (ControlField) field;
+         String accessCode = data007.getData();
+         if ((accessCode.length() > 1) && "cr".equals(accessCode.substring(0, 2))) {
+            result.addAll(getOnlineTypes(record));
+            return result;
+         }
+      }
+      return result;
+   }
+
+   /**
+    * Detect the online availability of the resource.<br>
+    * The title is online available when marked with marc:856 i1='4' i2='0'
+    * 
+    * @param record
+    * @return An empty set or the result of {@link #getOnlineTypes(Record)}
+    */
+   private Set<String> getAccessTypeBy856(Record record) {
+      Set<String> result = new HashSet<>();
+      List<VariableField> fields856 = record.getVariableFields("856");
+      if (fields856 == null) {
+         return result;
+      }
+      for (VariableField field : fields856) {
+         DataField data856 = (DataField) field;
+         if ((data856 != null) && (data856.getIndicator1() == '4') && (data856.getIndicator1() == '0')) {
+            result.addAll(getOnlineTypes(record));
+         }
+      }
+      return result;
+   }
+
+   /**
+    * Detect if the online resource is free<br>
+    * Evaluates the values of the subfields marc:8567 and marc:856z
+    * 
+    * @param record
+    * @return ["Online"] or ["Online","Online Kostenfrei"]
+    */
+   private Set<String> getOnlineTypes(Record record) {
+      Set<String> result = new HashSet<>();
+      result.add("Online");
+      List<VariableField> fields856 = record.getVariableFields("856");
+      if (fields856 == null) {
+         return result;
+      }
+      for (VariableField field : fields856) {
+         DataField data856 = (DataField) field;
+         Subfield accessStatus = data856.getSubfield('7');
+         if ((accessStatus != null) && "0".equals(accessStatus.getData())) {
+            result.add("Online Kostenfrei");
+         }
+         else {
+            Subfield accessStatusText = data856.getSubfield('z');
+            if ((accessStatusText != null) && accessStatusText.getData().toLowerCase().contains("kostenfrei")) {
+               result.add("Online Kostenfrei");
+            }
+         }
+      }
       return result;
    }
 
