@@ -87,7 +87,7 @@ public class Material {
     * ("Physical", "Online", "Online Kostenfrei")
     *
     * @param record
-    * @return  
+    * @return
     */
    public Set<String> getMaterialAccess(Record record) {
       Set<String> result = getAccessTypeBy007(record);
@@ -100,8 +100,7 @@ public class Material {
 
    /**
     * Detect the online availability of the resource.<br>
-    * The title is online available when at least one control field marc:007
-    * starts with "cr".
+    * The title is online available when at least one control field marc:007 starts with "cr".
     * 
     * @param record
     * @return An empty set or the result of {@link #getOnlineTypes(Record)}
@@ -148,7 +147,8 @@ public class Material {
 
    /**
     * Detect if the online resource is free<br>
-    * Evaluates the values of the subfields marc:8567 and marc:856z
+    * Evaluates the values of:<br>
+    * - subfield marc:8567 - subfield marc:856z - first indicator marc:506
     * 
     * @param record
     * @return ["Online"] or ["Online","Online Kostenfrei"]
@@ -162,17 +162,30 @@ public class Material {
       }
       for (VariableField field : fields856) {
          DataField data856 = (DataField) field;
+         Subfield accessStatusText = data856.getSubfield('z');
+         if ((accessStatusText != null) && accessStatusText.getData().toLowerCase().contains("kostenfrei")) {
+            return kostenfrei(result);
+         }
          Subfield accessStatus = data856.getSubfield('7'); // Currently not used in D-A-CH
          if ((accessStatus != null) && "0".equals(accessStatus.getData())) {
-            result.add("Online Kostenfrei");
-         }
-         else {
-            Subfield accessStatusText = data856.getSubfield('z');
-            if ((accessStatusText != null) && accessStatusText.getData().toLowerCase().contains("kostenfrei")) {
-               result.add("Online Kostenfrei");
-            }
+            return kostenfrei(result);
          }
       }
+      List<VariableField> fields506 = record.getVariableFields("506");
+      if (fields506 == null) {
+         return result;
+      }
+      for (VariableField field : fields506) {
+         DataField data506 = (DataField) field;
+         if (data506.getIndicator1() == '0') {
+            return kostenfrei(result);
+         }
+      }
+      return result;
+   }
+
+   private Set<String> kostenfrei(Set<String> result) {
+      result.add("Online Kostenfrei");
       return result;
    }
 

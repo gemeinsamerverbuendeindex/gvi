@@ -1,7 +1,9 @@
 package org.gvi.solrmarc.index;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -40,8 +42,12 @@ public class Material extends JunitHelper {
    @Test
    public void accessType() {
       Set<String> accessTypes = indexer.getMaterialAccess(testRecord_1);
-      LOG.warn(accessTypes);
+      assertEquals("Wrong number of entries.", 1, accessTypes.size());
+      assertFalse("The access type should not be \"Online\".", accessTypes.contains("Online"));
+      assertTrue("The access type should be \"Physical\".", accessTypes.contains("Physical"));
       accessTypes = indexer.getMaterialAccess(testRecord_2);
-      LOG.warn(accessTypes);
+      assertEquals("Wrong number of entries.", 2, accessTypes.size());
+      assertTrue("The access type should be \"Online\".", accessTypes.contains("Online"));
+      assertTrue("The access type should be \"Online Kostenfrei\".", accessTypes.contains("Online Kostenfrei"));
    }
 }
