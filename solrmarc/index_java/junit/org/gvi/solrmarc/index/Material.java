@@ -20,7 +20,7 @@ import org.marc4j.marc.Record;
  */
 public class Material extends JunitHelper {
    @SuppressWarnings("unused")
-   private static final Logger LOG        = LogManager.getLogger(Material.class);
+   private static final Logger LOG          = LogManager.getLogger(Material.class);
    private Record              testRecord_1 = readMarcFromFile("K10plus_012653829.xml");
    private Record              testRecord_2 = readMarcFromFile("ZDB_1003673171.xml");
 
@@ -36,8 +36,9 @@ public class Material extends JunitHelper {
    }
 
    /**
-    * Validate the identifaication of access types<br>
-    * Possible values are ("Physical"|"Online"|"Online Kostenfrei")
+    * Validate the identification of access types<br>
+    * Possible values are ("Physical"|"Online"|"Online Kostenfrei")<br>
+    * TODO add tests for marc:8567 and marc:506ind1
     */
    @Test
    public void accessType() {

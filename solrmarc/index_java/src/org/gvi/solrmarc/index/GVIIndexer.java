@@ -42,7 +42,7 @@ public class GVIIndexer extends SolrIndexer {
    public boolean              isInitialized = false;
    Basic                       basic         = new Basic(this);
    Subject                     subject       = new Subject(this);
-   Material                    material      = new Material(this);
+   Material                    material      = new Material();
    MatchKey                    matchKey      = new MatchKey(this);
    Cluster                     cluster       = new Cluster(this);
    Gnd_Charset                 gndCharset    = new Gnd_Charset(this);

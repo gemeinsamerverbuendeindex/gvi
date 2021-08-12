@@ -1,6 +1,5 @@
 package org.gvi.solrmarc.index.gvi;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.gvi.solrmarc.index.GVIIndexer;
 import org.marc4j.marc.ControlField;
 import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
@@ -17,12 +15,8 @@ import org.marc4j.marc.VariableField;
 
 public class Material {
 
+   @SuppressWarnings("unused")
    private static final Logger LOG  = LogManager.getLogger(Material.class);
-   private GVIIndexer          main = null;
-
-   public Material(GVIIndexer callback) {
-      main = callback;
-   }
 
    /**
     * Determine medium of material<br>
