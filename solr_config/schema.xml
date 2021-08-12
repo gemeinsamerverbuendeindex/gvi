@@ -341,7 +341,7 @@
                default="false" />
                 
     <!-- Character for indicators -->           
-    <fieldType name="Chars" class="solr.CharField" 
+    <fieldType name="Chars" class="solr.StrField" 
                indexed="true" 
                stored="true" 
                multiValued="true" />
