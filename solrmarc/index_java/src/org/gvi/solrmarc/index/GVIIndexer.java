@@ -162,11 +162,19 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * Lookup to get the duplicate key to the record's id ...<br>
+    * Lookup to find a KOBV cluster ...<br>
     * Wrapper to {@link Cluster#getDupId(Record)}
     */
    public String getDupId(Record record) {
       return cluster.getDupId(record);
+   }
+
+   /**
+    * Lookup to find a CutureGraph cluster ...<br>
+    * Wrapper to {@link Cluster#getDupId(Record)}
+    */
+   public String getCultureGraphClusterId(Record record) {
+      return cluster.getCultureGraphClusterId(record);
    }
 
    /**

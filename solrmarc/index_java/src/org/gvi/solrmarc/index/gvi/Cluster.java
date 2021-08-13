@@ -15,7 +15,7 @@ public class Cluster {
    }
 
    /**
-    * Lookup to get the duplicate key to the record's id
+    * Lookup to find a KOBV cluster id for the record's id
     * 
     * @param record The current data record
     * @return If found the duplicate key else the own id.
@@ -23,5 +23,16 @@ public class Cluster {
    public String getDupId(Record record) {
       String id = main.getRecordId(record);
       return Init.kobvClusterMap.getProperty(id, id);
+   }
+   
+   /**
+    * Lookup to find a CutureGraph cluster id for the record's id
+    * 
+    * @param record The current data record
+    * @return If found the duplicate key else the own id.
+    */
+   public String getCultureGraphClusterId(Record record) {
+      String id = main.getRecordId(record);
+      return Init.cutureGraphClusterMap.getProperty(id, id); 
    }
 }
