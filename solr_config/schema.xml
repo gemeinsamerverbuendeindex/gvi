@@ -3,6 +3,8 @@
 <!-- Datenmodel für die Version 1.0 des Datenmodells des Gemeinsamen Verbünde Index. -->
 <!-- 2014-07-11 Reh Kommentierung und Umstellung des Datenmodells der Testversion. --> 
 <!-- 2018-04-06 Reh Synonyme für Normdaten entfernt und für Dubletten ergänzt. (mit Bereinigung obsoleter Feldtypen)--> 
+<!-- 2021-08-13 Reh Anpassungen zu Rel3 -->
+
 
 <schema name="GVI_1.0" version="1.7">
     <!-- 
@@ -161,10 +163,6 @@
     <!-- Zusammenfassungen: 500a:501a:502a:504a:505a -->
     <field name="summary"                 type="text"/>
     
-    <!-- Verlinkte Titelanreicherungen aus in Titeldaten referenzierten Quellen -->
-    <field name="enrichment_types"            type="Chars" />
-    <field name="enrichments"                 type="text"/>
-       
     <!-- 
     ###########################################
     Optionale Felder zur Erweiterung der Kernfunktionalität
@@ -218,6 +216,15 @@
     -->
     <field name="id_related"                 type="string" />
         
+    <!-- 
+    ###########################################
+    new | neu
+    ###########################################
+    -->    
+    <!-- Verlinkte Titelanreicherungen aus in Titeldaten referenzierten Quellen -->
+    <field name="enrichment_types"            type="Chars" />
+    <field name="enrichments"                 type="text"/>
+       
     <!-- Cluster Informationen / Matchkeys -->
     <field name="clusterkey" type="string" stored="true" multiValued="false" docValues="true" />
     <dynamicField name="clusterkey_*" type="string" stored="true" multiValued="false" docValues="true" />
@@ -242,8 +249,6 @@
     <field name="test_matchkey_1" type="string" stored="true" multiValued="false" docValues="true" />
     <field name="test_matchkey_2" type="string" stored="true" multiValued="false" docValues="true" />
     <field name="test_matchkey_3" type="string" stored="true" multiValued="false" docValues="true" />
-        <!-- Deduplikationsidentifikationsnummer (was 'dup_id') -->
-    <field name="cluster_id"      type="string" stored="true"  multiValued="false" docValues="true" />  
     
     <!--  Überflüssig GVI-231 -->
     <field name="subject_topic_facet"        type="Facet" />
@@ -255,6 +260,16 @@
     <field name="subject_meetname_facet"     type="Facet" />
     <field name="subject_worktitle_facet"    type="Facet" />
     
+    <!-- 
+    ###########################################
+    removed | gelöscht | in dieser Version entfernt
+    ###########################################
+    -->   
+    <!--
+    <field name="title_slim" // Dublett zu 'title_unstemmed'
+    <field name="cluster_id // Ersetzt durch clusterkey_kobv
+    -->
+
 
     <!-- 
     ###########################################
@@ -292,12 +307,7 @@
     <copyField source="clusterkey"         dest="test_matchkey_3" />
     <copyField source="clusterkey_match2"  dest="test_matchkey_2" />
     <copyField source="clusterkey_match1"  dest="test_matchkey_1" />
-    <copyField source="clusterkey_kobv"    dest="cluster_id" />
 
-    <!-- Removed in release 3 -->
-    <!--
-    <field name="title_slim"              type="text" /> Duplett zu 'title_unstemmed'
-    -->
 
     
     <!-- 
@@ -305,7 +315,11 @@
     Definition der Feldtypen 
     ###########################################-->
     <!-- Für das Feld '_version_', welches vom 'real-time update' benötigt wird. -->
-    <fieldType name="long" class="solr.TrieLongField" />
+    <fieldType name="long" class="solr.TrieDateField"
+               indexed="true" 
+               stored="true" 
+               multiValued="false"
+               docValues="true" />
     
     <!-- Für Datumssuche und Sortierung: Keine Modifikationen. -->
     <fieldType name="Date" class="solr.TrieDateField" 
@@ -331,14 +345,12 @@
    <fieldType name="Count" class="solr.TrieIntField" 
                indexed="true" 
                stored="true" 
-               default="0" 
                multiValued="false" />
                 
     <!-- Boolean for flags -->
     <fieldType name="Flag" class="solr.BoolField"
                indexed="true" 
-               stored="true" 
-               default="false" />
+               stored="true" />
                 
     <!-- Character for indicators -->           
     <fieldType name="Chars" class="solr.StrField" 
@@ -470,7 +482,6 @@
                indexed="true" 
                stored="false" 
                required="false" 
-               docValues="true"
                multiValued="true">
         <analyzer>
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="\W" replacement=" " />
