@@ -300,8 +300,6 @@
     <copyField source="musical_cast"      dest="musical_cast_facet"/>
     <copyField source="musical_presentation" dest="musical_presentation_facet"/>
     <copyField source="musical_notation"  dest="musical_notation_facet"/>
-    <copyField source="classification_fivrk"  dest="classification_fivr"/>
-    <copyField source="classification_fivsk"  dest="classification_fivs"/>
       
     <!--  deprecated (to be removed in next release after 3.0)-->
     <copyField source="clusterkey"         dest="test_matchkey_3" />
