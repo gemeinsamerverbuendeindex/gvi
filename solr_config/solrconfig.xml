@@ -59,7 +59,7 @@
                     <str name="mm">0</str>
                     <str name="q.op">AND</str>
                     <str name="qf">
-                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                        title_unstemmed^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
                     </str>
                     <str name="facet">true</str>
                     <str name="facet.mincount">10</str>
@@ -84,7 +84,7 @@
                     <str name="mm">0</str>
                     <str name="q.op">AND</str>
                     <str name="qf">
-                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                        title_unstemmed^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
                     </str>
                     <str name="facet">true</str>
                     <str name="facet.mincount">10</str>
@@ -112,7 +112,7 @@
                     <str name="mm">0</str>
                     <str name="q.op">AND</str>
                     <str name="qf">
-                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                        title_unstemmed^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
                     </str>
                     <str name="facet">true</str>
                     <str name="facet.mincount">10</str>
@@ -144,7 +144,7 @@
                     <str name="mm">0</str>
                     <str name="q.op">AND</str>
                     <str name="qf">
-                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                        title_unstemmed^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
                     </str>
                     <str name="facet">true</str>
                     <str name="facet.mincount">10</str>
@@ -169,7 +169,7 @@
                     <str name="mm">0</str>
                     <str name="q.op">AND</str>
                     <str name="qf">
-                        title_slim^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
+                        title_unstemmed^400 author_norm^300 author_unstemmed^50 subject_worktitle^50 subject_topic^50 subject_geogname^100 subject_genre^50 subject_persname^100 subject_corpname^100 subject_meetname^100 subject_chrono^100 subject_all_unstemmed^50 publish_date^200 publisher^50 summary^10 issn^500 isbn^500 isbn_related^400                        
                     </str>
                     <str name="facet">true</str>
                     <str name="facet.mincount">10</str>

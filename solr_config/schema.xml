@@ -296,7 +296,7 @@
 
     <!-- Removed in release 3 -->
     <!--
-    <field name="title_slim"              type="text" /> Duplett zu 'title_unstemmed'
+    <field name="title_slim"              type="text" /> Dublet zu 'title_unstemmed'
     -->
 
     
@@ -305,17 +305,21 @@
     Definition der Feldtypen 
     ###########################################-->
     <!-- Für das Feld '_version_', welches vom 'real-time update' benötigt wird. -->
-    <fieldType name="long" class="solr.TrieLongField" />
+    <fieldType name="long" class="solr.LongPointField"
+               indexed="true" 
+               stored="true" 
+               multiValued="false"
+               docValues="true" />
     
     <!-- Für Datumssuche und Sortierung: Keine Modifikationen. -->
-    <fieldType name="Date" class="solr.TrieDateField" 
+    <fieldType name="Date" class="solr.DatePointField" 
                sortMissingLast="true" 
                indexed="true" 
                stored="false" 
                required="false" 
                multiValued="true"/>
 
-    <fieldType name="Year" class="solr.TrieIntField" 
+    <fieldType name="Year" class="solr.IntPointField" 
                sortMissingLast="true" 
                indexed="true" 
                stored="false" 
@@ -323,22 +327,20 @@
                multiValued="true"/>
 
     <!-- Integer and counters -->
-    <fieldType name="Numbers" class="solr.TrieIntField" 
+    <fieldType name="Numbers" class="solr.IntPointField" 
                indexed="true" 
                stored="true" 
                multiValued="true" />
                
-   <fieldType name="Count" class="solr.TrieIntField" 
+   <fieldType name="Count" class="solr.IntPointField" 
                indexed="true" 
                stored="true" 
-               default="0" 
                multiValued="false" />
                 
     <!-- Boolean for flags -->
     <fieldType name="Flag" class="solr.BoolField"
                indexed="true" 
-               stored="true" 
-               default="false" />
+               stored="true" />
                 
     <!-- Character for indicators -->           
     <fieldType name="Chars" class="solr.StrField" 
@@ -470,7 +472,6 @@
                indexed="true" 
                stored="false" 
                required="false" 
-               docValues="true"
                multiValued="true">
         <analyzer>
             <charFilter class="solr.PatternReplaceFilterFactory" pattern="\W" replacement=" " />
