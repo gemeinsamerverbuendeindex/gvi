@@ -84,7 +84,6 @@
     <!-- Angaben zur Erscheinung -->
     <!-- Verlag ohne Stemming und Phonetik -->
     <field name="publisher"               type="text" />
-    <field name="publisher_facet"         type="Facet" />
     
     <!-- GVI-110: Verlagsort ohne Stemming und Phonetik -->
     <field name="publisher_place"         type="text" />
@@ -111,18 +110,6 @@
     <!-- Zugriffsart (physikalisch, online) -->
     <field name="material_access"         type="FacetPlus" />
     
-    <!-- Musikalische Ausgabeform -->
-    <field name="musical_presentation"    type="text" />
-    <field name="musical_presentation_facet" type="FacetPlus" />
-
-    <!-- Musikalische Besetzung -->
-    <field name="musical_cast"            type="text" />
-    <field name="musical_cast_facet"      type="FacetPlus" />
-       
-    <!-- Musikalische Notation -->
-    <field name="musical_notation"        type="text" />
-    <field name="musical_notation_facet"  type="FacetPlus" />
-
     <!-- IDs -->
     <!-- Intenatonale Standart Nummern (isbn, issn, ismn, ...) -->
     <field name="isbn"                    type="ISBN" />
@@ -229,6 +216,17 @@
     <field name="clusterkey" type="string" stored="true" multiValued="false" docValues="true" />
     <dynamicField name="clusterkey_*" type="string" stored="true" multiValued="false" docValues="true" />
 
+    <!-- GVI-183 -->
+    <field name="publisher_facet"         type="Facet" />
+
+ 
+    <!-- GVI-236 Musikalische Ausgabeform -->
+    <field name="musical_presentation"    type="text" />
+    <!-- GVI-236 Musikalische Besetzung -->
+    <field name="musical_cast"            type="text" />
+    <!-- GVI-236 Musikalische Notation -->
+    <field name="musical_notation"        type="text" />
+ 
     <!-- 
     ###########################################
     prelimary | vorläufig | unter Vorbehalt
@@ -239,6 +237,13 @@
     <!-- Number of libraries that hold at least one item GVI-223-->
     <field name="library_hold_count"      type="Count" />
     <dynamicField name="shelfMark_*"      type="shelfMark" />
+ 
+     <!-- GVI-236 Musikalische Ausgabeform -->
+    <field name="musical_presentation_facet" type="FacetPlus" />
+    <!-- GVI-236 Musikalische Besetzung -->
+    <field name="musical_cast_facet"      type="FacetPlus" />
+    <!-- GVI-236 Musikalische Notation -->
+    <field name="musical_notation_facet"  type="FacetPlus" />
     
     <!-- 
     ###########################################
