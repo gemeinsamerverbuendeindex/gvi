@@ -26,13 +26,13 @@ public class Cluster {
    }
    
    /**
-    * Lookup to find a CutureGraph cluster id for the record's id
+    * Lookup to find a CultureGraph cluster id for the record's id
     * 
     * @param record The current data record
     * @return If found the duplicate key else the own id.
     */
    public String getCultureGraphClusterId(Record record) {
       String id = main.getRecordId(record);
-      return Init.cutureGraphClusterMap.getProperty(id, id); 
+      return Init.cultureGraphClusterMap.getProperty(id, id); 
    }
 }

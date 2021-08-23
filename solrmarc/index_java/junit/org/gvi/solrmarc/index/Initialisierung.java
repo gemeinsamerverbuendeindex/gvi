@@ -45,7 +45,7 @@ public class Initialisierung extends JunitHelper {
    @Test
    public void ignoreMissingFile() {
       reloadPropertyFiles(indexer, initDataDir, true, true, false);
-      assertTrue("Any CultureGraph cluster infomations should exist, because the file is missing.", Init.cutureGraphClusterMap.isEmpty());
+      assertTrue("Any CultureGraph cluster infomations should exist, because the file is missing.", Init.cultureGraphClusterMap.isEmpty());
    }
 
    static void reloadPropertyFiles(GVIIndexer indexer, String initDataDir, boolean skipSynonyms, boolean skipClusterMap, boolean skipCultureGraph) {

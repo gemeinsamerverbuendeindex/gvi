@@ -170,7 +170,7 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
-    * Lookup to find a CutureGraph cluster ...<br>
+    * Lookup to find a CultureGraph cluster ...<br>
     * Wrapper to {@link Cluster#getDupId(Record)}
     */
    public String getCultureGraphClusterId(Record record) {
