@@ -9,23 +9,24 @@
     
     <property file="gvi-solrmarc-ant.local.properties"/>
 
-    <property name="solrmarc.log4j.file"    value="log4j2.xml"/>
-    <property name="solrmarc.methodReport"  value="true"/>
-    <property name="solrmarc.trackProgress" value="true"/>
-    <property name="solrmarc.chunksize"     value="2000"/>
-    <property name="solrmarc.maxmemory"     value="35G"/>
-    <property name="solrmarc.threadCount"   value="15"/>
-    <property name="solrmarc.dryrun"        value="false"/>
-    <property name="solrmarc.skipSynonyms"  value="false"/>
-    <property name="solrmarc.skipClusterMap" value="true"/>
-    <property name="solrmarc.gnd.dir"       location="${gvi.work.dir}/gnd"/>    
-    <property name="solrmarc.base.dir"      location="${basedir}/../solrmarc"/>
-    <property name="solrmarc.log4j"         location="${solrmarc.base.dir}/${solrmarc.log4j.file}"/>
-    <property name="solrmarc.core.jar"      location="${solrmarc.base.dir}/solrmarc_core.jar"/>
-    <property name="solrmarc.dir"           location="${solrmarc.base.dir}"/>
-    <property name="solrmarc.solrj.dir"     location="${solrmarc.base.dir}/lib-solrj"/>
-    <property name="solrmarc.indexconf"     location="${solrmarc.base.dir}/gvi_index.properties"/>
-    <property name="solrmarc.reader"        location="${solrmarc.base.dir}/marcreader.properties"/>
+    <property name="solrmarc.log4j.file"       value="log4j2.xml"/>
+    <property name="solrmarc.methodReport"     value="true"/>
+    <property name="solrmarc.trackProgress"    value="true"/>
+    <property name="solrmarc.chunksize"        value="2000"/>
+    <property name="solrmarc.maxmemory"        value="35G"/>
+    <property name="solrmarc.threadCount"      value="15"/>
+    <property name="solrmarc.dryrun"           value="false"/>
+    <property name="solrmarc.skipSynonyms"     value="false"/>
+    <property name="solrmarc.skipClusterMap"   value="true"/>
+    <property name="solrmarc.skipCultureGraph" value="true"/>
+    <property name="solrmarc.gnd.dir"          location="${gvi.work.dir}/gnd"/>    
+    <property name="solrmarc.base.dir"         location="${basedir}/../solrmarc"/>
+    <property name="solrmarc.log4j"            location="${solrmarc.base.dir}/${solrmarc.log4j.file}"/>
+    <property name="solrmarc.core.jar"         location="${solrmarc.base.dir}/solrmarc_core.jar"/>
+    <property name="solrmarc.dir"              location="${solrmarc.base.dir}"/>
+    <property name="solrmarc.solrj.dir"        location="${solrmarc.base.dir}/lib-solrj"/>
+    <property name="solrmarc.indexconf"        location="${solrmarc.base.dir}/gvi_index.properties"/>
+    <property name="solrmarc.reader"           location="${solrmarc.base.dir}/marcreader.properties"/>
 
     <!-- Store the current starttime for later comming clean up -->
     <target name="init-index-date-for-delete">
@@ -78,11 +79,12 @@
     <macrodef name="solrmarc-run" description="Run SolrMarc">
         <attribute name="file"/>
         <attribute name="logdir"/>
-        <attribute name="logbasename"    default="solrmarc"/>
-        <attribute name="action"         default=""/><!-- can be -print, -del, or empty -->
-        <attribute name="solrURL"        default="${solr.baseurl}/${solr.core}"/>
-        <attribute name="skipSynonyms"   default="${solrmarc.skipSynonyms}"/>
-        <attribute name="skipClusterMap" default="${solrmarc.skipClusterMap}"/>
+        <attribute name="logbasename"      default="solrmarc"/>
+        <attribute name="action"           default=""/><!-- can be -print, -del, or empty -->
+        <attribute name="solrURL"          default="${solr.baseurl}/${solr.core}"/>
+        <attribute name="skipSynonyms"     default="${solrmarc.skipSynonyms}"/>
+        <attribute name="skipClusterMap"   default="${solrmarc.skipClusterMap}"/>
+        <attribute name="skipCultureGraph" default="${solrmarc.skipCultureGraph}"/>
         <sequential>
             <stopwatch name="solrmarc-run-timer"/>
             <var name="action"   value="@{action} @{file}"/>
@@ -98,6 +100,7 @@
                     chunksize = ${solrmarc.chunksize}
                  skipSynonyms = @{skipSynonyms}
                skipClusterMap = @{skipClusterMap}
+             skipCultureGraph = @{skipCultureGraph}
                   log4jConfig = ${solrmarc.log4j}
                      logError = ${logError}
                        logOut = ${logOut}
@@ -131,6 +134,7 @@
                         <sysproperty key="gnd.configdir"                value="${solrmarc.gnd.dir}"/>
                         <sysproperty key="GviIndexer.skipSynonyms"      value="@{skipSynonyms}" />
                         <sysproperty key="GviIndexer.skipClusterMap"    value="@{skipClusterMap}" />
+                        <sysproperty key="GviIndexer.skipCultureGraph"  value="@{skipCultureGraph}" />
                         <sysproperty key="org.marc4j.MarcPermissiveStreamReader.upperCaseSubfields" value="true"/>
                         <arg value="IndexDriver"/>
                         <arg line="-dir ${solrmarc.dir}"/>
@@ -185,7 +189,8 @@
                                   file="@{file} ${basedir}/../scripts/data/noData.mrc" 
                                   logdir="@{logdir}"
                                   skipSynonyms="true"
-                                  skipClusterMap="true"/>
+                                  skipClusterMap="true"
+                                  skipCultureGraph="true"/>
                 </then>  
             </if>
         </sequential>
