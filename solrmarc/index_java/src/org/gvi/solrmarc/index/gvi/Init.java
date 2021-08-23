@@ -14,14 +14,14 @@ import org.apache.log4j.Logger;
 import org.gvi.solrmarc.index.GVIIndexer;
 
 public class Init {
-   private static final Logger LOG                    = LogManager.getLogger(Init.class);
-   private GVIIndexer          main                   = null;
-   private static final String kobvClusterFile        = "kobv_clusters.properties";
-   private static final String cutureGraphClusterFile = "cuturegraph_clusters.properties";
-   private static final String gndSynonymFile         = "gnd_synonyms.properties";
-   public static Properties    gndSynonymMap          = null;
-   public static Properties    kobvClusterMap         = null;
-   public static Properties    cutureGraphClusterMap  = null;
+   private static final Logger LOG                     = LogManager.getLogger(Init.class);
+   private GVIIndexer          main                    = null;
+   private static final String kobvClusterFile         = "kobv_clusters.properties";
+   private static final String cultureGraphClusterFile = "culturegraph_clusters.properties";
+   private static final String gndSynonymFile          = "gnd_synonyms.properties";
+   public static Properties    gndSynonymMap           = null;
+   public static Properties    kobvClusterMap          = null;
+   public static Properties    cultureGraphClusterMap  = null;
 
    public Init(GVIIndexer callback) {
       main = callback;
@@ -33,13 +33,13 @@ public class Init {
     * Th loading is controlled by global flags:
     * <dl>
     * <dt>gnd.configdir</dt>
-    * <dd>The directory, containing the files "gnd_synonyms.properties", "kobv_clusters.properties" and "cuturegraph_clusters.properties"</dd>
+    * <dd>The directory, containing the files "gnd_synonyms.properties", "kobv_clusters.properties" and "culturegraph_clusters.properties"</dd>
     * <dt>GviIndexer.skipSynonyms</dt>
     * <dd>If 'true' skip reading the file gnd_synonyms.properties.</dd>
     * <dt>GviIndexer.skipClusterMap</dt>
     * <dd>If 'true' skip reading the file kobv_clusters.properties.</dd>
     * <dt>GviIndexer.skipCultureGraph</dt>
-    * <dd>If 'true' skip reading the file cuturegraph_clusters.properties.</dd>
+    * <dd>If 'true' skip reading the file culturegraph_clusters.properties.</dd>
     * <dt>
     * 
     * @throws Exception
@@ -52,7 +52,7 @@ public class Init {
 
       gndSynonymMap = init_read_big_propertyFiles("skipSynonyms", baseDir, gndSynonymFile);
       kobvClusterMap = init_read_big_propertyFiles("skipClusterMap", baseDir, kobvClusterFile);
-      cutureGraphClusterMap = init_read_big_propertyFiles("skipCultureGraph", baseDir, cutureGraphClusterFile);
+      cultureGraphClusterMap = init_read_big_propertyFiles("skipCultureGraph", baseDir, cultureGraphClusterFile);
    }
 
    /**
