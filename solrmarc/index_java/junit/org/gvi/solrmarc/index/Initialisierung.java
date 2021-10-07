@@ -3,6 +3,8 @@ package org.gvi.solrmarc.index;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Properties;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gvi.solrmarc.index.gvi.Init;
@@ -25,9 +27,20 @@ public class Initialisierung extends JunitHelper {
    @Test
    public void skipAll() {
       reloadPropertyFiles(indexer, initDataDir, true, true, true);
-      assertTrue("Any GND synonyms should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
-      assertTrue("Any Kobv cluster infomations should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
-      assertTrue("Any CultureGraph cluster infomations should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
+      noDataLoaded("Skiptest");
+   }
+
+   /**
+    * Verify resilience against missing properties.  
+    */
+   @Test
+   public void missingProperty() {
+      reloadPropertyFiles(indexer, initDataDir + "no_gnd", null, true, true);
+      noDataLoaded("NoGndProp");
+      reloadPropertyFiles(indexer, initDataDir + "no_kobv", true, null, true);
+      noDataLoaded("NoKobvProp");
+      reloadPropertyFiles(indexer, initDataDir + "no_culturegraph", true, true, null);
+      noDataLoaded("NoCultProp");
    }
 
    /**
@@ -44,17 +57,39 @@ public class Initialisierung extends JunitHelper {
     */
    @Test
    public void ignoreMissingFile() {
-      reloadPropertyFiles(indexer, initDataDir, true, true, false);
+      reloadPropertyFiles(indexer, initDataDir + "no_culturegraph", true, true, false);
       assertTrue("Any CultureGraph cluster infomations should exist, because the file is missing.", Init.cultureGraphClusterMap.isEmpty());
    }
 
-   static void reloadPropertyFiles(GVIIndexer indexer, String initDataDir, boolean skipSynonyms, boolean skipClusterMap, boolean skipCultureGraph) {
+   static void reloadPropertyFiles(GVIIndexer indexer, String initDataDir, Boolean skipSynonyms, Boolean skipClusterMap, Boolean skipCultureGraph) {
       System.setProperty("gnd.configdir", initDataDir);
-      System.setProperty("GviIndexer.skipSynonyms", String.valueOf(skipSynonyms));
-      System.setProperty("GviIndexer.skipClusterMap", String.valueOf(skipClusterMap));
-      System.setProperty("GviIndexer.skipCultureGraph", String.valueOf(skipCultureGraph));
+      if (skipSynonyms == null) {
+         System.clearProperty("GviIndexer.skipSynonyms");
+      } else {
+         System.setProperty("GviIndexer.skipSynonyms", String.valueOf(skipSynonyms));
+      }
+      if (skipClusterMap == null) {
+         System.clearProperty("GviIndexer.skipClusterMap");
+      } else {
+         System.setProperty("GviIndexer.skipClusterMap", String.valueOf(skipClusterMap));
+      }
+      if (skipCultureGraph == null) {
+         System.clearProperty("GviIndexer.skipCultureGraph");
+      } else {
+         System.setProperty("GviIndexer.skipCultureGraph", String.valueOf(skipCultureGraph));
+      }
       indexer.isInitialized = false;
       indexer.init();
    }
+
+   /**
+    * Assure that none of the big date files is loaded
+    */
+   private void noDataLoaded(String testId) {
+      assertTrue(testId + ": Any GND synonyms should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
+      assertTrue(testId + ": Any Kobv cluster infomations should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
+      assertTrue(testId + ": Any CultureGraph cluster infomations should exist, because the reading of the file was skipped.", Init.gndSynonymMap.isEmpty());
+   }
+   
 
 }
