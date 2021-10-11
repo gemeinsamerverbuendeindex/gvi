@@ -38,8 +38,8 @@ public class GVIIndexer extends SolrIndexer {
 
    @SuppressWarnings("unused")
    private static final Logger LOG           = LogManager.getLogger(GVIIndexer.class);
+   static public boolean       isInitialized = false;
    private Init                init          = new Init(this);
-   public boolean              isInitialized = false;
    Basic                       basic         = new Basic(this);
    Subject                     subject       = new Subject(this);
    Material                    material      = new Material();
