@@ -66,7 +66,8 @@ public class Init {
     */
    private Properties init_read_big_propertyFiles(String flagName, String dir, String fileName) {
       Properties data = new Properties();
-      if ("true".equals(System.getProperty("GviIndexer." + flagName))) {
+      String bigDataFlag = System.getProperty("GviIndexer." + flagName);
+      if ((bigDataFlag == null) || bigDataFlag.trim().toLowerCase().equals("true")) {
          LOG.info("GviIndexer." + flagName + " is true, skip loading.");
          return data;
       }
