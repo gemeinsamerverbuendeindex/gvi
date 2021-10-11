@@ -71,8 +71,12 @@
                     <str name="facet.field">material_content_type</str>
                     <str name="facet.field">material_media_type</str>
                     <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">musical_notation_facet</str>
+                    <str name="facet.field">musical_presentation_facet</str>
+                    <str name="facet.field">musical_cast_facet</str>
                     <str name="facet.field">language</str>
                     <str name="facet.field">publish_date</str>
+                    <str name="facet.field">publisher_facet</str>
                     <str name="facet.field">consortium</str>
                     <str name="facet.field">institution_id</str>
                 </lst>
@@ -96,8 +100,12 @@
                     <str name="facet.field">material_content_type</str>
                     <str name="facet.field">material_media_type</str>
                     <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">musical_notation_facet</str>
+                    <str name="facet.field">musical_presentation_facet</str>
+                    <str name="facet.field">musical_cast_facet</str>
                     <str name="facet.field">language</str>
                     <str name="facet.field">publish_date</str>
+                    <str name="facet.field">publisher_facet</str>
                     <str name="facet.field">consortium</str>
                     <str name="facet.field">institution_id</str>
                     <str name="group">true</str>
@@ -124,8 +132,12 @@
                     <str name="facet.field">material_content_type</str>
                     <str name="facet.field">material_media_type</str>
                     <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">musical_notation_facet</str>
+                    <str name="facet.field">musical_presentation_facet</str>
+                    <str name="facet.field">musical_cast_facet</str>
                     <str name="facet.field">language</str>
                     <str name="facet.field">publish_date</str>
+                    <str name="facet.field">publisher_facet</str>
                     <str name="facet.field">consortium</str>
                     <str name="facet.field">institution_id</str>
                     <str name="group">true</str>
@@ -156,8 +168,12 @@
                     <str name="facet.field">material_content_type</str>
                     <str name="facet.field">material_media_type</str>
                     <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">musical_notation_facet</str>
+                    <str name="facet.field">musical_presentation_facet</str>
+                    <str name="facet.field">musical_cast_facet</str>
                     <str name="facet.field">language</str>
                     <str name="facet.field">publish_date</str>
+                    <str name="facet.field">publisher_facet</str>
                     <str name="facet.field">consortium</str>
                     <str name="facet.field">institution_id</str>
                 </lst>
@@ -181,8 +197,12 @@
                     <str name="facet.field">material_content_type</str>
                     <str name="facet.field">material_media_type</str>
                     <str name="facet.field">material_pubform</str>
+                    <str name="facet.field">musical_notation_facet</str>
+                    <str name="facet.field">musical_presentation_facet</str>
+                    <str name="facet.field">musical_cast_facet</str>
                     <str name="facet.field">language</str>
                     <str name="facet.field">publish_date</str>
+                    <str name="facet.field">publisher_facet</str>
                     <str name="facet.field">consortium</str>
                     <str name="facet.field">institution_id</str>
                     <str name="group">true</str>
