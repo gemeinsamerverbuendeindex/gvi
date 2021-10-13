@@ -3,8 +3,6 @@ package org.gvi.solrmarc.index;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Properties;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.gvi.solrmarc.index.gvi.Init;
@@ -78,8 +76,7 @@ public class Initialisierung extends JunitHelper {
       } else {
          System.setProperty("GviIndexer.skipCultureGraph", String.valueOf(skipCultureGraph));
       }
-      indexer.isInitialized = false;
-      indexer.init();
+      indexer.init.reload();
    }
 
    /**

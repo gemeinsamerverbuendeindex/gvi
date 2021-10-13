@@ -37,36 +37,26 @@ import org.solrmarc.index.SolrIndexer;
 public class GVIIndexer extends SolrIndexer {
 
    @SuppressWarnings("unused")
-   private static final Logger LOG           = LogManager.getLogger(GVIIndexer.class);
-   static public boolean       isInitialized = false;
-   private Init                init          = new Init(this);
-   Basic                       basic         = new Basic(this);
-   Subject                     subject       = new Subject(this);
-   Material                    material      = new Material();
-   MatchKey                    matchKey      = new MatchKey(this);
-   Cluster                     cluster       = new Cluster(this);
-   Gnd_Charset                 gndCharset    = new Gnd_Charset(this);
+   private static final Logger LOG        = LogManager.getLogger(GVIIndexer.class);
+   Init                        init       = Init.init();                           // read implicit the property files.
+   Basic                       basic      = new Basic(this);
+   Subject                     subject    = new Subject(this);
+   Material                    material   = new Material();
+   MatchKey                    matchKey   = new MatchKey(this);
+   Cluster                     cluster    = new Cluster(this);
+   Gnd_Charset                 gndCharset = new Gnd_Charset(this);
 
    public GVIIndexer(String indexingPropsFile, String[] propertyDirs) throws Exception {
       super(indexingPropsFile, propertyDirs);
-      init();
    }
 
    public GVIIndexer() {
       super(null, null);
-      init();
    }
 
    /**
-    * Read big property files ...<br>
-    * Wrapper to {@link Init#init()}
-    */
-   protected void init() {
-      init.init();
-   }
-
-   /**
-    * Get the catalog's id fore the record ...<br>
+    * 
+    * /** Get the catalog's id fore the record ...<br>
     * Wrapper to {@link Basic#getCatalogId(Record)}
     */
    public String getRecordId(Record record) {

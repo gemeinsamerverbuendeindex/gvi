@@ -11,11 +11,10 @@ import java.util.Properties;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
-import org.gvi.solrmarc.index.GVIIndexer;
 
 public class Init {
    private static final Logger LOG                     = LogManager.getLogger(Init.class);
-   private GVIIndexer          main                    = null;
+   private static Init         me                      = null;
    private static final String kobvClusterFile         = "kobv_clusters.properties";
    private static final String cultureGraphClusterFile = "culturegraph_clusters.properties";
    private static final String gndSynonymFile          = "gnd_synonyms.properties";
@@ -23,14 +22,16 @@ public class Init {
    public static Properties    kobvClusterMap          = null;
    public static Properties    cultureGraphClusterMap  = null;
 
-   public Init(GVIIndexer callback) {
-      main = callback;
+   /**
+    * Singelton
+    */
+   private Init() {
    }
 
    /**
     * Read big property files into the heap memory<br>
     * This allows the fast enrichment of documents while indexing.<br>
-    * Th loading is controlled by global flags:
+    * The loading is controlled by global flags:
     * <dl>
     * <dt>gnd.configdir</dt>
     * <dd>The directory, containing the files "gnd_synonyms.properties", "kobv_clusters.properties" and "culturegraph_clusters.properties"</dd>
@@ -42,14 +43,31 @@ public class Init {
     * <dd>If 'true' skip reading the file culturegraph_clusters.properties.</dd>
     * <dt>
     * 
+    * While loading the data the whole indexing process is locked.
     * @throws Exception
+    * @return this singelton
     */
-   public synchronized void init() {
-      if (main.isInitialized) return;
-      main.isInitialized = true;
+   public static synchronized Init init() {
+      if (me != null) return me;
+      me = new Init();
+      me.loadDataFiles();
+      return me;
+   }
 
+   /**
+    * Reload the big property files like in {@link #init()}<br>
+    * !! This method is intended for tests only. 
+    * !! Reloading in a production environment may result in inconsistent data.
+    */
+   public synchronized void reload() {
+      loadDataFiles();
+   }
+
+   /**
+    * Read the big data files<br>
+    */
+   private void loadDataFiles() {
       String baseDir = System.getProperty("gnd.configdir", ".");
-
       gndSynonymMap = init_read_big_propertyFiles("skipSynonyms", baseDir, gndSynonymFile);
       kobvClusterMap = init_read_big_propertyFiles("skipClusterMap", baseDir, kobvClusterFile);
       cultureGraphClusterMap = init_read_big_propertyFiles("skipCultureGraph", baseDir, cultureGraphClusterFile);
