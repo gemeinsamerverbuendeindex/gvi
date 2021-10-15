@@ -318,7 +318,7 @@
     Definition der Feldtypen 
     ###########################################-->
     <!-- Für das Feld '_version_', welches vom 'real-time update' benötigt wird. -->
-    <fieldType name="long" class="solr.TrieDateField"
+    <fieldType name="long" class="solr.TrieLongField"
                indexed="true" 
                stored="true" 
                multiValued="false"
