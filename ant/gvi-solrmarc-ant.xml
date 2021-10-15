@@ -156,7 +156,7 @@
         <attribute name="logdir"/>
         <attribute name="suffix" default=".mrc"/>
         <sequential>
-            <solrmarc-run action="-print" solrURL="stdout"
+            <solrmarc-run action="" solrURL="stdout"
                           file="@{file}" logdir="@{logdir}"/>
         </sequential>
     </macrodef>
