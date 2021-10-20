@@ -119,7 +119,14 @@ public class GVIIndexer extends SolrIndexer {
       return basic.getZdbId(record);
    }
 
-   /**
+    /**
+     * Get publication date
+     */
+    public String getPublicationDate(final Record record) {
+	return basic.getPublicationDate(record);
+    }
+
+    /**
     * Get the licenced year(s) Field 912 ...<br>
     * Wrapper to {@link Basic#getProductYear(Record)}
     */

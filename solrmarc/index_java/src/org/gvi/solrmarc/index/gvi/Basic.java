@@ -237,6 +237,54 @@ public class Basic {
    }
 
    /**
+    * Stub more advanced version of getDate that looks in the 008 field as well as the 260c field this routine does some simple sanity checking to ensure that the date to return makes sense.
+    *
+    * @param record - the marc record object
+    * @return 260c or 008[7-10] or 008[11-14], "cleaned" per org.solrmarc.tools.Utils.cleanDate()
+    */
+   public String getPublicationDate(final Record record) {
+      String field008 = main.getFirstFieldVal(record, "008");
+      String pubDate26xc = getDate26xc(record);
+      String pubDate26xcJustDigits = null;
+
+      if (pubDate26xc != null) {
+         pubDate26xcJustDigits = pubDate26xc.replaceAll("[^0-9]", "");
+      }
+
+      if (field008 == null || field008.length() < 16) {
+         return (pubDate26xc);
+      }
+
+      String field008_d1 = field008.substring(7, 11);
+      String field008_d2 = field008.substring(11, 15);
+
+      String retVal = null;
+      char dateType = field008.charAt(6);
+      if (dateType == 'r' && field008_d2.equals(pubDate26xc)) {
+         retVal = field008_d2;
+      }
+      else if (field008_d1.equals(pubDate26xc)) {
+         retVal = field008_d1;
+      }
+      else if (field008_d2.equals(pubDate26xc)) {
+         retVal = field008_d2;
+      }
+      else if (pubDate26xcJustDigits != null && pubDate26xcJustDigits.length() == 4 && pubDate26xc != null && pubDate26xc.matches("(20|19|18|17|16|15)[0-9][0-9]")) {
+         retVal = pubDate26xc;
+      }
+      else if (field008_d1.matches("(20|1[98765432])[0-9][0-9]")) {
+         retVal = field008_d1;
+      }
+      else if (field008_d2.matches("(20|1[98765432])[0-9][0-9]")) {
+         retVal = field008_d2;
+      }
+      else {
+         retVal = pubDate26xc;
+      }
+      return (retVal);
+   }
+
+   /**
     * Get the licensed year(s) of products from marc:912b<br>
     * * Aug. 2021 only used at K10plus.<br>
     * * Definition is still on discussion at the AG-KVA
