@@ -237,6 +237,28 @@ public class Basic {
    }
 
    /**
+    * Return the date in 260c/264c as a string
+    *
+    * @param record - the marc record object
+    * @return 260c/264c, "cleaned" per org.solrmarc.tools.Utils.cleanDate()
+    */
+   public String getDate26xc(Record record) {
+      String date260c = main.getFieldVals(record, "260c", ", ");
+      String date264c = main.getFieldVals(record, "264c", ", ");
+      String date = null;
+      if (date260c != null && date260c.length() > 0) {
+         date = date260c;
+      }
+      else if (date264c != null && date264c.length() > 0) {
+         date = date264c;
+      }
+      if (date == null || date.length() == 0) {
+         return (null);
+      }
+      return DataUtil.cleanDate(date);
+   }
+
+   /**
     * Stub more advanced version of getDate that looks in the 008 field as well as the 260c field this routine does some simple sanity checking to ensure that the date to return makes sense.
     *
     * @param record - the marc record object
