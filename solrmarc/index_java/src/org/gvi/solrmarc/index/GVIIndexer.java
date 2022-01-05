@@ -1,5 +1,6 @@
 package org.gvi.solrmarc.index;
 
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.LogManager;
@@ -11,7 +12,10 @@ import org.gvi.solrmarc.index.gvi.Init;
 import org.gvi.solrmarc.index.gvi.MatchKey;
 import org.gvi.solrmarc.index.gvi.Material;
 import org.gvi.solrmarc.index.gvi.Subject;
+import org.marc4j.marc.DataField;
 import org.marc4j.marc.Record;
+import org.marc4j.marc.Subfield;
+import org.marc4j.marc.VariableField;
 import org.solrmarc.index.SolrIndexer;
 
 /**
@@ -154,8 +158,19 @@ public class GVIIndexer extends SolrIndexer {
     * Split string with comma separated List ...<br>
     * Wrapper to {@link Basic#splitSubfield(Record)}
     */
-   public Set<String> splitSubfield(Record record, String tagStr) {
-      return basic.splitSubfield(record, tagStr);
+   public Set<String> splitSubfield(Record record, String tagStr) {       
+       Set<String> resultSet = basic.splitSubfield(record, tagStr);
+       List<VariableField> list937 = record.getVariableFields("937");
+       for (VariableField f: list937) {
+            DataField d = (DataField) f;
+            Subfield sf937e = d.getSubfield('e');
+            Subfield sf937f = d.getSubfield('f');
+            if (sf937e != null && sf937e.getData().matches("(.*)[Ss]ingstimme(.*)") && 
+                sf937f != null && sf937f.getData().matches("(.*)[Ss]olo(.*)")) {
+                resultSet.add("singstimme solo");
+            }
+       }       
+      return resultSet;
    }
 
    /**
