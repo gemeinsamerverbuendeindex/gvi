@@ -9,6 +9,10 @@
         <tstamp>
             <format property="time.stamp" pattern="yyyyMMdd"/>
         </tstamp>
+        <tstamp>
+            <format property="date.download" pattern="yyyyMMdd" offset="-1" unit="day"/>
+        </tstamp>
+        
         <property name="collection"     value="OBV" />
         <property name="input.dir"      location="${gvi.input.dir}/obv/current" />
         <property name="work.dir"       location="${gvi.work.dir}/obv" />
@@ -16,13 +20,81 @@
         <property name="full.work.dir"  location="${work.dir}/full/work"/>
         <property name="full.log.dir"   location="${work.dir}/full/log"/>
         <property name="update.base.dir"  location="${input.dir}/update"/>
-        <property name="update.input.dir" location="${update.base.dir}"/>
+        <property name="update.input.dir" location="${update.base.dir}/${time.stamp}"/>
         <property name="update.work.dir"  location="${work.dir}/update"/>
         <property name="update.log.dir"   location="${work.dir}/update/log/"/>
     </target>
     
     <import file="gvi-ant-base.xml"/>
-
+    
+    <target name="download-updates-obv" depends="-init" unless="download.skip">
+        <echo>Checking updates for ${date.download} in ${update.input.dir}</echo>
+        <mkdir dir="${update.input.dir}"/>
+        <scp file="gvisftp@ftp.obvsg.at:/culturegraph/alma_bib_culturegraph_${date.download}*" 
+             todir="${update.input.dir}"
+             sftp="true"
+             trust="true"
+             verbose="true"
+             preserveLastModified="true"
+             keyfile="${user.home}/.ssh/id_rsa"
+             knownhosts="${user.home}/.ssh/known_hosts" 
+        />
+        <fileset dir="${update.input.dir}" id="update.fileset"/>
+        <pathconvert refid="update.fileset" property="updates.found" setonempty="false"/>
+        <move todir="${update.input.dir}" 
+              verbose="true" overwrite="false" preservelastmodified="true" includeEmptyDirs="false">
+            <fileset dir="${update.input.dir}">
+                <exclude name="**/*.mrc"/>
+                <exclude name="**/*_delete*"/>
+            </fileset>
+            <mapper type="glob" from="*" to="*.mrc"/>
+        </move>
+        <antcall target="extract-deletion-ids-obv" />
+    </target>
+    
+    <target name="extract-deletion-ids-obv">
+        <path id="deleteFilePath">
+            <fileset dir="${update.input.dir}" includes="*_delete"/>
+        </path>
+        <for param="file">
+            <path refid="deleteFilePath"/>
+            <sequential>
+                <obv-extract-deletion-ids in.file="@{file}" out.file="@{file}.txt"/>
+            </sequential>
+        </for>                                    
+    </target>
+    
+    <macrodef name="obv-extract-deletion-ids">
+        <attribute name="in.file"/>
+        <attribute name="out.file"/>
+        <sequential>
+            <tempfile destdir="${update.input.dir}" property="temp.file"/>
+            <java classname="org.marc4j.util.UtilDriver"
+                  output="${temp.file}"
+                  fork="true">
+                <classpath>
+                    <fileset dir="${solrmarc.dir}/lib">
+                        <include name="**/*.jar"/>
+                    </fileset>
+                </classpath>
+                <arg value="printrecord"/>
+                <arg value="@{in.file}"/>                          
+            </java>
+            <copy file="${temp.file}" tofile="@{out.file}">
+                <filterchain>
+                    <filterreader classname="org.apache.tools.ant.filters.LineContainsRegExp">
+                        <param type="regexp" value="^009 "/>                    
+                    </filterreader>
+                </filterchain>
+            </copy>
+            <delete file="${temp.file}"/>
+            <replaceregexp file="@{out.file}"
+                           match="^(009 )(.*)"
+                           replace="(AT-OBV)\2"
+                           byline="true"/>
+        </sequential>
+    </macrodef>
+    
     <target name="-index-full">
         <path id="filePath">
             <fileset dir="${full.input.dir}" includes="*.mrc"/>
@@ -30,19 +102,53 @@
         <pathconvert pathsep=" " refid="filePath" property="fileList"/>
         <echo>FileList: ${fileList}</echo>
         <for param="file">
-           <path refid="filePath"/>
-           <sequential>
-               <solrmarc-index-file file="@{file}" logdir="${full.log.dir}"/>
-           </sequential>
+            <path refid="filePath"/>
+            <sequential>
+                <solrmarc-index-file file="@{file}" logdir="${full.log.dir}"/>
+            </sequential>
         </for>                    
     </target>
     
-    <target name="-index-updates">
-        <fail>Target not implemented !</fail>
+    <target name="-index-updates" depends="download-updates-obv" if="updates.found">
+        <solrmarc-index-dir  src="${update.input.dir}" logdir="${update.log.dir}" suffix=".mrc"/>
+        <solrmarc-delete-dir src="${update.input.dir}" logdir="${update.log.dir}" suffix=".txt"/>
     </target>
 
     <target name="-index-all-updates">
-        <fail>Target not implemented !</fail>
+        <for param="dir">
+            <path>
+                <dirset dir="${update.base.dir}" includes="*"/>
+            </path>
+            <sequential>
+                <echo>Datadir @{dir}</echo>
+                <solrmarc-index-dir  src="@{dir}" logdir="${update.log.dir}"/>
+                <solrmarc-delete-dir src="@{dir}" logdir="${update.log.dir}"/>
+            </sequential>
+        </for>
+        <!--
+<path id="mrcFilePath">
+    <fileset dir="${update.base.dir}" includes="**/*new.mrc"/>
+</path>
+<pathconvert pathsep=" " refid="mrcFilePath" property="mrcFileList"/>
+<echo>MrcFileList: ${mrcFileList}</echo>
+<for param="file">
+    <path refid="mrcFilePath"/>
+    <sequential>
+        <solrmarc-index-file file="@{file}" logdir="${update.log.dir}"/>
+    </sequential>
+</for>
+<path id="deleteFilePath">
+    <fileset dir="${update.base.dir}" includes="*delete.mrc"/>
+</path>
+<pathconvert pathsep=" " refid="deleteFilePath" property="deleteFileList"/>
+<echo>DeleteFileList: ${deleteFileList}</echo>
+<for param="file">
+    <path refid="deleteFilePath"/>
+    <sequential>
+        <solrmarc-delete-file file="@{file}" logdir="${update.log.dir}"/>
+    </sequential>
+</for>
+        -->
     </target>
-        
+
 </project>

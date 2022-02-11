@@ -91,24 +91,24 @@
             <var name="logError" value="@{logdir}/@{logbasename}@{action}_err.log"/>
             <var name="logOut"   value="@{logdir}/@{logbasename}@{action}_out.log"/>
             <echo> 
-                          jar = ${solrmarc.core.jar} 
-                          dir = ${solrmarc.base.dir}
-                    maxmemory = ${solrmarc.maxmemory}                 
-                  threadCount = ${solrmarc.threadCount}
-                 methodReport = ${solrmarc.methodReport}
+                jar = ${solrmarc.core.jar} 
+                dir = ${solrmarc.base.dir}
+                maxmemory = ${solrmarc.maxmemory}                 
+                threadCount = ${solrmarc.threadCount}
+                methodReport = ${solrmarc.methodReport}
                 trackProgress = ${solrmarc.trackProgress}
-                    chunksize = ${solrmarc.chunksize}
-                 skipSynonyms = @{skipSynonyms}
-               skipClusterMap = @{skipClusterMap}
-             skipCultureGraph = @{skipCultureGraph}
-                  log4jConfig = ${solrmarc.log4j}
-                     logError = ${logError}
-                       logOut = ${logOut}
-                   collection = ${collection}
-                      solrURL = @{solrURL}
-                    indexconf = ${solrmarc.indexconf}
-                       action = @{action}
-                        files = @{file}
+                chunksize = ${solrmarc.chunksize}
+                skipSynonyms = @{skipSynonyms}
+                skipClusterMap = @{skipClusterMap}
+                skipCultureGraph = @{skipCultureGraph}
+                log4jConfig = ${solrmarc.log4j}
+                logError = ${logError}
+                logOut = ${logOut}
+                collection = ${collection}
+                solrURL = @{solrURL}
+                indexconf = ${solrmarc.indexconf}
+                action = @{action}
+                files = @{file}
             </echo>
             <if>
                 <equals arg1="${solrmarc.dryrun}" arg2="true"/>
@@ -209,7 +209,9 @@
                     <include name="**/*@{suffix}"/>
                 </fileset>
             </path>
+            <var name="indexFileList" unset="true"/>
             <pathconvert pathsep=" " refid="indexFilePath" property="indexFileList"/>
+            <var name="indexFileListNotEmpty" unset="true"/>
             <condition property="indexFileListNotEmpty">
                 <length string="${indexFileList}" trim="true" when="greater" length="0"/>
             </condition>
@@ -236,7 +238,9 @@
             <path id="deleteFilePath">
                 <fileset dir="@{src}" includes="**/*@{suffix}"/>                
             </path>
+            <var name="deleteFileList" unset="true"/>
             <pathconvert refid="deleteFilePath" property="deleteFileList"/>
+            <var name="deleteFileListNotEmpty" unset="true"/>
             <condition property="deleteFileListNotEmpty">
                 <length string="${deleteFileList}" trim="true" when="greater" length="0"/>
             </condition>
