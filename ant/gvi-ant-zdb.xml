@@ -16,7 +16,8 @@
         <property name="full.input.dir" location="${input.dir}/full"/>
         <property name="full.work.dir"  location="${work.dir}/full/"/>
         <property name="full.log.dir"   location="${work.dir}/full/log"/>
-        <property name="update.base.dir"  location="${gvi.input.dir}/dnb/current/update"/>
+        <property name="update.inbox.dir" location="${gvi.input.dir}/dnb/current/update"/>
+        <property name="update.base.dir"  location="${gvi.input.dir}/zdb/current/update"/>
         <property name="update.input.dir" location="${update.base.dir}"/>
         <property name="update.work.dir"  location="${work.dir}/update"/>
         <property name="update.log.dir"   location="${work.dir}/update/log/"/>
@@ -30,6 +31,11 @@
     </target>
     
     <target name="-index-updates">
+        <move todir="${update.input.dir}" preservelastmodified="true">
+            <fileset dir="${update.inbox.dir}">
+                <include name="zdb_*.gz"/>
+            </fileset>
+        </move>
         <zdb-unpack-index-dir src="${update.input.dir}" 
                           dest="${update.work.dir}" 
                           logdir="${update.log.dir}" 
