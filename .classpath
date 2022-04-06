@@ -14,10 +14,6 @@
 	<classpathentry kind="lib" path="solrmarc/lib/classgraph-4.1.6.jar"/>
 	<classpathentry kind="lib" path="solrmarc/lib/java-cup-11b-runtime.jar"/>
 	<classpathentry kind="lib" path="solrmarc/lib/jopt-simple-5.0.2.jar"/>
-	<classpathentry kind="lib" path="solrmarc/lib/log4j-1.2-api-2.10.0.jar"/>
-	<classpathentry kind="lib" path="solrmarc/lib/log4j-api-2.10.0.jar"/>
-	<classpathentry kind="lib" path="solrmarc/lib/log4j-core-2.10.0.jar"/>
-	<classpathentry kind="lib" path="solrmarc/lib/log4j-slf4j-impl-2.10.0.jar"/>
 	<classpathentry kind="lib" path="solrmarc/lib/miglayout15-swing.jar"/>
 	<classpathentry kind="lib" path="solrmarc/lib/slf4j-api-1.7.24.jar"/>
 	<classpathentry kind="lib" path="solrmarc/lib_local/commons-codec-1.3.jar"/>
@@ -35,7 +31,11 @@
 	<classpathentry kind="lib" path="solrmarc/lib-solrj/stax2-api-3.1.4.jar"/>
 	<classpathentry kind="lib" path="solrmarc/lib-solrj/woodstox-core-asl-4.4.1.jar"/>
 	<classpathentry kind="lib" path="solrmarc/lib-solrj/zookeeper-3.4.11.jar"/>
-	<classpathentry kind="lib" path="solrmarc/solrmarc_core_3.4.jar"/>
 	<classpathentry kind="lib" path="solrmarc/lib/marc4j-2.9.2.jar"/>
+	<classpathentry kind="lib" path="solrmarc/lib/log4j-1.2-api-2.17.1.jar"/>
+	<classpathentry kind="lib" path="solrmarc/lib/log4j-api-2.17.1.jar"/>
+	<classpathentry kind="lib" path="solrmarc/lib/log4j-core-2.17.1.jar"/>
+	<classpathentry kind="lib" path="solrmarc/lib/log4j-slf4j-impl-2.17.1.jar"/>
+	<classpathentry kind="lib" path="solrmarc/solrmarc_core_3.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
