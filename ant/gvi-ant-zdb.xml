@@ -54,8 +54,11 @@
         <zdb-unpack-index-dir src="${update.input.dir}" 
                           dest="${update.work.dir}" 
                           logdir="${update.log.dir}" 
-                          indexUnpacked="false"/>
-        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}"/>        
+                          indexUnpacked="true"/>
+        <zdb-unpack-delete-dir src="${update.input.dir}" 
+                          dest="${update.work.dir}" 
+                          logdir="${update.log.dir}" 
+                          indexUnpacked="true"/>
     </target>
     
     <!-- Macros for ZDB -->
