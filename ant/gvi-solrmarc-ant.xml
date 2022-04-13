@@ -131,6 +131,7 @@
                         <sysproperty key="solrmarc.indexer.threadcount" value="${solrmarc.threadCount}" />
                         <sysproperty key="solrmarc.track.solr.progress" value="${solrmarc.trackProgress}" />
                         <sysproperty key="solrmarc.indexer.chunksize"   value="${solrmarc.chunksize}" />
+                        <sysproperty key="solrmarc.commit.at.end"       value="false"/>
                         <sysproperty key="gnd.configdir"                value="${solrmarc.gnd.dir}"/>
                         <sysproperty key="GviIndexer.skipSynonyms"      value="@{skipSynonyms}" />
                         <sysproperty key="GviIndexer.skipClusterMap"    value="@{skipClusterMap}" />
