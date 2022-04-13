@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.java.j2seproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>gvi-cleanup</name>
+            <name>gvi</name>
             <explicit-platform explicit-source-supported="true"/>
             <source-roots>
                 <root id="src.src.dir"/>
