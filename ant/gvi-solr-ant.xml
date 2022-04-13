@@ -27,6 +27,10 @@
         <solr-purge />
     </target>
     
+    <target name="solr-ping">
+        <solr-ping action="status"/>
+    </target>
+
     <macrodef name="solr-ping">
         <attribute name="action"/>
         <sequential>
