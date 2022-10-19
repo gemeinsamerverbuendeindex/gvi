@@ -342,7 +342,7 @@
         <lst name="defaults">
             <str name="mlt.fl">allfields</str>
             <str name="mlt.qf">
-                allfields_unstemmed
+                allfields
             </str>
             <int name="mlt.mintf">1</int>
             <int name="mlt.mindf">1</int>
