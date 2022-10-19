@@ -266,7 +266,7 @@
         <lst name="defaults">
             <str name="defType">edismax</str>
             <str name="tie">0.1</str>
-            <str name="qf">allfields_unstemmed^4 allfields </str>
+            <str name="qf">allfields </str>
             <str name="spellcheck">false</str>
         </lst>
         <arr name="components">
@@ -287,7 +287,7 @@
         <lst name="defaults">
             <str name="defType">edismax</str>
             <str name="tie">0.1</str>
-            <str name="qf">allfields_unstemmed^4 allfields </str>
+            <str name="qf">allfields</str>
             <str name="spellcheck">false</str>
         </lst>
         <arr name="components">
