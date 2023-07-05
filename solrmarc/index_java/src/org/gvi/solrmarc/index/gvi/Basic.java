@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -82,6 +83,30 @@ public class Basic {
       String catalogId = getCatalogId(record);
       if ("AT-OBV".equals(catalogId)) {
          localId = main.getFirstFieldVal(record, "009");
+      }
+      if ("DE-605".equals(catalogId)) {
+          List<VariableField> fields_035 = record.getVariableFields("035");
+          for (VariableField field: fields_035) {
+              DataField dataField = (DataField) field;
+              String id = dataField.getSubfield('a').getData();
+              if (id.startsWith("(DE-605)")) {
+                  localId = id.substring(8);
+                  break;
+              }
+          }
+          if (localId == null) {
+            for (VariableField field: fields_035) {
+                DataField dataField = (DataField) field;
+                String id = dataField.getSubfield('a').getData();
+                if (id.startsWith("(DE-600)")) {
+                    localId = id;
+                    break;
+                }
+            }
+          }
+          if (localId == null|| localId.isEmpty()) {
+            localId = "(UUID)"+UUID.randomUUID().toString().replace("-", "");
+          }
       }
       if ((localId == null) || localId.isEmpty()) {
          localId = main.getFirstFieldVal(record, "001");
