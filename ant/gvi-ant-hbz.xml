@@ -41,14 +41,51 @@
              newer="true"
              preservelastmodified="true">
             <fileset dir="${update.input.dir}">
-                <include name="${date.download}.gvi.i.*.mrc.gz"/>
-                <include name="${date.download}.gvi.d.*.lst.gz"/>
+                <include name="gvi_hbz_${date.download}*_new*.tar.gz"/>
+                <include name="gvi_hbz_${date.download}*_delete*.tar.gz"/>
             </fileset>
         </ftp>
         <fileset dir="${update.input.dir}" id="update.fileset"/>
         <pathconvert refid="update.fileset" property="updates.found" setonempty="false"/>
+        <antcall target="extract-deletion-ids-hbz" />
     </target>
     
+    <target name="extract-deletion-ids-hbz">
+        <path id="deleteFilePath">
+            <fileset dir="${update.input.dir}" includes="*_delete*.gz"/>
+        </path>
+        <for param="file">
+            <path refid="deleteFilePath"/>
+            <sequential>
+                <var name="base.name" unset="true"/>
+                <propertyregex property="base.name"
+                               input="@{file}"
+                               regexp="(.*)\.tar\.gz"
+                               select="\1" override="true"/>
+                <untar src="@{file}" dest="${update.input.dir}" compression="gzip"/>
+                <hbz-extract-deletion-ids in.file="${base.name}.xml" out.file="${base.name}.txt"/>
+                <delete file="${base.name}.xml"/>
+            </sequential>
+        </for>                                    
+    </target>
+    
+    <macrodef name="hbz-extract-deletion-ids">
+        <attribute name="in.file"/>
+        <attribute name="out.file"/>
+        <sequential>
+            <echo>XSLT in    : @{in.file}</echo>
+            <echo>XSLT out   : @{out.file}</echo>
+            <echo>XSLT style : ${basedir}/gvi-ant-hbz.xsl</echo>
+            <xslt basedir="${update.input.dir}" 
+                  destdir="${update.input.dir}" 
+                  style="gvi-ant-hbz.xsl"
+                  in="@{in.file}"
+                  out="@{out.file}"
+                  force="true"
+            />
+        </sequential>
+    </macrodef>
+
     <target name="-index-updates" depends="download-updates-hbz" if="updates.found">
         <hbz-unpack-index-dir src="${update.input.dir}" 
                               dest="${update.work.dir}" 
@@ -71,11 +108,13 @@
             </path>
             <sequential>
                 <echo>Datadir @{dir}</echo>
+                <echo>Unpacking index dir</echo>
                 <hbz-unpack-index-dir
                     src="@{dir}" 
                     dest="${update.work.dir}" 
                     logdir="${update.log.dir}" 
                     indexUnpacked="false"/>
+                <echo>Unpacking delete dir</echo>
                 <hbz-unpack-delete-dir
                     src="@{dir}" 
                     dest="${update.work.dir}"
@@ -83,20 +122,22 @@
                     indexUnpacked="false"/>                
             </sequential>
         </for>
-        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}"/>
+        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}" pattern="*new*" suffix=".xml"/>
         <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}"/>
     </target>
     
     <target name="-index-full">
-        <delete>
+        <!--
+          <delete>
             <fileset dir="${full.log.dir}"  includes="*" erroronmissingdir="false"/>
             <fileset dir="${full.work.dir}" includes="*" erroronmissingdir="false"/>
-        </delete>
-        <hbz-unpack-index-dir src="${full.input.dir}" 
-                              dest="${full.work.dir}" 
-                              logdir="${full.log.dir}" 
-                              indexUnpacked="false"/> 
-        <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}"/> 
+          </delete>
+          <hbz-unpack-index-dir src="${full.input.dir}" 
+                                dest="${full.work.dir}" 
+                                logdir="${full.log.dir}" 
+                                indexUnpacked="false"/>
+        -->
+        <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" suffix=".xml"/> 
     </target>
     
     <!-- Macros for HBZ -->
@@ -111,26 +152,25 @@
             <for param="filename">
                 <path>
                     <fileset dir="@{src}">
-                        <include name="*.gvi.f.mrc.gz"/>
-                        <include name="*.gvi.i.*.mrc.gz"/>
+                        <include name="gvi_hbz_*_new*.tar.gz"/>
                     </fileset>
                 </path>
                 <sequential>
                     <var name="basename" unset="true"/>
-                    <basename property="basename" file="@{filename}" suffix=".mrc.gz"/>
+                    <basename property="basename" file="@{filename}" suffix="tar.gz"/>
                     <echo>Basename=${basename}</echo>
-                    <var name="is_mrc_avaliable" unset="true"/>
-                    <available property="is_mrc_avaliable" file="@{dest}/${basename}.mrc"/>                    
+                    <var name="is_mrcxml_avaliable" unset="true"/>
+                    <available property="is_mrcxml_avaliable" file="@{dest}/${basename}.xml"/>                    
                     <if>
                         <not>
-                            <equals arg1="${is_mrc_avaliable}" arg2="true"/>
+                            <equals arg1="${is_mrcxml_avaliable}" arg2="true"/>
                         </not>
                         <then>
-                            <gunzip src="@{filename}" dest="@{dest}/${basename}.mrc"/>
+                            <untar src="@{filename}" dest="@{dest}" compression="gzip"/>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
-                                    <solrmarc-index-file file="@{dest}/${basename}.mrc" logdir="@{logdir}"/> 
+                                    <solrmarc-index-file file="@{dest}/${basename}.xml" logdir="@{logdir}"/> 
                                 </then>
                             </if>
                         </then>
@@ -150,25 +190,25 @@
             <mkdir dir="@{logdir}"/>
             <for param="filename">
                 <path>
-                    <fileset dir="@{src}" includes="*.gvi.d.*.lst.gz"/>
+                    <fileset dir="@{src}" includes="gvi_hbz_*_delete_*.tar.gz"/>
                 </path>
                 <sequential>
                     <var name="basename" unset="true"/>
-                    <basename property="basename" file="@{filename}" suffix=".lst.gz"/>
+                    <basename property="basename" file="@{filename}" suffix="tar.gz"/>
                     <echo>Basename=${basename}</echo>
                     <var name="is_del_avaliable" unset="true"/>
-                    <available property="is_del_avaliable" file="@{dest}/${basename}.lst"/>                    
+                    <available property="is_del_avaliable" file="@{dest}/${basename}.txt"/>                    
                     <if>
                         <not>
                             <equals arg1="${is_del_avaliable}" arg2="true"/>
                         </not>
                         <then>
-                            <gunzip src="@{filename}" dest="@{dest}/${basename}.lst"/>
-                            <solr-delete-file-hbz file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
+                            <untar src="@{filename}" dest="@{dest}" compression="gzip"/>
+                            <hbz-extract-deletion-ids in.file="@{dest}/${basename}.xml" out.file="@{dest}/${basename}.txt"/>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
-                                    <solr-delete-file-hbz file="@{dest}/${basename}.lst" logdir="@{logdir}"/>
+                                    <solr-delete-file-hbz file="@{dest}/${basename}.txt" logdir="@{logdir}"/>
                                 </then>
                             </if>
                         </then>
