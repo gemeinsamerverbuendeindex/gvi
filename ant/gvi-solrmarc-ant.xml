@@ -204,13 +204,14 @@
     <macrodef name="solrmarc-index-dir">
         <attribute name="src"/>
         <attribute name="logdir"/>
+        <attribute name="pattern" default="*"/>
         <attribute name="suffix" default=".mrc"/>
         <sequential>
             <echo>Indexing in datadir @{src}</echo>
             <mkdir dir="@{logdir}"/>
             <path id="indexFilePath">
                 <fileset dir="@{src}">
-                    <include name="**/*@{suffix}"/>
+                    <include name="**/@{pattern}@{suffix}"/>
                 </fileset>
             </path>
             <var name="indexFileList" unset="true"/>
