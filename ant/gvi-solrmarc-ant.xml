@@ -14,7 +14,7 @@
     <property name="solrmarc.trackProgress"    value="true"/>
     <property name="solrmarc.chunksize"        value="2000"/>
     <property name="solrmarc.maxmemory"        value="35G"/>
-    <property name="solrmarc.threadCount"      value="15"/>
+    <property name="solrmarc.threadCount"      value="4"/>
     <property name="solrmarc.dryrun"           value="false"/>
     <property name="solrmarc.skipSynonyms"     value="false"/>
     <property name="solrmarc.skipClusterMap"   value="true"/>
