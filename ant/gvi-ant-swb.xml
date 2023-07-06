@@ -91,6 +91,7 @@
 
     <!-- Alle Updates auspacken und indexieren -->
     <target name="-index-all-updates">
+        <!--
         <delete>
             <fileset dir="${update.log.dir}"  includes="*" erroronmissingdir="false"/>
             <fileset dir="${update.work.dir}" includes="*" erroronmissingdir="false"/>
@@ -118,15 +119,62 @@
                     indexUnpacked="false"/>                
             </sequential>
         </for>
+        -->
+        <echo message="${update.work.dir}"></echo>
+        <for param="update.file.name">
+            <path>
+                <fileset dir="${update.work.dir}">
+                    <include name="*.txt"/>
+                    <include name="*.mrc"/>
+                    <include name="*.xml"/>
+                </fileset>
+            </path>
+            <sequential>
+                <echo message="file.name=@{update.file.name}"/>
+                <var name="base.name" unset="true"/>
+                <var name="suffix.name" unset="true"/>
+                <propertyregex property="base.name"
+                               input="@{update.file.name}"
+                               regexp="(.*)\.(.*)"
+                               select="\1" override="true"/>
+
+                <propertyregex property="suffix.name"
+                               input="@{update.file.name}"
+                               regexp="(.*)\.(.*)"
+                               select="\2" override="true"/>
+                <echo message="base.name=${base.name}"></echo>
+                <echo message="suffix.name=${suffix.name}"></echo>
+                <if>
+                    <equals arg1="${suffix.name}" arg2="mrc"/>
+                    <then>
+                        <solrmarc-index-file file="@{update.file.name}" logdir="${update.log.dir}" suffix=".mrc"/>
+                    </then>                    
+                    <elseif>
+                        <equals arg1="${suffix.name}" arg2="xml"/> 
+                        <then>
+                            <solrmarc-index-file file="@{update.file.name}" logdir="${update.log.dir}" suffix=".xml"/>
+                        </then>
+                    </elseif>
+                    <elseif>
+                        <equals arg1="${suffix.name}" arg2="txt"/> 
+                        <then>
+                            <solrmarc-delete-file file="@{update.file.name}" logdir="${update.log.dir}" suffix=".txt"/>
+                        </then>                        
+                    </elseif>
+                </if>
+            </sequential>
+        </for>
+        <!--
         <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}"/>
         <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}"/>
+        -->
     </target>
         
     <!-- Nur den Komplettabzug indexieren -->
     <target name="-index-full">
         <delete>
-          <fileset dir="${full.log.dir}"  includes="*.log" erroronmissingdir="false"/>
-          <fileset dir="${full.work.dir}" includes="*"     erroronmissingdir="false"/>
+            <fileset dir="${full.log.dir}"  includes="*.log" erroronmissingdir="false"/>
+            <fileset dir="${full.work.dir}" includes="*"     erroronmissingdir="false"/>
         </delete>
         <swb-unpack-index-dir
             src="${full.input.dir}" 
@@ -269,9 +317,9 @@
                                 </filterchain>
                             </copy>
                             <replaceregexp file="${file.target}"
-                                   match="^[0-9]{11}A(.*)"
-                                   replace="(DE-627)\1"
-                                   byline="true"/>
+                                           match="^[0-9]{11}A(.*)"
+                                           replace="(DE-627)\1"
+                                           byline="true"/>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
