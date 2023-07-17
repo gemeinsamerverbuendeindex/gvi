@@ -127,16 +127,15 @@
     </target>
     
     <target name="-index-full">
-        <!--
           <delete>
             <fileset dir="${full.log.dir}"  includes="*" erroronmissingdir="false"/>
             <fileset dir="${full.work.dir}" includes="*" erroronmissingdir="false"/>
           </delete>
+          <echo>Unpacking index dir</echo>
           <hbz-unpack-index-dir src="${full.input.dir}" 
                                 dest="${full.work.dir}" 
                                 logdir="${full.log.dir}" 
                                 indexUnpacked="false"/>
-        -->
         <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" suffix=".xml"/> 
     </target>
     
@@ -167,6 +166,34 @@
                         </not>
                         <then>
                             <untar src="@{filename}" dest="@{dest}" compression="gzip"/>
+                            <if>
+                                <equals arg1="@{indexUnpacked}" arg2="true"/>
+                                <then>
+                                    <solrmarc-index-file file="@{dest}/${basename}.xml" logdir="@{logdir}"/> 
+                                </then>
+                            </if>
+                        </then>
+                    </if>
+                </sequential>
+            </for>
+            <for param="filename">
+                <path>
+                    <fileset dir="@{src}">
+                        <include name="*.xml.gz"/>
+                    </fileset>
+                </path>
+                <sequential>
+                    <var name="basename" unset="true"/>
+                    <basename property="basename" file="@{filename}" suffix=".gz"/>
+                    <echo>Basename=${basename}</echo>
+                    <var name="is_mrcxml_avaliable" unset="true"/>
+                    <available property="is_mrcxml_avaliable" file="@{dest}/${basename}.xml"/>                    
+                    <if>
+                        <not>
+                            <equals arg1="${is_mrcxml_avaliable}" arg2="true"/>
+                        </not>
+                        <then>
+                            <gunzip src="@{filename}" dest="@{dest}"/>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
@@ -275,4 +302,45 @@
         </sequential>
     </macrodef>
     
+    <macrodef name="combine-marcxml-files">
+        <attribute name="src.dir"/>
+        <attribute name="dest.dir"/>
+        <attribute name="sizePack"/>
+        <sequential>
+            <resourcecount property="numFiles">
+                <fileset dir="@{src.dir}" includes="*"/>
+            </resourcecount>
+            
+            <math result="numPacks"     datatype="int" operand1="${numFiles}" op="/" operand2="${sizePack}"/>
+            <math result="sizeLastPack" datatype="int" operand1="${numFiles}" op="%" operand2="${sizePack}"/>
+
+            <echo>numFiles     = ${numFiles}</echo>            
+            <echo>numPacks     = ${numPacks}</echo>            
+            <echo>sizePack     = ${sizePack}</echo>            
+            <echo>sizeLastPack = ${sizeLastPack}</echo>            
+            <length string="${numPacks}" property="lengthNumPacks"/>
+            <for param="i" begin="1" end="${numPacks}">
+                <sequential>
+                    <var name="combFileSuffix" unset="true"/>
+                    <property name="combFileSuffix" value="${i}"/>
+                    <for param="i" begin="1" end="${lenthNumPacks}">
+                        <sequential>
+                            <if>
+                                <length string="${combFileSuffix}" when="less" length="${lengthNumPacks}"/>
+                            </if>
+                            <then>
+                                <property name="combFileSuffix" value="0${combFileSuffix}"/>
+                            </then>
+                        </sequential>
+                    </for>
+                    
+                </sequential>
+            </for>
+            <concat destfile="" append="true">
+                <path path="@{src.dir}"/>
+                <header>&lt;?xml version="1.0" encoding="UTF-8"?>&#xA;&lt;collection></header>
+                <footer>&#xA;&lt;/collection></footer>
+            </concat>
+        </sequential>
+    </macrodef>
 </project>
