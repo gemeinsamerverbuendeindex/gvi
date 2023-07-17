@@ -140,6 +140,26 @@ public class Basic {
    }
 
    /**
+    * Get set of other_ids. For HBZ (DE-605) add (DE-605)$001. This is used for deletion. <br>
+    * @param record
+    * @param tagStr List of fields
+    * @return Set of other_ids
+    */
+   public  Set<String> getOtherId(final Record record, String tagStr) {
+      Set<String> result = new HashSet<>();
+      Set<String> fieldList = main.getFieldList(record, tagStr);
+      for (String str : fieldList) {
+         result.add(str);
+      }
+      // For HBZ (DE-605) add (DE-605)$001. This is used for deletion.
+      String catalogId = getCatalogId(record);
+      if ("DE-605".equals(catalogId)) {
+          String localId = main.getFirstFieldVal(record, "001");
+          result.add("(" + catalogId + ")" + localId);
+      }
+      return result;
+   }
+   /**
     * Get value(s) of selected classification schema
     * 
     * @param record The title data

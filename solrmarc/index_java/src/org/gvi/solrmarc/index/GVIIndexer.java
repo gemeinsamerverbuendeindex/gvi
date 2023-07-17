@@ -100,6 +100,14 @@ public class GVIIndexer extends SolrIndexer {
    }
 
    /**
+    * Get set of other_ids. For HBZ (DE-605) add (DE-605)$001. This is used for deletion. <br>
+    * Wrapper to {@link Basic#getOtherId(Record, tagString)
+    */
+   public  Set<String> getOtherId(final Record record, String tagStr) {
+    return basic.getOtherId(record, tagStr);
+   }
+   
+  /**
     * Get value(s) of selected classification schema ...<br>
     * Wrapper to {@link Basic#getClassification(Record, String, String)}
     */
