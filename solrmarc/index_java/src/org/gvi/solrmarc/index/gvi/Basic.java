@@ -94,7 +94,7 @@ public class Basic {
                   break;
               }
           }
-          if (localId == null) {
+          if (localId == null || localId.isEmpty()) {
             for (VariableField field: fields_035) {
                 DataField dataField = (DataField) field;
                 String id = dataField.getSubfield('a').getData();
@@ -104,7 +104,7 @@ public class Basic {
                 }
             }
           }
-          if (localId == null|| localId.isEmpty()) {
+          if (localId == null || localId.isEmpty()) {
             localId = "(UUID)"+UUID.randomUUID().toString().replace("-", "");
           }
       }
