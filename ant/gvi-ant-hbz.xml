@@ -114,25 +114,24 @@
                     dest="${update.work.dir}" 
                     logdir="${update.log.dir}" 
                     indexUnpacked="false"/>
+                <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}" pattern="*new*" suffix=".xml"/>
                 <echo>Unpacking delete dir</echo>
                 <hbz-unpack-delete-dir
                     src="@{dir}" 
                     dest="${update.work.dir}"
                     logdir="${update.log.dir}" 
-                    indexUnpacked="false"/>                
+                    indexUnpacked="true"/>
             </sequential>
         </for>
-        <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}" pattern="*new*" suffix=".xml"/>
-        <solrmarc-delete-dir src="${update.work.dir}" logdir="${update.log.dir}"/>
     </target>
     
     <target name="-index-full">
-          <delete>
+        <delete>
             <fileset dir="${full.log.dir}"  includes="*" erroronmissingdir="false"/>
             <fileset dir="${full.work.dir}" includes="*" erroronmissingdir="false"/>
-          </delete>
-          <echo>Unpacking index dir</echo>
-          <hbz-unpack-index-dir src="${full.input.dir}" 
+        </delete>
+        <echo>Unpacking index dir</echo>
+        <hbz-unpack-index-dir src="${full.input.dir}" 
                                 dest="${full.work.dir}" 
                                 logdir="${full.log.dir}" 
                                 indexUnpacked="false"/>
