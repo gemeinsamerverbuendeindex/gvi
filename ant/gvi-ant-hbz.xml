@@ -140,9 +140,9 @@
         </delete>
         <echo>Unpacking index dir</echo>
         <hbz-unpack-index-dir src="${full.input.dir}" 
-                                dest="${full.work.dir}" 
-                                logdir="${full.log.dir}" 
-                                indexUnpacked="false"/>
+                              dest="${full.work.dir}" 
+                              logdir="${full.log.dir}" 
+                              indexUnpacked="false"/>
         <solrmarc-index-dir src="${full.work.dir}" logdir="${full.log.dir}" suffix=".xml"/> 
     </target>
     
@@ -239,6 +239,16 @@
                         <then>
                             <untar src="@{filename}" dest="@{dest}" compression="gzip"/>
                             <hbz-extract-deletion-ids in.file="@{dest}/${basename}.xml" out.file="@{dest}/${basename}.txt"/>
+                            <var name="is_del_txt_avaliable" unset="true"/>
+                            <available property="is_del_txt_avaliable" file="@{src}/${basename}.txt"/>
+                            <if>
+                                <not>
+                                    <equals arg1="${is_del_txt_avaliable}" arg2="true"/>
+                                </not>
+                                <then>
+                                    <copy file="@{dest}/${basename}.txt" todir="@{src}" preservelastmodified="true"/>
+                                </then>
+                            </if>
                             <if>
                                 <equals arg1="@{indexUnpacked}" arg2="true"/>
                                 <then>
