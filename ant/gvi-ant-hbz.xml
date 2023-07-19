@@ -47,7 +47,15 @@
         </ftp>
         <fileset dir="${update.input.dir}" id="update.fileset"/>
         <pathconvert refid="update.fileset" property="updates.found" setonempty="false"/>
-        <antcall target="extract-deletion-ids-hbz" />
+        <if>
+            <equals arg1="${updates.found}" arg2="false"/>
+            <then>
+                <delete dir="${update.input.dir}"/>
+            </then>
+            <else>
+                <antcall target="extract-deletion-ids-hbz" />                
+            </else>
+        </if>
     </target>
     
     <target name="extract-deletion-ids-hbz">
