@@ -107,19 +107,27 @@
                 <dirset dir="${update.base.dir}" includes="*"/>
             </path>
             <sequential>
+                <var name="date.dir" unset="true"/>
+                <basename property="date.dir" file="@{dir}"/>
+                <var name="update.work.date.dir" unset="true"/>
+                <property name="update.work.date.dir" value="${work.dir}/update/${date.dir}"/>
                 <echo>Datadir @{dir}</echo>
-                <echo>Unpacking index dir</echo>
+                <echo>Unpacking to work dir ${update.work.date.dir}</echo>
                 <hbz-unpack-index-dir
                     src="@{dir}" 
-                    dest="${update.work.dir}" 
-                    logdir="${update.log.dir}" 
+                    dest="${update.work.date.dir}" 
+                    logdir="${update.work.date.dir}/log" 
                     indexUnpacked="false"/>
-                <solrmarc-index-dir  src="${update.work.dir}" logdir="${update.log.dir}" pattern="*new*" suffix=".xml"/>
+                <solrmarc-index-dir  
+                    src="${update.work.date.dir}" 
+                    logdir="${update.work.date.dir}/log" 
+                    pattern="*new*" 
+                    suffix=".xml"/>
                 <echo>Unpacking delete dir</echo>
                 <hbz-unpack-delete-dir
                     src="@{dir}" 
-                    dest="${update.work.dir}"
-                    logdir="${update.log.dir}" 
+                    dest="${update.work.date.dir}"
+                    logdir="${update.work.date.dir}/log" 
                     indexUnpacked="true"/>
             </sequential>
         </for>
@@ -216,7 +224,7 @@
             <mkdir dir="@{logdir}"/>
             <for param="filename">
                 <path>
-                    <fileset dir="@{src}" includes="gvi_hbz_*_delete_*.tar.gz"/>
+                    <fileset dir="@{src}" includes="gvi_hbz_*_delete*.tar.gz"/>
                 </path>
                 <sequential>
                     <var name="basename" unset="true"/>
