@@ -257,12 +257,12 @@
                                     <copy file="@{dest}/${basename}.txt" todir="@{src}" preservelastmodified="true"/>
                                 </then>
                             </if>
-                            <if>
-                                <equals arg1="@{indexUnpacked}" arg2="true"/>
-                                <then>
-                                    <solr-delete-file-hbz file="@{dest}/${basename}.txt" logdir="@{logdir}"/>
-                                </then>
-                            </if>
+                        </then>
+                    </if>
+                    <if>
+                        <equals arg1="@{indexUnpacked}" arg2="true"/>
+                        <then>
+                                <solr-delete-file-hbz file="@{dest}/${basename}.txt" logdir="@{logdir}"/>
                         </then>
                     </if>
                 </sequential>
@@ -278,13 +278,15 @@
         <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
         <attribute name="solr.core"       default="${solr.core}"/>
         <sequential>
+	    <var name="fileSizeGreaterNull" unset="true"/>
             <condition property="fileSizeGreaterNull">
                 <length file="@{file}" when="greater" length="0" />                
             </condition>
             <if>
                 <equals arg1="${fileSizeGreaterNull}" arg2="true"/>
                 <then>                    
-                    <var name="basename" unset="true"/>	   
+                    <var name="basename" unset="true"/>
+   		    <var name="msg" unset="true"/>
                     <basename property="basename" file="@{file}" suffix=".txt"/>
                     <echo>Deleting from Index @{file}</echo>
                     <build-delete-by-query-file src="@{file}" dest="@{file}.batch"/>
@@ -302,11 +304,10 @@
             <concat destfile="@{dest}.tmp">
                 <path path="@{src}"/>
                 <filterchain>
-                    <tokenfilter>
-                        <replacestring from="(DE-605)" to="other_id:\(DE-605\)"/>
-                        <trim/>
+                  <tokenfilter>
+                    <trim/>
                     </tokenfilter>
-                    <prefixlines prefix="&lt;query>"/>
+                    <prefixlines prefix="&lt;query>consortium:DE-605 AND other_id:"/>
                     <suffixlines suffix="&lt;/query>"/>    
                 </filterchain>
             </concat>
