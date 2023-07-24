@@ -236,6 +236,7 @@
         <attribute name="date"/>
         <attribute name="response-property"/>
         <sequential>
+	    <var name="query" unset="true"/>
             <property name="query" value="index_date:[* TO @{date}] AND collection:(@{data.collection})"/>
             <solr-delete-by-query 
                 query="${query}"
@@ -252,6 +253,7 @@
         <sequential>
             <var name="response-property" unset="true"/>
             <var name="solr-delete-response-file" unset="true"/>
+	    <var name="stream.body" unset="true"/>
             <tempfile property="solr-delete-response-file" prefix="solr-delete-response-status-" destDir="/tmp"/>
             <property name="stream.body" value="&lt;delete>&lt;query>@{query}&lt;/query>&lt;/delete>"/>
             <post to="${solr.baseurl}/@{collection}/update"
@@ -270,8 +272,12 @@
         <attribute name="solr.baseurl"    default="${solr.baseurl}"/>
         <attribute name="solr.core"       default="${solr.core}"/>
         <sequential>
-            <property name="url">@{solr.baseurl}/@{solr.core}/update?commit=true&amp;wt=json&amp;indent=true</property>        
-            <property name="data">@{file}</property>
+	  <echo>Batchfile: @{file}</echo>
+	    <var name="url" unset="true"/>	    
+   	    <var name="data" unset="true"/>
+    	    <var name="contenttype" unset="true"/>
+            <property name="url">@{solr.baseurl}/@{solr.core}/update?commit=true&amp;wt=json&amp;indent=true</property>
+	    <property name="data">@{file}</property>
             <property name="contenttype">Content-Type:text/xml</property>
             <exec executable="curl" outputproperty="@{response-property}" failonerror="true">
                 <arg value="--silent"/>
