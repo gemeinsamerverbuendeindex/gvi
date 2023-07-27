@@ -11,7 +11,7 @@
             <format property="time.stamp" pattern="yyyy-MM-dd"/>
         </tstamp>
         <tstamp>
-            <format property="date.download" pattern="YYYYMMdd" unit="day"/>
+            <format property="date.download" pattern="YYYYMMdd" offset="-1" unit="day"/>
         </tstamp>
         <property name="collection"       value="HBZ"/>
         <property name="input.dir"        location="${gvi.input.dir}/hbz/current"/>
