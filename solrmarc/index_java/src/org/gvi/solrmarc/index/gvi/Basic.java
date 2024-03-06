@@ -81,10 +81,11 @@ public class Basic {
    public String getRecordId(final Record record) {
       String localId = null;
       String catalogId = getCatalogId(record);
+      String collection = getCollection(record);
       if ("AT-OBV".equals(catalogId)) {
          localId = main.getFirstFieldVal(record, "009");
       }
-      if ("DE-605".equals(catalogId)) {
+      if ("DE-605".equals(catalogId) && !"HBZFIX".equals(collection)) {
           List<VariableField> fields_035 = record.getVariableFields("035");
           for (VariableField field: fields_035) {
               DataField dataField = (DataField) field;
