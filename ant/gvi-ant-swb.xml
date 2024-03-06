@@ -312,12 +312,12 @@
                             <copy file="@{filename}" tofile="${file.target}">
                                 <filterchain>
                                     <filterreader classname="org.apache.tools.ant.filters.LineContainsRegExp">
-                                        <param type="regexp" value="^[0-9]{11}A(.*)"/>                    
+                                        <param type="regexp" value="^[0-9\-]{11}A(.*)"/>                    
                                     </filterreader>
                                 </filterchain>
                             </copy>
                             <replaceregexp file="${file.target}"
-                                           match="^[0-9]{11}A(.*)"
+                                           match="^[0-9\-]{11}A(.*)"
                                            replace="(DE-627)\1"
                                            byline="true"/>
                             <if>
