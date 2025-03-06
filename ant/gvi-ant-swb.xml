@@ -58,10 +58,11 @@
              server="${ftp.server}"
              userid="${ftp.userid}"
              password="${ftp.password}"
-             remotedir="${ftp.remotedir}/../sekkor"
+             remotedir="/ftpdaten/swb/sekkor"
              verbose="true"
              newer="true"
-             preservelastmodified="true">
+             preservelastmodified="true"
+	     timediffauto="true">
             <fileset dir="${update.input.dir}">
                 <include name="LOEKXP-${date.download}"/>
             </fileset>
@@ -91,7 +92,6 @@
 
     <!-- Alle Updates auspacken und indexieren -->
     <target name="-index-all-updates">
-        <!--
         <delete>
             <fileset dir="${update.log.dir}"  includes="*" erroronmissingdir="false"/>
             <fileset dir="${update.work.dir}" includes="*" erroronmissingdir="false"/>
@@ -119,7 +119,7 @@
                     indexUnpacked="false"/>                
             </sequential>
         </for>
-        -->
+       
         <echo message="${update.work.dir}"></echo>
         <for param="update.file.name">
             <path>
