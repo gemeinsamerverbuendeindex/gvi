@@ -167,7 +167,7 @@
         <attribute name="file"/>
         <attribute name="todir"      default="${update.input.dir}"/>
         <attribute name="keyfile"    default="${user.home}/.ssh/id_ed25519"/>
-        <attribute name="knowbhosts" default="${user.home}/.ssh/known_hosts"/>
+        <attribute name="knownhosts" default="${user.home}/.ssh/known_hosts"/>
         <sequential>
             <scp file="@{server}:@{file}" 
                  todir="@{todir}"
