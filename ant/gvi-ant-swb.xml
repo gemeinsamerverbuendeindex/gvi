@@ -37,36 +37,13 @@
     <target name="download-updates-swb" depends="-init" unless="download.skip">
         <echo>Checking updates for ${date.download} in ${update.input.dir}</echo>
         <mkdir dir="${update.input.dir}"/>
-        <ftp action="get"
-             server="${ftp.server}"
-             userid="${ftp.userid}"
-             password="${ftp.password}"
-             remotedir="${ftp.remotedir}"
-             verbose="true"
-             newer="true"
-             preservelastmodified="true">
-            <fileset dir="${update.input.dir}">
-                <include name="SA-MARC-verbund-${date.download}*.tar.gz"/>
-                <include name="TA-MARC-verbund-${date.download}*.tar.gz"/>
-                <include name="TA-MARC-verbund_l-${date.download}*.tar.gz"/>
-                <include name="WA-MARC-verbund-${date.download}*.tar.gz"/>
-                <include name="od_del_bsz-tit_${date.download}*"/>
-                <include name="LOEKXP_v-${date.download}"/>
-            </fileset>
-        </ftp>
-        <ftp action="get"
-             server="${ftp.server}"
-             userid="${ftp.userid}"
-             password="${ftp.password}"
-             remotedir="/ftpdaten/swb/sekkor"
-             verbose="true"
-             newer="true"
-             preservelastmodified="true"
-	     timediffauto="true">
-            <fileset dir="${update.input.dir}">
-                <include name="LOEKXP-${date.download}"/>
-            </fileset>
-        </ftp>
+        <sftp server="swb@vdata.bsz-bw.de" file="/swb/verbund/SA-MARC-verbund-${date.download}*.tar.gz" /> 
+        <sftp server="swb@vdata.bsz-bw.de" file="/swb/verbund/TA-MARC-verbund-${date.download}*.tar.gz" /> 
+        <sftp server="swb@vdata.bsz-bw.de" file="/swb/verbund/TA-MARC-verbund_l-${date.download}*.tar.gz" /> 
+        <sftp server="swb@vdata.bsz-bw.de" file="/swb/verbund/WA-MARC-verbund-${date.download}*.tar.gz" /> 
+        <sftp server="swb@vdata.bsz-bw.de" file="/swb/verbund/od_del_bsz-tit_${date.download}*" /> 
+        <sftp server="swb@vdata.bsz-bw.de" file="/swb/verbund/LOEKXP_v-${date.download}" /> 
+        <sftp server="swb@vdata.bsz-bw.de" file="/swb/sekkor/LOEKXP-${date.download}" /> 
         <fileset dir="${update.input.dir}" id="update.fileset"/>
         <pathconvert refid="update.fileset" property="updates.found" setonempty="false"/>
     </target>
@@ -185,6 +162,25 @@
     </target>
 
     <!-- Implementation macros -->
+    <macrodef name="sftp">
+        <attribute name="server"/>
+        <attribute name="file"/>
+        <attribute name="todir"      default="${update.input.dir}"/>
+        <attribute name="keyfile"    default="${user.home}/.ssh/id_ed25519"/>
+        <attribute name="knowbhosts" default="${user.home}/.ssh/known_hosts"/>
+        <sequential>
+            <scp file="@{server}:@{file}" 
+                 todir="@{todir}"
+                 sftp="true"
+                 trust="true"
+                 verbose="false"
+                 preserveLastModified="true"
+                 keyfile="@{keyfile}"
+                 knownhosts="@{knownhosts}" 
+            />
+        </sequential>
+    </macrodef>
+    
     <macrodef name="swb-unpack-index-dir">
         <attribute name="src"/>
         <attribute name="dest"/>
