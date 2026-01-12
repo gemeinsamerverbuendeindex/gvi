@@ -4,7 +4,7 @@
 Neben der [Deutschen Nationalbibliothek](http://www.dnb.de/) pflegen die wissenschaftlichen [Bibliotheksverbünde](https://de.wikipedia.org/wiki/Bibliotheksverbund) große bibliografische Verzeichnisse.
 Ziel diese Projektes ist es eine gemeinsame Schnittstelle über den Gesamtbestand bereitzustellen und Verbundübergreifende Anwendungen zu entwickeln.
 ### Technik
-Der so entstandene gemeinsame Datenbestand von über 185 Mio Titeldaten wird in einer [SolrCloud](https://cwiki.apache.org/confluence/display/solr/SolrCloud) abgelegt. Über die [AbfrageSprache] (https://cwiki.apache.org/confluence/display/solr/Query+Syntax+and+Parsing) von SOLR wird der Index für verschiedenste Anwendungen zur Verfügung stehen. Als eine erste Beispielanwendung wird es eine angepasste Variante von [VuFind](http://vufind-org.github.io/vufind/) geben.
+Der so entstandene gemeinsame Datenbestand von über 185 Mio Titeldaten wird in einer [SolrCloud](https://cwiki.apache.org/confluence/display/solr/SolrCloud) abgelegt. Über die [AbfrageSprache](https://cwiki.apache.org/confluence/display/solr/Query+Syntax+and+Parsing) von SOLR wird der Index für verschiedenste Anwendungen zur Verfügung stehen. Als eine erste Beispielanwendung wird es eine angepasste Variante von [VuFind](http://vufind-org.github.io/vufind/) geben.
 
 ----
 # GVI: Combined Consortional Library Index
