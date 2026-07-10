@@ -28,11 +28,11 @@ public class Gnd_Charset extends JunitHelper {
    @Test
    public void termId() {
       Set<String> gndIds = indexer.getTermID(testRecord_2, "1000:1100:1110:7000:7100:7110", "DE-588", "false");
-      assertTrue("Two ids schould be found. " + gndIds, (gndIds.size() == 2));
-      assertTrue("The id '1692-5' shoud exist.", gndIds.contains("1692-5"));
+      assertTrue("Two ids should be found. " + gndIds, (gndIds.size() == 2));
+      assertTrue("The id '1692-5' should exist.", gndIds.contains("1692-5"));
       gndIds = indexer.getTermID(testRecord_2, "1000:1100:1110:7000:7100:7110", "DE-588", "true");
-      assertTrue("Two ids schould be found. " + gndIds, (gndIds.size() == 2));
-      assertTrue("The id '(DE-588)1692-5' shoud exist.", gndIds.contains("(DE-588)1692-5"));
+      assertTrue("Two ids should be found. " + gndIds, (gndIds.size() == 2));
+      assertTrue("The id '(DE-588)1692-5' should exist.", gndIds.contains("(DE-588)1692-5"));
    }
 
    /**

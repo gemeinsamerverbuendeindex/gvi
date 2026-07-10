@@ -415,7 +415,7 @@ public class Basic {
     * See GVI-87
     * 
     * @param record
-    * @return The concatination of "GviMarc_" and the isil of the source.
+    * @return The concatenation of "GviMarc_" and the ISIL of the source.
     */
    public String getMarcTypByConsortium(final Record record) {
       String catalogId = getCatalogId(record);

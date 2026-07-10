@@ -23,7 +23,7 @@ public class Init {
    public static Properties    cultureGraphClusterMap  = null;
 
    /**
-    * Singelton
+    * Singleton
     */
    private Init() {
    }
@@ -45,7 +45,7 @@ public class Init {
     * 
     * While loading the data the whole indexing process is locked.
     * @throws Exception
-    * @return this singelton
+    * @return this singleton
     */
    public static synchronized Init init() {
       if (me != null) return me;
@@ -109,7 +109,7 @@ public class Init {
 
    /**
     * Helper for {@link #init_read_big_propertyFiles()}<br>
-    * Prints the ammount of free heap memory to log.
+    * Prints the amount of free heap memory to log.
     */
    private void listMem() {
       for (MemoryPoolMXBean mpBean : ManagementFactory.getMemoryPoolMXBeans()) {

@@ -90,9 +90,9 @@ public class Basic extends JunitHelper {
    @Test
    public void holdingCount() {
       String count = indexer.getHoldingCount(testRecord_1);
-      assertEquals("Wrong nomber of 924 entries.", count, "8");
+      assertEquals("Wrong number of 924 entries.", count, "8");
       count = indexer.getHoldingCount(testRecord_2);
-      assertEquals("Wrong nomber of 924 entries.", count, "91");
+      assertEquals("Wrong number of 924 entries.", count, "91");
    }
 
    /**
@@ -245,7 +245,7 @@ public class Basic extends JunitHelper {
    public void hasEnrichment() {
       assertTrue("Should contain the key for resource", indexer.getEnrichmentTypes(testRecord_1).contains(" "));
       assertTrue("Should contain the key for resource", indexer.getEnrichmentTypes(testRecord_1).contains("0"));
-      assertTrue("Should contain the key for releated resource", indexer.getEnrichmentTypes(testRecord_1).contains("2"));
+      assertTrue("Should contain the key for related resource", indexer.getEnrichmentTypes(testRecord_1).contains("2"));
    }
 
    /**

@@ -32,7 +32,7 @@ public class JunitHelper {
       System.setProperty("GviIndexer.skipClusterMap", "true");
       System.setProperty("GviIndexer.skipCultureGraph", "true");
       indexer = new GVIIndexer();
-      ValueIndexerFactory.initialize(homeDirs); // this singelton has to be called once
+      ValueIndexerFactory.initialize(homeDirs); // this singleton has to be called once
    }
 
    /**

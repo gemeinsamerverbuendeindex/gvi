@@ -111,7 +111,7 @@
     <field name="material_access"         type="FacetPlus" />
     
     <!-- IDs -->
-    <!-- Intenatonale Standart Nummern (isbn, issn, ismn, ...) -->
+    <!-- Internationale Standardnummern (isbn, issn, ismn, ...) -->
     <field name="isbn"                    type="ISBN" />
     <field name="isbn_related"            type="ISBN" />
     
@@ -426,7 +426,7 @@
         </analyzer>
     </fieldType>
     
-    <!-- Standardsuche für Texte, es wird wortweise indexiert und Standartnummern werden komprimiert. -->
+    <!-- Standardsuche für Texte, es wird wortweise indexiert und Standardnummern werden komprimiert. -->
     <fieldType name="text" class="solr.TextField" 
                positionIncrementGap="100" 
                indexed="true" 

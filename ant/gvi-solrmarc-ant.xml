@@ -28,7 +28,7 @@
     <property name="solrmarc.indexconf"        location="${solrmarc.base.dir}/gvi_index.properties"/>
     <property name="solrmarc.reader"           location="${solrmarc.base.dir}/marcreader.properties"/>
 
-    <!-- Store the current starttime for later comming clean up -->
+    <!-- Store the current starttime for later coming clean up -->
     <target name="init-index-date-for-delete">
         <tstamp>
             <format property="index-date-for-delete" 
@@ -38,7 +38,7 @@
         <echo>init-index-date-for-delete (UTC): ${index-date-for-delete}</echo>
     </target>
     
-    <!-- Delete all stale Documents from collection. (not updadated since ${index-date-for-delete} -->
+    <!-- Delete all stale Documents from collection. (not updated since ${index-date-for-delete} -->
     <target name="delete-by-collection-and-index-date">
         <solr-delete-by-collection-and-indexdate 
             solr.collection="${solr.core}"

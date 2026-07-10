@@ -9,7 +9,7 @@
 ## $Profiling Flag to turn on solrmarc's profiling option. (default: false) 
 ## $SkipBig Flag to control the long running loading of optional big property files (GND, Cluster) (default: true)
 ## $LoggingConfig  Path to the config file for Log4j. (Default: .../solrmarc/test/log4j2.xml)
-## $MEM Size of the heap to reseve while indexing. Should be quite big. (default: 20g)
+## $MEM Size of the heap to reserve while indexing. Should be quite big. (default: 20g)
 #
 # This file contains also the function 'runTest' to build all parameters to a call of 'solrmarc'
 
